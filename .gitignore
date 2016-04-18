@@ -31,15 +31,4 @@ proguard/
 # Android Studio captures folder
 captures/o
 
-.idea/libraries/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/.name
-BestSlopes2/.idea/compiler.xml
-BestSlopes2/.idea/copyright/profiles_settings.xml
-BestSlopes2/.idea/encodings.xml
-BestSlopes2/.idea/misc.xml
-BestSlopes2/.idea/modules.xml
-BestSlopes2/.idea/scopes/scope_settings.xml
-BestSlopes2/.idea/vcs.xml
-*.iml
+.idea/

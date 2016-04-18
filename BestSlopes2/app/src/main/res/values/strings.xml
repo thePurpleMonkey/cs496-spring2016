@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Best Slopes</string>
+    <string name="start_activity_text">Start Activity</string>
+    <string name="edit_trail_name_hint">Trail Name</string>
+    <string name="edit_difficulty_text">Please select a difficulty</string>
+    <string name="edit_description_hint">Comments...</string>
+    <string name="edit_add_image">Add Image</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="difficult">Difficult</string>
+</resources>

@@ -17,57 +17,53 @@
         android:id="@+id/edit_trail_name"
         android:inputType="text|textCapWords|textAutoCorrect" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_difficulty_text"
+        android:gravity="center_horizontal" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <ToggleButton
+            android:id="@+id/toggle_easy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_difficulty_image"
-            android:maxHeight="41dp"
-            android:maxWidth="41dp"
-            android:src="@drawable/easy"
-            android:adjustViewBounds="true"
-            android:layout_marginRight="20dp"/>
+            android:background="@drawable/toggle_easy"
+            android:textOn=""
+            android:textOff=""
+            android:checked="true"
+            android:onClick="difficultyChanged" />
 
-        <!--TextView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="center_vertical"
-            android:text="@string/edit_difficulty_text"
-            android:textSize="20sp"
-            android:paddingLeft="10dp"/-->
-        <RadioGroup
-            android:id="@+id/edit_difficulty_radio_group"
-            android:layout_width="match_parent"
+        <ToggleButton
+            android:id="@+id/toggle_medium"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:checkedButton="@+id/radio_difficulty_easy">
+            android:background="@drawable/toggle_medium"
+            android:textOn=""
+            android:textOff=""
+            android:onClick="difficultyChanged" />
 
-            <RadioButton
-                android:id="@+id/radio_difficulty_easy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/easy"
-                android:paddingRight="10dp"
-                android:checked="true" />
+        <ToggleButton
+            android:id="@+id/toggle_difficult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_difficult"
+            android:textOn=""
+            android:textOff=""
+            android:onClick="difficultyChanged" />
 
-            <RadioButton
-                android:id="@+id/radio_difficulty_medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/medium"
-                android:paddingRight="10dp" />
-
-            <RadioButton
-                android:id="@+id/radio_difficulty_hard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/difficult"
-                android:paddingRight="10dp" />
-        </RadioGroup>
+        <ToggleButton
+            android:id="@+id/toggle_extremely_difficult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_extremely_difficult"
+            android:textOn=""
+            android:textOff=""
+            android:onClick="difficultyChanged" />
     </LinearLayout>
 
     <RatingBar

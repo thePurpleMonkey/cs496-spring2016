@@ -3,40 +3,29 @@ package com.best_slopes.bestslopes;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.ToggleButton;
 
 public class EditTrail extends AppCompatActivity {
+    public final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
+            R.id.toggle_extremely_difficult};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_trail);
+    }
 
-        final ImageView imageView = (ImageView) findViewById(R.id.edit_difficulty_image);
+    public void difficultyChanged(View view) {
+        ToggleButton clicked = (ToggleButton) view;
 
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.edit_difficulty_radio_group);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radio_difficulty_easy:
-                        imageView.setImageResource(R.drawable.easy);
-                        break;
+        for (int id : toggles) {
+            ToggleButton button = (ToggleButton) findViewById(id);
+            button.setChecked(false);
+        }
 
-                    case R.id.radio_difficulty_medium:
-                        imageView.setImageResource(R.drawable.medium);
-                        break;
-
-                    case R.id.radio_difficulty_hard:
-                        imageView.setImageResource(R.drawable.difficult);
-                        break;
-
-                    default:
-                        imageView.setImageResource(R.drawable.default_image);
-                        break;
-                }
-            }
-        });
+        clicked.setChecked(true);
     }
 }

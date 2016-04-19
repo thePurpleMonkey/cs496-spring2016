@@ -1,3 +1,5 @@
 - Camera icon made by www.danielbruce.se from www.flaticon.com
 - App icon made by www.freepik.com from flaticon.com
-- Trail difficulty symbols retreived from http://www.belleayre.com/snowsports-school/beginner-s-guide/terms
+- Trail difficulty symbols retrieved from http://www.belleayre.com/snowsports-school/beginner-s-guide/terms
+- Check mark symbol retrieved from http://iconizer.net/files/Retina_Display_Icons/orig/checkmark.png
+- 

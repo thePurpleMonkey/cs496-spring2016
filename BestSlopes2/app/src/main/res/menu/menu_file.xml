@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_add"
+        android:id="@+id/menu_add_run"
         android:orderInCategory="100"
         android:title="@string/menu_add_run" />
 

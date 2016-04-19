@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, text, duration);
 
         switch (item.getItemId()) {
-
-            case R.id.menu_add_run:
-
-                return true;
-
             case R.id.menu_settings:
                 final Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);

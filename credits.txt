@@ -1,5 +1,5 @@
 - Camera icon made by www.danielbruce.se from www.flaticon.com
-- App icon made by www.freepik.com from flaticon.com
+- App icon retrieved from http://www.flaticon.com/free-icon/snowboard-race_92814#term=snowboard&page=1&position=16
 - Trail difficulty symbols retrieved from http://www.belleayre.com/snowsports-school/beginner-s-guide/terms
 - Check mark symbol retrieved from http://iconizer.net/files/Retina_Display_Icons/orig/checkmark.png
-- 
+- Add symbol retrieved from http://www.flaticon.com/free-icon/plus-black-symbol_25304#term=plus&page=1&position=38

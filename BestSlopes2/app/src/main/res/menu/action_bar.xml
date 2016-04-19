@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add_run"
+        android:icon="@drawable/add_symbol"
+        android:title="NA"
+        app:showAsAction="always"  />
+
+</menu>

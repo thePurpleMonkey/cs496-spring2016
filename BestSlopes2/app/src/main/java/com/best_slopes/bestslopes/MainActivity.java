@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_file, menu);
+        getMenuInflater().inflate(R.menu.action_bar, menu);
         return true;
     }
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         CharSequence text = "Currently the default settings layout";
         int duration = Toast.LENGTH_LONG;
+        Intent editTrailIntent = new Intent(this, EditTrail.class);
 
         Toast toast = Toast.makeText(context, text, duration);
 
@@ -54,14 +56,13 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
                 return true;
 
+            case R.id.action_add_run:
+                startActivity(editTrailIntent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-
-    public void startActivity(View view) {
-        Intent intent = new Intent(this, EditTrail.class);
-        startActivity(intent);
-    }
 }

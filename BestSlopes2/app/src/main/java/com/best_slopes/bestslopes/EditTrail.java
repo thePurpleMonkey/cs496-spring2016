@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,11 +59,9 @@ public class EditTrail extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toast toast = Toast.makeText(getApplicationContext(), "Saving...", Toast.LENGTH_SHORT);
-
         switch (item.getItemId()) {
             case R.id.action_save:
-                toast.show();
+                Log.d("Database", "Starting save AsyncTask...");
                 new SaveTask().execute();
                 finish();
                 return true;
@@ -79,6 +78,7 @@ public class EditTrail extends AppCompatActivity {
         int difficulty;
 
         protected void onPreExecute() {
+            Log.d("Database", "PreExecution starting...");
             // Create references to layout objects
             EditText trailName = (EditText) findViewById(R.id.edit_trail_name);
             RatingBar ratingBar = (RatingBar) findViewById(R.id.edit_rating);
@@ -117,9 +117,12 @@ public class EditTrail extends AppCompatActivity {
                     }
                 }
             }
+
+            Log.d("Database", "Finished PreExecution...");
         }
 
         protected Void doInBackground(Void... params) {
+            Log.d("Database", "Starting background work...");
             DatabaseContract.Trail mDbHelper = new DatabaseContract.Trail(getApplicationContext());
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -137,6 +140,10 @@ public class EditTrail extends AppCompatActivity {
                     "null",
                     values);
 
+            Log.d("Database", "insert() returned '" + newRowId + "'");
+
+            Log.d("Database", "Background function complete.");
+
             return null;
         }
 
@@ -144,8 +151,7 @@ public class EditTrail extends AppCompatActivity {
         }
 
         protected void onPostExecute() {
-            Toast toast = Toast.makeText(getApplicationContext(), "Save complete!", Toast.LENGTH_LONG);
-            toast.show();
+            Log.d("Database", "Save complete");
         }
     }
 }

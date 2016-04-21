@@ -74,6 +74,7 @@
         android:numStars="5" />
 
     <EditText
+        android:id="@+id/edit_comments"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"

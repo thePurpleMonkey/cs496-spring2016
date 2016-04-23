@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         CharSequence text = "Currently the default settings layout";
         int duration = Toast.LENGTH_LONG;
-        Intent editTrailIntent = new Intent(this, EditTrail.class);
 
         Toast toast = Toast.makeText(context, text, duration);
 
@@ -68,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_add_run:
+                Intent editTrailIntent = new Intent(this, EditTrail.class);
                 startActivity(editTrailIntent);
                 return true;
 

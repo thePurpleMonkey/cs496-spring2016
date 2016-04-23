@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 //final Intent intent = new Intent(this, SettingsActivity.class);
+                //TODO: change this line back to settings activity
                 final Intent intent = new Intent(this, TestDatabase.class);
                 startActivity(intent);
                 toast.show();

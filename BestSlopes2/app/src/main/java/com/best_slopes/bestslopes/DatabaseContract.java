@@ -335,6 +335,8 @@ public final class DatabaseContract {
 
             // Issue SQL statement.
             db.delete(TrailContract.TABLE_NAME, selection, selectionArgs);
+
+            return null;
         }
     }
 }

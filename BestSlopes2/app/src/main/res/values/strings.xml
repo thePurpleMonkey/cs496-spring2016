@@ -71,5 +71,6 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="action_save">Save</string>
+    <string name="title_activity_test_list_database">TestListDatabase</string>
 
 </resources>

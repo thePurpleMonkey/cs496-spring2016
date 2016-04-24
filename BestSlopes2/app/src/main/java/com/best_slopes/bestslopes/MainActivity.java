@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO: add a row item that says "Add item..." when empty
         if(!trailDifficultyImage.isEmpty() && !trailNames.isEmpty()){
             myListView.setAdapter(new CustomAdapter(this, trailNames, trailDifficultyImage));
+
         }
     }
 

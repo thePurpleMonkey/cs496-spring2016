@@ -20,10 +20,15 @@ public final class DatabaseContract {
         public static final int DATABASE_VERSION = 1;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
+        public static final String IMAGE_TABLE_NAME = "images";
+
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DIFFICULTY = "difficulty";
         public static final String COLUMN_NAME_RATING = "rating";
         public static final String COLUMN_NAME_COMMENTS = "comments";
+
+        public static final String COLUMN_NAME_FILENAME = "filename";
+        public static final String COLUMN_NAME_TRAIL_ID = "trail";
 
         public static final int INVALID_DIFFICULTY = -1;
         public static final int EASY_DIFFICULTY = 1;
@@ -41,6 +46,14 @@ public final class DatabaseContract {
         private static final String SQL_DELETE_TRAILS =
                 "DROP TABLE IF EXISTS " + TrailContract.TABLE_NAME;
 
+        private static final String SQL_CREATE_IMAGE_TABLE =
+                "CREATE TABLE " + TrailContract.IMAGE_TABLE_NAME + " (" +
+                        TrailContract.COLUMN_NAME_FILENAME + " TEXT, " +
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " INTEGER PRIMARY KEY, " +
+                        "FOREIGN KEY(" + TrailContract.COLUMN_NAME_TRAIL_ID + ") REFERENCES " +
+                        TrailContract.TABLE_NAME + "(" + TrailContract._ID + ")";
+        private static final String SQL_DELETE_IMAGE_TABLE =
+                "DROP TABLE IF EXISTS " + TrailContract.IMAGE_TABLE_NAME;
 
         public TrailContract(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,10 +62,15 @@ public final class DatabaseContract {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_TABLE);
+            db.execSQL(SQL_CREATE_IMAGE_TABLE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL(SQL_DELETE_TRAILS);
+            db.execSQL(SQL_DELETE_IMAGE_TABLE);
+
+            onCreate(db);
         }
     }
 
@@ -242,6 +260,81 @@ public final class DatabaseContract {
 
         public Trail getResult() {
             return result;
+        }
+    }
+
+    public static class AttachImageTask extends AsyncTask<String, Void, Long> {
+        private Context mContext;
+        private int id;
+        private String filename;
+
+        public AttachImageTask(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        @Override
+        protected Long doInBackground(String... params) {
+            if (params.length < 2) {
+                return null;
+            } else {
+                try {
+                    id = Integer.parseInt(params[0]);
+                    filename = params[1];
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            }
+
+            TrailContract mDbHelper = new TrailContract(mContext);
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(TrailContract.COLUMN_NAME_FILENAME, filename);
+            values.put(TrailContract.COLUMN_NAME_TRAIL_ID, id);
+
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId;
+            newRowId = db.insert(
+                    TrailContract.IMAGE_TABLE_NAME,
+                    "null",
+                    values);
+
+            return newRowId;
+        }
+    }
+
+    public static class DeleteTrailTask extends AsyncTask<Long, Void, Void> {
+        private Context mContext;
+        private long id;
+
+        public DeleteTrailTask(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        @Override
+        protected Void doInBackground(Long... params) {
+            if (params.length < 1) {
+                return null;
+            } else {
+                try {
+                    id = params[0];
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            }
+
+            TrailContract mDbHelper = new TrailContract(mContext);
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Define 'where' part of query.
+            String selection = TrailContract._ID + " LIKE ?";
+
+            // Specify arguments in placeholder order.
+            String[] selectionArgs = { String.valueOf(id) };
+
+            // Issue SQL statement.
+            db.delete(TrailContract.TABLE_NAME, selection, selectionArgs);
         }
     }
 }

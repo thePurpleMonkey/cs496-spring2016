@@ -82,6 +82,19 @@ public class Trail {
         this.id = id;
     }
 
+    public int getImageByDifficulty() { // Jhon: It works for both screens
+        switch (difficulty) {
+            default:
+                return R.drawable.easy;
+            case 2:
+                return R.drawable.medium;
+            case 3:
+                return R.drawable.difficult;
+            case 4:
+                return R.drawable.extremely_difficult;
+        }
+    }
+
     public String toString() {
         return "Name: " + name + ", Rating: " + rating + ", Difficulty: " + difficulty + ", Comments: \"" +comments + "\"";
     }

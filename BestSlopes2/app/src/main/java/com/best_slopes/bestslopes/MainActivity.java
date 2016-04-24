@@ -1,27 +1,24 @@
 package com.best_slopes.bestslopes;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
+    private static Map<Integer, Trail> trails;  // All trails // Should not be static when id stuff works
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -64,34 +61,25 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Database", e.getMessage());
             finish();
         }
-
-        Trail[] trails = task.getResults();
-
-        for (Trail trail : trails) {
-            trailNames.add(trail.getName());
-
-            switch(trail.getDifficulty()){
-                case 1:
-                    trailDifficultyImage.add(R.drawable.easy);
-                    break;
-                case 2:
-                    trailDifficultyImage.add(R.drawable.medium);
-                    break;
-                case 3:
-                    trailDifficultyImage.add(R.drawable.difficult);
-                    break;
-                case 4:
-                    trailDifficultyImage.add(R.drawable.extremely_difficult);
-                    break;
+        Trail[] trailsArray = task.getResults();
+        trails = new HashMap<Integer, Trail>(); // Jhon: map for Trails by ID // A kind of caching
+        for(Trail trail : trailsArray) {
+            int currentID = trail.getId();
+            while (trails.containsKey(currentID)) {
+                currentID++;
             }
+            trails.put(currentID, trail);
         }
-
         //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
-        if(!trailDifficultyImage.isEmpty() && !trailNames.isEmpty()){
-            myListView.setAdapter(new CustomAdapter(this, trailNames, trailDifficultyImage));
+        if(!trails.isEmpty()){
+            myListView.setAdapter(new CustomAdapter(this));  // Jhon: I modified Peter's  adapter
 
         }
+    }
+
+    public static Map<Integer, Trail> getAllTrails() {
+        return trails;
     }
 
     @Override

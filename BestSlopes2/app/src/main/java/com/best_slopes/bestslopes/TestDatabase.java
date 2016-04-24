@@ -1,10 +1,7 @@
 package com.best_slopes.bestslopes;
 
 import android.app.Activity;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -19,45 +16,50 @@ public class TestDatabase extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_database);
 
-        DatabaseContract.LoadTask allTrails = new DatabaseContract.LoadTask(this);
-        allTrails.execute();
+        DatabaseContract.LoadTask allTrailsTask = new DatabaseContract.LoadTask(this);
+        allTrailsTask.execute();
         try {
-            allTrails.get();
+            allTrailsTask.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(this);
-        task.execute("1");
+        Trail[] trails =  allTrailsTask.getResults();
+
+        Trail first = trails[0];
+        Log.d("Test", "ID of first: " + first.getId());
+        first.addImagePath("/example/path/one.jpg");
+        first.addImagePath("/example/path/two.png");
+        first.addImagePath("/example/path/three.bmp");
+
+        new DatabaseContract.UpdateTrailTask(this).execute(first);
+
+        allTrailsTask = new DatabaseContract.LoadTask(this);
+        allTrailsTask.execute();
         try {
-            task.get();
-        } catch (ExecutionException e) {
-            Log.e("Database", e.getMessage());
-            finish();
+            allTrailsTask.get();
         } catch (InterruptedException e) {
-            Log.e("Database", e.getMessage());
-            finish();
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
 
-        Trail trail = task.getResult();
+        trails =  allTrailsTask.getResults();
 
-        LinearLayout myLayout = (LinearLayout) findViewById(R.id.test_database_layout);
+        for (Trail trail : trails) {
+            LinearLayout myLayout = (LinearLayout) findViewById(R.id.test_database_layout);
 
-        TextView text = new TextView(getApplicationContext());
-        text.setTextColor(Color.RED);
-        text.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        myLayout.addView(text);
-
-
-        if (trail != null) {
+            TextView text = new TextView(getApplicationContext());
+            text.setTextColor(Color.RED);
             text.setText(trail.toString());
-        } else {
-            text.setText("No result");
+            text.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            myLayout.addView(text);
+
         }
     }
 }

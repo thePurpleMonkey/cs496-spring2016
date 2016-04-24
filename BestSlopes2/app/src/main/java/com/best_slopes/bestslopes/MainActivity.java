@@ -110,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(editTrailIntent);
                 return true;
 
+            case R.id.menu_debug:
+                startActivity(new Intent(this, TestDatabase.class));
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

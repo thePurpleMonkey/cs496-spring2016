@@ -22,6 +22,7 @@ public class Trail {
         this.difficulty = 0;
         this.comments = "";
         this.id = -1;
+        this.imagePaths = new ArrayList<String>();
     }
 
     public Trail(String name, float rating, int difficulty) {
@@ -30,6 +31,7 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = "";
         this.id = -1;
+        this.imagePaths = new ArrayList<String>();
     }
 
     public Trail(String name, float rating, int difficulty, String comments) {
@@ -38,6 +40,7 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = comments;
         this.id = -1;
+        this.imagePaths = new ArrayList<String>();
     }
 
     public Trail(String name, float rating, int difficulty, String comments, int id) {
@@ -46,6 +49,7 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = comments;
         this.id = id;
+        this.imagePaths = new ArrayList<String>();
     }
 
     public String getName() {
@@ -88,6 +92,8 @@ public class Trail {
         this.id = id;
     }
 
+    public void setId(long id) { this.id = (int) id; }
+
     public int getImageByDifficulty() { // Jhon: It works for both screens
         switch (difficulty) {
             default:
@@ -101,12 +107,13 @@ public class Trail {
         }
     }
 
-    public ArrayList<String> getImagePaths() {  // Jhon: It should be filled from database // This is just for debug
+    public ArrayList<String> getImagePaths() {  /*/ Jhon: It should be filled from database // This is just for debug
         imagePaths = new ArrayList<String>();
         String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         for (int i = 1; i < 8; i += 1) {
             imagePaths.add(baseDir + File.separator + "DCIM/BestSlopes2/IMG_0" + i + ".JPG");
         }
+        return imagePaths;*/
         return imagePaths;
     }
 
@@ -114,6 +121,15 @@ public class Trail {
 
 
     public String toString() {
-        return "ID: " + id + "Name: " + name + ", Rating: " + rating + ", Difficulty: " + difficulty + ", Comments: \"" +comments + "\"";
+        String result = "ID: " + id + ", Name: " + name + ", Rating: " + rating + ", Difficulty: " +
+                difficulty + ", Comments: \"" +comments + "\", Paths: [";
+
+        for (String path : getImagePaths()) {
+            result += path;
+        }
+
+        result += "]";
+
+        return result;
     }
 }

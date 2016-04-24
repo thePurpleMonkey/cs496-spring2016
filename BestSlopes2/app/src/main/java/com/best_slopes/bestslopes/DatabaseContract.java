@@ -17,7 +17,7 @@ public final class DatabaseContract {
     }
 
     public static class TrailContract extends SQLiteOpenHelper implements BaseColumns {
-        public static final int DATABASE_VERSION = 1;
+        public static final int DATABASE_VERSION = 2;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";
@@ -43,6 +43,7 @@ public final class DatabaseContract {
                         TrailContract.COLUMN_NAME_DIFFICULTY + " INTEGER, " +
                         TrailContract.COLUMN_NAME_RATING + " INTEGER, " +
                         TrailContract.COLUMN_NAME_COMMENTS + " TEXT)";
+
         private static final String SQL_DELETE_TRAILS =
                 "DROP TABLE IF EXISTS " + TrailContract.TABLE_NAME;
 
@@ -51,7 +52,7 @@ public final class DatabaseContract {
                         TrailContract.COLUMN_NAME_FILENAME + " TEXT, " +
                         TrailContract.COLUMN_NAME_TRAIL_ID + " INTEGER PRIMARY KEY, " +
                         "FOREIGN KEY(" + TrailContract.COLUMN_NAME_TRAIL_ID + ") REFERENCES " +
-                        TrailContract.TABLE_NAME + "(" + TrailContract._ID + ")";
+                        TrailContract.TABLE_NAME + "(" + TrailContract._ID + "))";
         private static final String SQL_DELETE_IMAGE_TABLE =
                 "DROP TABLE IF EXISTS " + TrailContract.IMAGE_TABLE_NAME;
 
@@ -74,6 +75,58 @@ public final class DatabaseContract {
         }
     }
 
+    public static class SaveTrailTask extends AsyncTask<Trail, Void, Void> {
+        Trail trail;
+        private Context mContext;
+
+        public SaveTrailTask (Context mContext) {
+            this.mContext = mContext;
+        }
+
+        protected Void doInBackground(Trail... params) {
+            if (params.length < 1) {
+                Log.e("Database", "Insufficient parameters. Expected 1, got " + params.length);
+                return null;
+            } else {
+                trail = params[0];
+            }
+
+            TrailContract mDbHelper = new TrailContract(mContext);
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
+            values.put(TrailContract.COLUMN_NAME_COMMENTS, trail.getComments());
+            values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
+            values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
+
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId;
+            newRowId = db.insert(
+                    TrailContract.TABLE_NAME,
+                    "null",
+                    values);
+
+            trail.setId((int) newRowId);
+
+            // Save image paths to database
+            for (String path : trail.getImagePaths()) {
+                values = new ContentValues();
+                values.put(TrailContract.COLUMN_NAME_FILENAME, path);
+                values.put(TrailContract.COLUMN_NAME_TRAIL_ID, trail.getId());
+
+                db.insert(
+                        TrailContract.IMAGE_TABLE_NAME,
+                        "null",
+                        values);
+            }
+
+            return null;
+        }
+    }
+
+    @Deprecated
     public static class SaveTask extends AsyncTask<String, Void, Long> {
         String title;
         String comments;

@@ -19,8 +19,18 @@ public class TestDatabase extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_database);
 
-        DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
-        task.execute();
+        DatabaseContract.LoadTask allTrails = new DatabaseContract.LoadTask(this);
+        allTrails.execute();
+        try {
+            allTrails.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(this);
+        task.execute("1");
         try {
             task.get();
         } catch (ExecutionException e) {
@@ -31,19 +41,23 @@ public class TestDatabase extends Activity {
             finish();
         }
 
-        Trail[] trails = task.getResults();
+        Trail trail = task.getResult();
 
-        for (Trail trail : trails) {
-            LinearLayout myLayout = (LinearLayout) findViewById(R.id.test_database_layout);
+        LinearLayout myLayout = (LinearLayout) findViewById(R.id.test_database_layout);
 
-            TextView text = new TextView(getApplicationContext());
+        TextView text = new TextView(getApplicationContext());
+        text.setTextColor(Color.RED);
+        text.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        myLayout.addView(text);
+
+
+        if (trail != null) {
             text.setText(trail.toString());
-            text.setTextColor(Color.RED);
-            text.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            myLayout.addView(text);
+        } else {
+            text.setText("No result");
         }
     }
 }

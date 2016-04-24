@@ -143,7 +143,7 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_COMMENTS
             };
 
-// How you want the results sorted in the resulting Cursor
+            // How you want the results sorted in the resulting Cursor
             //TODO: add app functionality to sort by different methods
             String sortOrder =
                     TrailContract.COLUMN_NAME_DIFFICULTY + " DESC";
@@ -164,6 +164,7 @@ public final class DatabaseContract {
             while (!c.isAfterLast()) {
                 Trail trail = new Trail();
 
+                trail.setId(c.getColumnIndexOrThrow(TrailContract._ID));
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))/2.0));
@@ -179,6 +180,68 @@ public final class DatabaseContract {
 
         public Trail[] getResults() {
             return results;
+        }
+    }
+
+    public static class LoadTrailTask extends AsyncTask<String, Void, Trail> {
+        private Context mContext;
+        private Trail result;
+        private String id;
+
+        public LoadTrailTask (Context context){
+            mContext = context;
+        }
+
+        @Override
+        protected Trail doInBackground(String... params) {
+            if (params.length < 1) {
+                return null;
+            } else {
+                id = params[0];
+            }
+
+            TrailContract mDbHelper = new TrailContract(mContext);
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+            // Define a projection that specifies which columns from the database
+            // you will actually use after this query.
+            String[] projection = {
+                    TrailContract._ID,
+                    TrailContract.COLUMN_NAME_TITLE,
+                    TrailContract.COLUMN_NAME_DIFFICULTY,
+                    TrailContract.COLUMN_NAME_RATING,
+                    TrailContract.COLUMN_NAME_COMMENTS
+            };
+
+            Cursor c = db.query(
+                    TrailContract.TABLE_NAME,                 // The table to query
+                    projection,                               // The columns to return
+                    "_id = ?",                                  // The columns for the WHERE clause
+                    new String[] {id},     // The values for the WHERE clause
+                    null,                                     // Don't group the rows
+                    null,                                     // Don't filter by row groups
+                    null                                      // Don't sort
+            );
+
+            if (c.getCount() < 1) {
+                Log.d("LoadTrailTask", "No result found");
+                return null;
+            } else {
+                c.moveToFirst();
+
+                result = new Trail();
+                result.setId(c.getInt(c.getColumnIndexOrThrow(TrailContract._ID)));
+                result.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
+                result.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
+                result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING)) / 2.0));
+                result.setComments(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENTS)));
+
+                return result;
+            }
+        }
+
+        public Trail getResult() {
+            return result;
         }
     }
 }

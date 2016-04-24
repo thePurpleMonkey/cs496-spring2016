@@ -8,6 +8,7 @@ public class Trail {
     private float rating;
     private int difficulty;
     private String comments;
+    private int id;
 
     public Trail() {
         this.name = "";
@@ -60,6 +61,14 @@ public class Trail {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String toString() {

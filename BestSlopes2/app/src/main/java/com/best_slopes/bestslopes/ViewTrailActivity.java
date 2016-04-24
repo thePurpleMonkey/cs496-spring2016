@@ -15,12 +15,12 @@ public class ViewTrailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_trail);
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
 //        this.trail = getTrailByID(id);
         this.trail = MainActivity.getAllTrails().get(id); // Jhon: Temporary but an ugly fix for id
-        setContentView(R.layout.activity_view_trail);
-        fillFields();
+//        fillFields();
     }
 
     private Trail getTrailByID(int id) {

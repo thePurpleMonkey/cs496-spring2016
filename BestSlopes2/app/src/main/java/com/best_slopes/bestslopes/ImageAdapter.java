@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,26 +20,59 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
-
     private Context context;
-    private ArrayList<Bitmap> imageList;
-    private boolean isImageFitToScreen;
+    private ArrayList<String> imagePaths;
     private ViewGroup.LayoutParams defaultParams;
-    ImageView fullScreenContainer;
-
-    public ImageAdapter(AppCompatActivity mainActivity) {
+    public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
         this.context = mainActivity;
-        this.imageList = imageList;
+        this.imagePaths = trail.getImagePaths();
         this.defaultParams = new GridView.LayoutParams(375, 375);
-        this.imageList = new ArrayList<Bitmap>();
-        String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        for (int i = 1; i < 8; i+=1) {//urls[0]
-            String imagePath = baseDir + File.separator +"DCIM/BestSlopes2/IMG_0" + i + ".JPG";
-            Bitmap bitmap = pathImageToBitmap(imagePath);
-            if (bitmap != null) {
-                this.imageList.add(bitmap);
-            }
+    }
+
+    public int getCount() {
+        return this.imagePaths.size();
+    }
+
+    public Object getItem(int position) {
+        return this.imagePaths.get(position);
+    }
+
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ImageView imageView;
+        final File file = new File(imagePaths.get(position));
+        if (!file.exists()) {
+            return null;
         }
+        if (convertView == null) {
+            imageView = new ImageView(this.context);
+            imageView.setLayoutParams(defaultParams);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setClickable(true);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                //@Override
+                public void onClick(View v) {
+                    if (file.exists()) {
+                        Uri uri = Uri.fromFile(file);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        intent.setDataAndType(uri, "image/*");
+                        context.startActivity(intent);
+                    }
+                }
+            });
+        } else {
+            imageView = (ImageView) convertView;
+        }
+        if (position < imagePaths.size()) {
+            imageView.setImageBitmap(pathImageToBitmap(imagePaths.get(position)));
+        }
+        else {
+            imageView.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.add_image));
+        }
+        return imageView;
     }
 
     private Bitmap pathImageToBitmap(String imagePath){
@@ -56,45 +88,6 @@ public class ImageAdapter extends BaseAdapter {
             e.printStackTrace();
         }
         return result;
-    }
-
-    public int getCount() {
-        return this.imageList.size();
-    }
-
-    public Object getItem(int position) {
-        return null;
-    }
-
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ImageView imageView;
-        if (convertView == null) {
-            imageView = new ImageView(this.context);
-            imageView.setLayoutParams(defaultParams);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setClickable(true);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                //@Override
-                public void onClick(View v) {
-                    File file = new File("/sdcard/DCIM/BestSlopes2/IMG_01.JPG");
-                    if (file.exists()) {
-                        Uri uri = Uri.fromFile(file);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        intent.setDataAndType(uri, "image/*");
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        } else {
-            imageView = (ImageView) convertView;
-        }
-
-        imageView.setImageBitmap(this.imageList.get(position));
-        return imageView;
     }
 
 }

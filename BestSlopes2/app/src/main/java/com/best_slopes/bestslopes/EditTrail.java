@@ -62,41 +62,42 @@ public class EditTrail extends AppCompatActivity {
         RatingBar ratingBar = (RatingBar) findViewById(R.id.edit_rating);
         EditText commentsText = (EditText) findViewById(R.id.edit_comments);
 
+        Trail trail = new Trail();
+
         // Gather data from layout objects
-        String title = trailName.getText().toString();
-        int rating = (int) ratingBar.getRating() * 2;
-        String comments = commentsText.getText().toString();
+        trail.setName(trailName.getText().toString());
+        trail.setRating((int) ratingBar.getRating() * 2);
+        trail.setComments(commentsText.getText().toString());
 
         // Determine difficulty
-        int difficulty = DatabaseContract.TrailContract.INVALID_DIFFICULTY;
+        trail.setDifficulty(DatabaseContract.TrailContract.INVALID_DIFFICULTY);
         for (int id : toggles) {
             ToggleButton button = (ToggleButton) findViewById(id);
             if (button.isChecked()) {
                 switch (button.getId()) {
                     case R.id.toggle_easy:
-                        difficulty = DatabaseContract.TrailContract.EASY_DIFFICULTY;
+                        trail.setDifficulty(DatabaseContract.TrailContract.EASY_DIFFICULTY);
                         break;
 
                     case R.id.toggle_medium:
-                        difficulty = DatabaseContract.TrailContract.MEDIUM_DIFFICULTY;
+                        trail.setDifficulty(DatabaseContract.TrailContract.MEDIUM_DIFFICULTY);
                         break;
 
                     case R.id.toggle_difficult:
-                        difficulty = DatabaseContract.TrailContract.DIFFICULT_DIFFICULTY;
+                        trail.setDifficulty(DatabaseContract.TrailContract.DIFFICULT_DIFFICULTY);
                         break;
 
                     case R.id.toggle_extremely_difficult:
-                        difficulty = DatabaseContract.TrailContract.EXTREME_DIFFICULTY;
+                        trail.setDifficulty(DatabaseContract.TrailContract.EXTREME_DIFFICULTY);
                         break;
 
                     default:
-                        difficulty = DatabaseContract.TrailContract.INVALID_DIFFICULTY;
+                        trail.setDifficulty(DatabaseContract.TrailContract.INVALID_DIFFICULTY);
                         break;
                 }
             }
         }
 
-
-        new DatabaseContract.SaveTask(this).execute(title, String.valueOf(difficulty), String.valueOf(rating), comments);
+        new DatabaseContract.SaveTrailTask(this).execute(trail);
     }
 }

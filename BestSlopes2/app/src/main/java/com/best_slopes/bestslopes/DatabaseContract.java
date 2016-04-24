@@ -17,7 +17,7 @@ public final class DatabaseContract {
     }
 
     public static class TrailContract extends SQLiteOpenHelper implements BaseColumns {
-        public static final int DATABASE_VERSION = 2;
+        public static final int DATABASE_VERSION = 3;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";
@@ -49,8 +49,9 @@ public final class DatabaseContract {
 
         private static final String SQL_CREATE_IMAGE_TABLE =
                 "CREATE TABLE " + TrailContract.IMAGE_TABLE_NAME + " (" +
+                        "_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         TrailContract.COLUMN_NAME_FILENAME + " TEXT, " +
-                        TrailContract.COLUMN_NAME_TRAIL_ID + " INTEGER PRIMARY KEY, " +
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " INTEGER, " +
                         "FOREIGN KEY(" + TrailContract.COLUMN_NAME_TRAIL_ID + ") REFERENCES " +
                         TrailContract.TABLE_NAME + "(" + TrailContract._ID + "))";
         private static final String SQL_DELETE_IMAGE_TABLE =
@@ -102,8 +103,7 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
 
             // Insert the new row, returning the primary key value of the new row
-            long newRowId;
-            newRowId = db.insert(
+            long newRowId = db.insert(
                     TrailContract.TABLE_NAME,
                     "null",
                     values);
@@ -123,69 +123,6 @@ public final class DatabaseContract {
             }
 
             return null;
-        }
-    }
-
-    @Deprecated
-    public static class SaveTask extends AsyncTask<String, Void, Long> {
-        String title;
-        String comments;
-        float rating;
-        int difficulty;
-        private Context mContext;
-
-        public SaveTask (Context context){
-            mContext = context;
-        }
-
-        protected void onPreExecute() {}
-
-        protected Long doInBackground(String... params) {
-            Log.d("Database", "Starting background work...");
-
-            if (params.length < 4) {
-                Log.e("Database", "Insufficient parameters. Expected 4, got "+params.length);
-                return (long) -1;
-            } else {
-                try {
-                    title = params[0];
-                    difficulty = Integer.parseInt(params[1]);
-                    rating = Integer.parseInt(params[2]);
-                    comments = params[3];
-                } catch (NumberFormatException e) {
-                    Log.e("Database", "Could not parse parameters. Aborting.");
-                    return (long) -1;
-                }
-            }
-
-            TrailContract mDbHelper = new TrailContract(mContext);
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-            // Create a new map of values, where column names are the keys
-            ContentValues values = new ContentValues();
-            values.put(TrailContract.COLUMN_NAME_TITLE, title);
-            values.put(TrailContract.COLUMN_NAME_COMMENTS, comments);
-            values.put(TrailContract.COLUMN_NAME_DIFFICULTY, difficulty);
-            values.put(TrailContract.COLUMN_NAME_RATING, rating);
-
-            // Insert the new row, returning the primary key value of the new row
-            long newRowId;
-            newRowId = db.insert(
-                    TrailContract.TABLE_NAME,
-                    "null",
-                    values);
-
-            Log.d("Database", "insert() returned '" + newRowId + "'");
-            Log.d("Database", "Background function complete.");
-
-            return newRowId;
-        }
-
-        protected void onProgressUpdate() {
-        }
-
-        protected void onPostExecute() {
-            Log.d("Database", "Save complete");
         }
     }
 
@@ -403,6 +340,66 @@ public final class DatabaseContract {
 
             // Issue SQL statement.
             db.delete(TrailContract.TABLE_NAME, selection, selectionArgs);
+
+            return null;
+        }
+    }
+
+    public static class UpdateTrailTask extends AsyncTask<Trail, Void, Void> {
+        private Context mContext;
+        private Trail trail;
+
+        public UpdateTrailTask(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        @Override
+        protected Void doInBackground(Trail... params) {
+            if (params.length < 1) {
+                Log.e("Database", "Insufficient parameters. Expected 1, got " + params.length);
+                return null;
+            } else {
+                trail = params[0];
+            }
+
+            TrailContract mDbHelper = new TrailContract(mContext);
+            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+            // New value for one column
+            ContentValues values = new ContentValues();
+            values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
+            values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
+            values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
+            values.put(TrailContract.COLUMN_NAME_COMMENTS, trail.getComments());
+
+            // Which row to update, based on the ID
+            String selection = TrailContract._ID + " = ?";
+            String[] selectionArgs = { String.valueOf(trail.getId()) };
+
+            int count = db.update(
+                    TrailContract.TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs);
+
+            // Define 'where' part of query.
+            selection = TrailContract.COLUMN_NAME_TRAIL_ID + " = ?";
+            // Specify arguments in placeholder order.
+            selectionArgs[0] = String.valueOf(trail.getId());
+            // Issue SQL statement.
+            db.delete(TrailContract.IMAGE_TABLE_NAME, selection, selectionArgs);
+
+            // Save image paths to database
+            for (String path : trail.getImagePaths()) {
+                values = new ContentValues();
+                values.put(TrailContract.COLUMN_NAME_FILENAME, path);
+                values.put(TrailContract.COLUMN_NAME_TRAIL_ID, trail.getId());
+
+                db.insert(
+                        TrailContract.IMAGE_TABLE_NAME,
+                        "null",
+                        values);
+            }
 
             return null;
         }

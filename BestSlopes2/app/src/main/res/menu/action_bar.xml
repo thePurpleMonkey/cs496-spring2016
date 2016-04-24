@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_add_run"
-        android:icon="@drawable/add_symbol"
+        android:icon="@drawable/ic_add_white_48dp"
         android:title="NA"
         app:showAsAction="always"  />
 

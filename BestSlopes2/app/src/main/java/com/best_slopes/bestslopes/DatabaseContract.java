@@ -307,6 +307,21 @@ public final class DatabaseContract {
                 result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING)) / 2.0));
                 result.setComments(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENTS)));
 
+                Cursor cc = db.query(
+                        TrailContract.IMAGE_TABLE_NAME,
+                        new String[] {},
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
+                        new String[] {String.valueOf(result.getId())},
+                        null,
+                        null,
+                        null
+                );
+
+                cc.moveToFirst();
+                while (!cc.isAfterLast()) {
+                    result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+                }
+
                 return result;
             }
         }

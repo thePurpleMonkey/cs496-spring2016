@@ -3,3 +3,4 @@
 - Trail difficulty symbols retrieved from http://www.belleayre.com/snowsports-school/beginner-s-guide/terms
 - Check mark symbol retrieved from http://iconizer.net/files/Retina_Display_Icons/orig/checkmark.png
 - Add symbol retrieved from http://www.flaticon.com/free-icon/plus-black-symbol_25304#term=plus&page=1&position=38
+- Arrow icon retrieved from http://www.flaticon.com/free-icon/right-arrow_118740#term=arrow&page=1&position=1

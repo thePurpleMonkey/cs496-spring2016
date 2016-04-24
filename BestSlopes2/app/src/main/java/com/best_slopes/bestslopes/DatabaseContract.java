@@ -144,8 +144,9 @@ public final class DatabaseContract {
             };
 
 // How you want the results sorted in the resulting Cursor
+            //TODO: add app functionality to sort by different methods
             String sortOrder =
-                    TrailContract.COLUMN_NAME_RATING + " DESC";
+                    TrailContract.COLUMN_NAME_DIFFICULTY + " DESC";
 
             Cursor c = db.query(
                     TrailContract.TABLE_NAME,        // The table to query

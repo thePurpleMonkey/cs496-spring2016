@@ -18,7 +18,6 @@ public class CustomAdapter extends BaseAdapter {
     ArrayList<Integer> imageId;
     private static LayoutInflater inflater=null;
     public CustomAdapter(MainActivity mainActivity, ArrayList<String> prgmNameList, ArrayList<Integer> prgmImages) {
-        // TODO Auto-generated constructor stub
         result=prgmNameList;
         context=mainActivity;
         imageId=prgmImages;
@@ -27,37 +26,38 @@ public class CustomAdapter extends BaseAdapter {
     }
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
         return result.size();
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
     public class Holder
     {
         TextView tv;
-        ImageView img;
+        ImageView img1;
+        ImageView img2;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
         Holder holder=new Holder();
         View rowView;
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
-        holder.img=(ImageView) rowView.findViewById(R.id.imageView1);
+        holder.img1=(ImageView) rowView.findViewById(R.id.imageView1);
         holder.tv.setText(result.get(position));
-        holder.img.setImageResource(imageId.get(position));
+        holder.img1.setImageResource(imageId.get(position));
+
+        holder.img2=(ImageView) rowView.findViewById(R.id.imageView2);
+        holder.img2.setImageResource(R.drawable.arrow_enter_trail);
+
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

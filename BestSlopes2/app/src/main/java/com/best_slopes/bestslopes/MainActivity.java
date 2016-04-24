@@ -134,16 +134,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addToDbButton(View view){
+    public void enterTrail(View view){
         Context context = getApplicationContext();
-
-        CharSequence text = "Adding to DB";
-        int duration = Toast.LENGTH_LONG;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();           //shows that the settings tab is temporary
-
-
 
     }
 

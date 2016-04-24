@@ -1,5 +1,10 @@
 package com.best_slopes.bestslopes;
 
+import android.os.Environment;
+
+import java.io.File;
+import java.util.ArrayList;
+
 /**
  * Created by Michael Humphrey on 4/22/2016.
  */
@@ -9,6 +14,7 @@ public class Trail {
     private int difficulty;
     private String comments;
     private int id;
+    private ArrayList<String> imagePaths; // Jhon: we should also handle with this
 
     public Trail() {
         this.name = "";
@@ -95,7 +101,19 @@ public class Trail {
         }
     }
 
+    public ArrayList<String> getImagePaths() {  // Jhon: It should be filled from database // This is just for debug
+        imagePaths = new ArrayList<String>();
+        String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        for (int i = 1; i < 8; i += 1) {
+            imagePaths.add(baseDir + File.separator + "DCIM/BestSlopes2/IMG_0" + i + ".JPG");
+        }
+        return imagePaths;
+    }
+
+    public void addImagePath(String imagePath) { imagePaths.add(imagePath); }
+
+
     public String toString() {
-        return "Name: " + name + ", Rating: " + rating + ", Difficulty: " + difficulty + ", Comments: \"" +comments + "\"";
+        return "ID: " + id + "Name: " + name + ", Rating: " + rating + ", Difficulty: " + difficulty + ", Comments: \"" +comments + "\"";
     }
 }

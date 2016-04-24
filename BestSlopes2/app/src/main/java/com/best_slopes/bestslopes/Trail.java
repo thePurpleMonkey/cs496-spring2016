@@ -15,6 +15,7 @@ public class Trail {
         this.rating = 0.0f;
         this.difficulty = 0;
         this.comments = "";
+        this.id = -1;
     }
 
     public Trail(String name, float rating, int difficulty) {
@@ -22,6 +23,7 @@ public class Trail {
         this.rating = rating;
         this.difficulty = difficulty;
         this.comments = "";
+        this.id = -1;
     }
 
     public Trail(String name, float rating, int difficulty, String comments) {
@@ -29,6 +31,15 @@ public class Trail {
         this.rating = rating;
         this.difficulty = difficulty;
         this.comments = comments;
+        this.id = -1;
+    }
+
+    public Trail(String name, float rating, int difficulty, String comments, int id) {
+        this.name = name;
+        this.rating = rating;
+        this.difficulty = difficulty;
+        this.comments = comments;
+        this.id = id;
     }
 
     public String getName() {

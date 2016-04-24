@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,9 +22,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-    public final static String EXTRA_DIFFICULTY = "extra hard";
-    private ArrayAdapter<String> adapter ;
-
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -41,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onResume(){
         super.onResume();       //must be called first
@@ -53,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
-        ArrayList<String> testList = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(this, R.layout.trail_row, testList);
+        ArrayList<String> trailNames = new ArrayList<String>();
+        ArrayList<Integer> trailDifficultyImage = new ArrayList<Integer>();
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
         task.execute();
@@ -71,8 +68,28 @@ public class MainActivity extends AppCompatActivity {
         Trail[] trails = task.getResults();
 
         for (Trail trail : trails) {
-            adapter.add(trail.getName());
-            myListView.setAdapter(adapter);
+            trailNames.add(trail.getName());
+
+            switch(trail.getDifficulty()){
+                case 1:
+                    trailDifficultyImage.add(R.drawable.easy);
+                    break;
+                case 2:
+                    trailDifficultyImage.add(R.drawable.medium);
+                    break;
+                case 3:
+                    trailDifficultyImage.add(R.drawable.difficult);
+                    break;
+                case 4:
+                    trailDifficultyImage.add(R.drawable.extremely_difficult);
+                    break;
+            }
+        }
+
+        //verifies list is not empty!
+        //TODO: add a row item that says "Add item..." when empty
+        if(!trailDifficultyImage.isEmpty() && !trailNames.isEmpty()){
+            myListView.setAdapter(new CustomAdapter(this, trailNames, trailDifficultyImage));
         }
     }
 

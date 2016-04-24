@@ -172,11 +172,27 @@ public final class DatabaseContract {
             while (!c.isAfterLast()) {
                 Trail trail = new Trail();
 
-                trail.setId(c.getColumnIndexOrThrow(TrailContract._ID));
+                trail.setId((int) c.getLong(c.getColumnIndexOrThrow(TrailContract._ID)));
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))/2.0));
                 trail.setComments(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENTS)));
+
+                Cursor cc = db.query(
+                        TrailContract.IMAGE_TABLE_NAME,
+                        new String[] {},
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
+                        new String[] {String.valueOf(trail.getId())},
+                        null,
+                        null,
+                        null
+                );
+
+                cc.moveToFirst();
+                while (!cc.isAfterLast()) {
+                    trail.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+                    cc.moveToNext();
+                }
 
                 results[index] = trail;
                 c.moveToNext();
@@ -257,6 +273,7 @@ public final class DatabaseContract {
                 cc.moveToFirst();
                 while (!cc.isAfterLast()) {
                     result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+                    cc.moveToNext();
                 }
 
                 return result;
@@ -382,12 +399,18 @@ public final class DatabaseContract {
                     selection,
                     selectionArgs);
 
+            Log.v("Database", "Updated " + count + " rows.");
+
             // Define 'where' part of query.
             selection = TrailContract.COLUMN_NAME_TRAIL_ID + " = ?";
             // Specify arguments in placeholder order.
             selectionArgs[0] = String.valueOf(trail.getId());
             // Issue SQL statement.
-            db.delete(TrailContract.IMAGE_TABLE_NAME, selection, selectionArgs);
+            count = db.delete(TrailContract.IMAGE_TABLE_NAME, selection, selectionArgs);
+
+            Log.v("Database", "Deleted " + count + "rows from image database.");
+
+            count = 0;
 
             // Save image paths to database
             for (String path : trail.getImagePaths()) {
@@ -399,7 +422,10 @@ public final class DatabaseContract {
                         TrailContract.IMAGE_TABLE_NAME,
                         "null",
                         values);
+                count++;
             }
+
+            Log.v("Database", "Inserted " + count + " rows");
 
             return null;
         }

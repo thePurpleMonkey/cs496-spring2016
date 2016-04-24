@@ -3,7 +3,6 @@
     package="com.best_slopes.bestslopes">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -31,6 +30,7 @@
             android:theme="@style/AppTheme.CustomTheme"
         ></activity>
 
+        <activity android:name=".TestDatabase" />
     </application>
 
 </manifest>

@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterTrail(View view){
         Context context = getApplicationContext();
+
     }
 
 

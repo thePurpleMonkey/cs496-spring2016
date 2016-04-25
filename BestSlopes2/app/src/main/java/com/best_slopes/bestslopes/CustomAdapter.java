@@ -48,8 +48,9 @@ public class CustomAdapter extends BaseAdapter {
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
         holder.img1=(ImageView) rowView.findViewById(R.id.imageView1);
-        holder.tv.setText(trails.get(position).getName());
-        holder.img1.setImageResource(trails.get(position).getImageByDifficulty());
+        Trail trail = trails.get(position+1);
+        holder.tv.setText(trail.getName());
+        holder.img1.setImageResource(trail.getImageByDifficulty());
 
         holder.img2=(ImageView) rowView.findViewById(R.id.imageView2);
         holder.img2.setImageResource(R.drawable.arrow_enter_trail);
@@ -57,10 +58,10 @@ public class CustomAdapter extends BaseAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: when clicked, enter into John's page for specific item
+//                //TODO: when clicked, enter into John's page for specific item
 //                Intent intent = new Intent(context, ViewTrailActivity.class);
-////                Trail trail = trails.get(position);
-////                intent.putExtra("Trail_ID", trail.getId());
+//                Trail trail = trails.get(position);
+//                intent.putExtra("Trail_ID", trail.getId());
 //                context.startActivity(intent);
             }
         });

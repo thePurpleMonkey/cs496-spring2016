@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.best_slopes.bestslopes.EditTrail">
+    tools:context="com.best_slopes.bestslopes.ViewTrailActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -33,37 +33,76 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:id="@+id/trailRatingBar" />
+            android:id="@+id/trailRatingBar"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Comments"
-        android:id="@+id/commentsTitleText" />
-
-    <ListView
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="125dp"
-        android:id="@+id/commentsListView"
+        android:layout_height="10dp"
+        android:layout_gravity="center_horizontal" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grid_view_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/comments"
+            android:textColor="@android:color/black"
+            android:id="@+id/commentsTitleText" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_gravity="center_horizontal" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/commentsListView"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Images"
-        android:id="@+id/imagesTitleText" />
-
-    <GridView
-        android:id="@+id/imageGridView"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="2"
-        android:verticalSpacing="5dp"
-        android:horizontalSpacing="5dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grid_view_background"
+        android:textColor="@android:color/transparent" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/images"
+            android:textColor="@android:color/black"
+            android:id="@+id/imagesTitleText" />
+
+        <GridView
+            android:id="@+id/imageGridView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="2"
+            android:verticalSpacing="5dp"
+            android:horizontalSpacing="5dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center" />
+    </LinearLayout>
+
 </LinearLayout>

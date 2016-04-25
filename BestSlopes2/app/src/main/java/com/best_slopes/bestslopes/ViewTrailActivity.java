@@ -20,7 +20,7 @@ public class ViewTrailActivity extends AppCompatActivity {
         int id = b.getInt("Trail_ID");
 //        this.trail = getTrailByID(id);
         this.trail = MainActivity.getAllTrails().get(id); // Jhon: Temporary but an ugly fix for id
-//        fillFields();
+        fillFields();
     }
 
     private Trail getTrailByID(int id) {

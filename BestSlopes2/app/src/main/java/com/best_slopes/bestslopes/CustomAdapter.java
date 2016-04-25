@@ -1,6 +1,7 @@
 package com.best_slopes.bestslopes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +59,10 @@ public class CustomAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 //TODO: when clicked, enter into John's page for specific item
-//                Intent intent = new Intent(context, ViewTrailActivity.class);
-////                Trail trail = trails.get(position);
-////                intent.putExtra("Trail_ID", trail.getId());
-//                context.startActivity(intent);
+                Intent intent = new Intent(context, ViewTrailActivity.class);
+                Trail trail = trails.get(position);
+                intent.putExtra("Trail_ID", trail.getId());
+                context.startActivity(intent);
             }
         });
         return rowView;

@@ -13,6 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:hint="@string/edit_trail_name_hint"
         android:id="@+id/trailNameText" />
 

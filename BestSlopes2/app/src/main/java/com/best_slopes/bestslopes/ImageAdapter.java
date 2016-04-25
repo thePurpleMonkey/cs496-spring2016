@@ -1,7 +1,8 @@
 package com.best_slopes.bestslopes;
 
 /**
- * Created by Muratcan on 4/20/2016.
+ * Created by Muratcan a.k.a Jhon on 4/20/2016.
+ *
  */
 
 import android.content.Context;
@@ -21,20 +22,26 @@ import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<String> imagePaths;
-    private ViewGroup.LayoutParams defaultParams;
+    private ArrayList<String> imageViews;
     public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
         this.context = mainActivity;
-        this.imagePaths = trail.getImagePaths();
-        this.defaultParams = new GridView.LayoutParams(375, 375);
+        getImageViews(trail.getImagePaths());
     }
 
+    private void getImageViews(ArrayList<String> imagePaths) {
+        imageViews = new ArrayList<>(imagePaths);
+        imageViews.add("ADD_IMAGE_ICON");
+//        for (String imagePath : imagePaths) {
+//            imageViews.add(new MyImageView(imagePath).getImageView());
+//        }
+//        imageViews.add(new MyImageView("ADD_IMAGE_ICON").getImageView());
+    }
     public int getCount() {
-        return this.imagePaths.size();
+        return this.imageViews.size();
     }
 
     public Object getItem(int position) {
-        return this.imagePaths.get(position);
+        return this.imageViews.get(position);
     }
 
     public long getItemId(int position) {
@@ -43,51 +50,87 @@ public class ImageAdapter extends BaseAdapter {
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ImageView imageView;
-        final File file = new File(imagePaths.get(position));
-        if (!file.exists()) {
-            return null;
-        }
         if (convertView == null) {
-            imageView = new ImageView(this.context);
-            imageView.setLayoutParams(defaultParams);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setClickable(true);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                //@Override
-                public void onClick(View v) {
-                    if (file.exists()) {
-                        Uri uri = Uri.fromFile(file);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        intent.setDataAndType(uri, "image/*");
-                        context.startActivity(intent);
-                    }
-                }
-            });
+            imageView = new MyImageView(imageViews.get(position)).getImageView();
         } else {
             imageView = (ImageView) convertView;
-        }
-        if (position < imagePaths.size()) {
-            imageView.setImageBitmap(pathImageToBitmap(imagePaths.get(position)));
-        }
-        else {
-            imageView.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.add_image));
         }
         return imageView;
     }
 
-    private Bitmap pathImageToBitmap(String imagePath){
-        Bitmap result = null;
-        try {
-            File f= new File(imagePath);
-            boolean a = f.exists();
-            if(f.exists()) {
-                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                result = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private class MyImageView {
+        private ViewGroup.LayoutParams defaultParams;
+        private ImageView imageView;
+        private String imagePath;
+        private boolean isIcon;
+
+        public MyImageView(final String imagePath) {
+            this.defaultParams = new GridView.LayoutParams(375, 375);
+            this.imagePath = imagePath;
+            this.isIcon = imagePath.equals("ADD_IMAGE_ICON");
+            this.imageView = new ImageView(context);
+            this.imageView.setLayoutParams(defaultParams);
+            this.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            this.imageView.setClickable(true);
+            chooseBitmap();
+            setOnClickListener();
+
         }
-        return result;
+
+        private void chooseBitmap() {
+            if (this.isIcon) {
+                Bitmap addImageIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_image);
+                this.imageView.setImageBitmap(addImageIcon);
+            }
+            else {
+                this.imageView.setImageBitmap(getBitmapFromPath());
+            }
+
+        }
+
+        private Bitmap getBitmapFromPath(){
+            Bitmap result = null;
+            try {
+                File f= new File(this.imagePath);
+                if(f.exists()) {
+                    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                    result = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        private void setOnClickListener() {
+            this.imageView.setOnClickListener(new View.OnClickListener() {
+                //@Override
+                public void onClick(View v) {
+                    if (isIcon) {
+                        pickImage();
+                    }
+                    else {
+                        openImage();
+                    }
+                }
+            });
+        }
+
+        void openImage() {
+            final File file = new File(this.imagePath);
+            if (file.exists()) {
+                Uri uri = Uri.fromFile(file);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setDataAndType(uri, "image/*");
+                context.startActivity(intent);
+            }
+        }
+
+        private void pickImage() {
+            // TODO: Open camera or file browser to add image
+        }
+
+        public ImageView getImageView() { return this.imageView; }
     }
 
 }

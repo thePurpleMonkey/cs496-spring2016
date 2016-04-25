@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ public class CustomAdapter extends BaseAdapter {
     private Map<Integer, Trail> trails;
     Context context;
     private static LayoutInflater inflater=null;
+
     public CustomAdapter(MainActivity mainActivity) {
         context=mainActivity;
         this.trails = mainActivity.getAllTrails();
@@ -45,6 +48,7 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Holder holder=new Holder();
+
         View rowView;
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
@@ -55,17 +59,31 @@ public class CustomAdapter extends BaseAdapter {
         holder.img2=(ImageView) rowView.findViewById(R.id.imageView2);
         holder.img2.setImageResource(R.drawable.arrow_enter_trail);
 
+        /*Set ClickListener to arrow image */
+        rowView.findViewById(R.id.imageView2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startViewTrailActivity(position);
+            }
+        });
+
+        /*Set ClickListener to row */
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: when clicked, enter into John's page for specific item
-                Intent intent = new Intent(context, ViewTrailActivity.class);
-                Trail trail = trails.get(position);
-                intent.putExtra("Trail_ID", trail.getId());
-                context.startActivity(intent);
+                startViewTrailActivity(position);
             }
         });
+
+
         return rowView;
+    }
+
+    private void startViewTrailActivity(int position){
+        Intent intent = new Intent(context, ViewTrailActivity.class);
+        Trail trail = trails.get(position);
+        intent.putExtra("Trail_ID", trail.getId());
+        context.startActivity(intent);
     }
 
 }

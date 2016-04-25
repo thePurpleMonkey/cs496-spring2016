@@ -61,7 +61,7 @@ public class CustomAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //TODO: when clicked, enter into John's page for specific item
                 Intent intent = new Intent(context, ViewTrailActivity.class);
-                Trail trail = trails.get(position);
+                Trail trail = trails.get(position+1);
                 intent.putExtra("Trail_ID", trail.getId());
                 context.startActivity(intent);
             }

@@ -1,8 +1,5 @@
 package com.best_slopes.bestslopes;
 
-import android.os.Environment;
-
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -76,8 +73,20 @@ public class Trail {
         this.difficulty = difficulty;
     }
 
-    public String getComments() {
-        return comments;
+    public ArrayList<String> getCommentsList() { // TODO: John: Comments should be handled.
+        comments = "Great#Dangerous#I love it#Fine";
+        ArrayList<String> commentsList = new ArrayList<>();
+        String[] arr = comments.split("#");
+        for (String comment: arr) {
+            commentsList.add(comment);
+        }
+        return commentsList;
+    }
+
+    public String getComments() { return comments; }
+
+    public void addComment(String comment) {
+        this.comments = comments + "#" + comments;
     }
 
     public void setComments(String comments) {
@@ -107,14 +116,7 @@ public class Trail {
         }
     }
 
-    public ArrayList<String> getImagePaths() {  /*/ Jhon: It should be filled from database // This is just for debug
-        imagePaths = new ArrayList<String>();
-        String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        for (int i = 1; i < 8; i += 1) {
-            imagePaths.add(baseDir + File.separator + "DCIM/BestSlopes2/IMG_0" + i + ".JPG");
-        }
-        return imagePaths;*/
-        return imagePaths;
+    public ArrayList<String> getImagePaths() {  return imagePaths;
     }
 
     public void addImagePath(String imagePath) { imagePaths.add(imagePath); }

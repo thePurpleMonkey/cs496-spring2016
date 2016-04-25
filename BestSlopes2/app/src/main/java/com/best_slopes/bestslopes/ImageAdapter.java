@@ -9,39 +9,48 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
+    static final private String ADD_IMAGE_ICON = "#$%#$%#$%";
+    private ArrayList<String> imagePaths;
+    private static String baseDir;
     private Context context;
-    private ArrayList<String> imageViews;
+    private static LayoutInflater inflater=null;
+
     public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
+        if(baseDir == null)
+            baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         this.context = mainActivity;
-        getImageViews(trail.getImagePaths());
+        inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.imagePaths = new ArrayList<>(trail.getImagePaths());
+        getDebuggingImages(); // JUST FOR DEBUGGING
+        this.imagePaths.add(ADD_IMAGE_ICON);
     }
 
-    private void getImageViews(ArrayList<String> imagePaths) {
-        imageViews = new ArrayList<>(imagePaths);
-        imageViews.add("ADD_IMAGE_ICON");
-//        for (String imagePath : imagePaths) {
-//            imageViews.add(new MyImageView(imagePath).getImageView());
-//        }
-//        imageViews.add(new MyImageView("ADD_IMAGE_ICON").getImageView());
+    private void getDebuggingImages() {
+        this.imagePaths = new ArrayList<>();
+        for (int i = 1; i < 8; i += 1) {
+            imagePaths.add(baseDir + File.separator + "DCIM/BestSlopes2/IMG_0" + i + ".JPG");
+        }
     }
     public int getCount() {
-        return this.imageViews.size();
+        return this.imagePaths.size();
     }
 
     public Object getItem(int position) {
-        return this.imageViews.get(position);
+        return this.imagePaths.get(position);
     }
 
     public long getItemId(int position) {
@@ -49,30 +58,25 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final ImageView imageView;
-        if (convertView == null) {
-            imageView = new MyImageView(imageViews.get(position)).getImageView();
-        } else {
-            imageView = (ImageView) convertView;
-        }
-        return imageView;
+        ImageViewHolder holder = new ImageViewHolder();
+        View cellView;
+        cellView = inflater.inflate(R.layout.image_view_for_grid, null);
+        holder.imageView = (ImageView) cellView.findViewById(R.id.imageViewForGrid);
+        holder.setImageView(this.imagePaths.get(position));
+        return cellView;
     }
 
-    private class MyImageView {
+    private class ImageViewHolder {
         private ViewGroup.LayoutParams defaultParams;
         private ImageView imageView;
         private String imagePath;
         private boolean isIcon;
 
-        public MyImageView(final String imagePath) {
-            this.defaultParams = new GridView.LayoutParams(375, 375);
+        public void setImageView(final String imagePath) {
             this.imagePath = imagePath;
-            this.isIcon = imagePath.equals("ADD_IMAGE_ICON");
-            this.imageView = new ImageView(context);
-            this.imageView.setLayoutParams(defaultParams);
-            this.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            this.imageView.setClickable(true);
+            this.isIcon = imagePath.equals(ADD_IMAGE_ICON);
             chooseBitmap();
+            this.imageView.setClickable(true);
             setOnClickListener();
 
         }
@@ -81,6 +85,7 @@ public class ImageAdapter extends BaseAdapter {
             if (this.isIcon) {
                 Bitmap addImageIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_image);
                 this.imageView.setImageBitmap(addImageIcon);
+                this.imageView.setBackgroundColor(Color.TRANSPARENT);
             }
             else {
                 this.imageView.setImageBitmap(getBitmapFromPath());

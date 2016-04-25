@@ -49,8 +49,9 @@ public class CustomAdapter extends BaseAdapter {
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
         holder.img1=(ImageView) rowView.findViewById(R.id.imageView1);
-        holder.tv.setText(trails.get(position).getName());
-        holder.img1.setImageResource(trails.get(position).getImageByDifficulty());
+        Trail trail = trails.get(position+1);
+        holder.tv.setText(trail.getName());
+        holder.img1.setImageResource(trail.getImageByDifficulty());
 
         holder.img2=(ImageView) rowView.findViewById(R.id.imageView2);
         holder.img2.setImageResource(R.drawable.arrow_enter_trail);

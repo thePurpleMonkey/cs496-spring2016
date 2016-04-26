@@ -36,19 +36,28 @@ public class ImageAdapter extends BaseAdapter {
     private static LayoutInflater inflater=null;
 
     public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
-        if(baseDir == null)
-            baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         this.context = mainActivity;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.imagePaths = new ArrayList<>(trail.getImagePaths());
-        getDebuggingImages(); // JUST FOR DEBUGGING
+        loadImages(trail);
+    }
+
+    private void loadImages(Trail trail) {
+        if(baseDir == null)
+            baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if (!trail.isNew()) {
+            this.imagePaths = new ArrayList<>(trail.getImagePaths());
+            getDebuggingImages(); // JUST FOR DEBUGGING
+        }
+        else {
+            this.imagePaths = new ArrayList<>();
+        }
         this.imagePaths.add(ADD_IMAGE_ICON);
     }
 
     private void getDebuggingImages() {
         this.imagePaths = new ArrayList<>();
         for (int i = 1; i < 8; i += 1) {
-            imagePaths.add(baseDir + File.separator + "DCIM/BestSlopes2/IMG_0" + i + ".JPG");
+            imagePaths.add("DCIM/BestSlopes2/IMG_0" + i + ".JPG");
         }
     }
     public int getCount() {
@@ -102,7 +111,7 @@ public class ImageAdapter extends BaseAdapter {
         private Bitmap getBitmapFromPath(){
             Bitmap result = null;
             try {
-                File f= new File(this.imagePath);
+                File f= new File(baseDir + File.separator + this.imagePath);
                 if(f.exists()) {
                     BitmapFactory.Options bmOptions = new BitmapFactory.Options();
                     result = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         Trail[] trailsArray = task.getResults();
         trails = new SparseArray<Trail>(); // Jhon: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
-            trails.put(trail.getId(), trail);
+           trails.put(trail.getId(), trail);
         }
         //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
@@ -96,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_add_run:
-                Intent editTrailIntent = new Intent(this, EditTrail.class);
+                Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
+                editTrailIntent.putExtra("Trail_ID", -1); // John: -1 means trail will be created, not edited
                 startActivity(editTrailIntent);
                 return true;
 

@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.provider.BaseColumns;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Michael Humphrey on 4/20/2016.
@@ -172,6 +175,7 @@ public final class DatabaseContract {
             while (!c.isAfterLast()) {
                 Trail trail = new Trail();
 
+                trail.setOld();
                 trail.setId((int) c.getLong(c.getColumnIndexOrThrow(TrailContract._ID)));
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
@@ -216,6 +220,22 @@ public final class DatabaseContract {
             mContext = context;
         }
 
+
+        static public Trail getTrailByID(AppCompatActivity mContext, int id) {
+            String ID = "" + id; // Short Cast
+            DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(mContext);
+            task.execute(ID);
+            try {
+                task.get();
+            } catch (ExecutionException e) {
+                Log.e("Database", e.getMessage());
+                mContext.finish();
+            } catch (InterruptedException e) {
+                Log.e("Database", e.getMessage());
+                mContext.finish();
+            }
+            return task.getResult();
+        }
         @Override
         protected Trail doInBackground(String... params) {
             if (params.length < 1) {
@@ -254,6 +274,7 @@ public final class DatabaseContract {
                 c.moveToFirst();
 
                 result = new Trail();
+                result.setOld();
                 result.setId(c.getInt(c.getColumnIndexOrThrow(TrailContract._ID)));
                 result.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 result.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));

@@ -6,11 +6,12 @@ import java.util.ArrayList;
  * Created by Michael Humphrey on 4/22/2016.
  */
 public class Trail {
+    private int id;
     private String name;
     private float rating;
     private int difficulty;
     private String comments;
-    private int id;
+    private boolean isNew;
     private ArrayList<String> imagePaths; // Jhon: we should also handle with this
 
     public Trail() {
@@ -19,6 +20,7 @@ public class Trail {
         this.difficulty = 0;
         this.comments = "";
         this.id = -1;
+        this.isNew = true;
         this.imagePaths = new ArrayList<String>();
     }
 
@@ -28,6 +30,7 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = "";
         this.id = -1;
+        this.isNew = true;
         this.imagePaths = new ArrayList<String>();
     }
 
@@ -37,6 +40,7 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = comments;
         this.id = -1;
+        this.isNew = true;
         this.imagePaths = new ArrayList<String>();
     }
 
@@ -46,6 +50,7 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = comments;
         this.id = id;
+        this.isNew = true;
         this.imagePaths = new ArrayList<String>();
     }
 
@@ -121,10 +126,18 @@ public class Trail {
 
     public void addImagePath(String imagePath) { imagePaths.add(imagePath); }
 
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setOld() {
+        isNew = false;
+    }
 
     public String toString() {
-        String result = "ID: " + id + ", Name: " + name + ", Rating: " + rating + ", Difficulty: " +
-                difficulty + ", Comments: \"" +comments + "\", Paths: [";
+        String result = "ID: " + id + ", isNew: " + isNew + ", Name: " + name +
+                ", Rating: " + rating + ", Difficulty: " +difficulty +
+                ", Comments: \"" +comments + "\", Paths: [";
 
         for (String path : getImagePaths()) {
             result += path;

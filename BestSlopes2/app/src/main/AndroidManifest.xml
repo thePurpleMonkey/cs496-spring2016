@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditTrail" />
+        <activity android:name=".EditTrailActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />

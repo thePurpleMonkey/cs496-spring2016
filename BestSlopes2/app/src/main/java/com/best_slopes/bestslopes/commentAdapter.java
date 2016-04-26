@@ -111,6 +111,7 @@ public class CommentAdapter extends BaseAdapter {
         comments.remove(ADD_COMMENT_STRING);
         comments.add(newComment);
         comments.add(ADD_COMMENT_STRING);
+        notifyDataSetChanged();
         editText.clearFocus();
         if (!trail.isNew()) {
             new DatabaseContract.UpdateTrailTask(context).execute(trail);

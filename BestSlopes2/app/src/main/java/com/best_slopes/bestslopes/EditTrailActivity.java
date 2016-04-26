@@ -74,11 +74,31 @@ public class EditTrailActivity extends AppCompatActivity {
             commentsView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
         else {
-            ((TextView) findViewById(R.id.edit_trail_name)).setText(trail.getName());
+            TextView editName = ((TextView) findViewById(R.id.edit_trail_name));
+            editName.setText(trail.getName());
+            setOnEditorActionListener(editName);
             ((ToggleButton) findViewById(toggles[0])).setChecked(false);
             ((ToggleButton) findViewById(toggles[trail.getDifficulty()-1])).setChecked(true);
             ((RatingBar) findViewById(R.id.edit_rating)).setRating(trail.getRating());
         }
+    }
+
+    private void setOnEditorActionListener(TextView editText) {
+        editText.setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                                actionId == EditorInfo.IME_ACTION_DONE ||
+                                event.getAction() == KeyEvent.ACTION_DOWN &&
+                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                            if (!event.isShiftPressed()) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
     }
 
     public void difficultyChanged(View view) {
@@ -176,9 +196,7 @@ public class EditTrailActivity extends AppCompatActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         int actionId = event.getAction();
-        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (actionId == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
             if (v instanceof EditText) {
                 Rect outRect = new Rect();
@@ -187,9 +205,9 @@ public class EditTrailActivity extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     v.clearFocus();
-                    if (v.getId() == R.id.commentField) {
-                        ((EditText) v).setText("");
-                    }
+//                    if (v.getId() == R.id.commentField) {
+//                        ((EditText) v).setText("");
+//                    }
                 }
             }
         }

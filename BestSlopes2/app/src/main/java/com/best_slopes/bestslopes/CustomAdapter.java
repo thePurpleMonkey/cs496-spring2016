@@ -2,6 +2,7 @@ package com.best_slopes.bestslopes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Map;
-
 public class CustomAdapter extends BaseAdapter {
-    private Map<Integer, Trail> trails;
+    private SparseArray<Trail> trails;
     Context context;
     private static LayoutInflater inflater=null;
+    public CustomAdapter(MainActivity mainActivity, SparseArray<Trail> trails) {
 
     public CustomAdapter(MainActivity mainActivity) {
         context=mainActivity;
-        this.trails = mainActivity.getAllTrails();
+        this.trails = trails;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     @Override
@@ -53,7 +53,7 @@ public class CustomAdapter extends BaseAdapter {
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
         holder.img1=(ImageView) rowView.findViewById(R.id.imageView1);
-        Trail trail = trails.get(position+1);
+        Trail trail = trails.valueAt(position);
         holder.tv.setText(trail.getName());
         holder.img1.setImageResource(trail.getImageByDifficulty());
 

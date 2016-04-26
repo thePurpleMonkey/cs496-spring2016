@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,12 +14,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-    private static Map<Integer, Trail> trails;  // All trails // Should not be static when id stuff works
+    private SparseArray<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -62,24 +61,15 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         Trail[] trailsArray = task.getResults();
-        trails = new HashMap<Integer, Trail>(); // Jhon: map for Trails by ID // A kind of caching
+        trails = new SparseArray<Trail>(); // Jhon: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
-            int currentID = trail.getId();
-            while (trails.containsKey(currentID)) {
-                currentID++;
-            }
-            trails.put(currentID, trail);
+            trails.put(trail.getId(), trail);
         }
         //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
-        if(!trails.isEmpty()){
-            myListView.setAdapter(new CustomAdapter(this));  // Jhon: I modified Peter's  adapter
-
+        if(trails.size() != 0){
+            myListView.setAdapter(new CustomAdapter(this, trails));
         }
-    }
-
-    public static Map<Integer, Trail> getAllTrails() {
-        return trails;
     }
 
     @Override

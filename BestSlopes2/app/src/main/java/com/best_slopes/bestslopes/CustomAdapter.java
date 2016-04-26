@@ -2,6 +2,7 @@ package com.best_slopes.bestslopes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +10,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Map;
-
 public class CustomAdapter extends BaseAdapter {
-    private Map<Integer, Trail> trails;
+    private SparseArray<Trail> trails;
     Context context;
     private static LayoutInflater inflater=null;
-    public CustomAdapter(MainActivity mainActivity) {
+    public CustomAdapter(MainActivity mainActivity, SparseArray<Trail> trails) {
         context=mainActivity;
-        this.trails = mainActivity.getAllTrails();
+        this.trails = trails;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     @Override
@@ -49,7 +48,7 @@ public class CustomAdapter extends BaseAdapter {
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
         holder.img1=(ImageView) rowView.findViewById(R.id.imageView1);
-        Trail trail = trails.get(position+1);
+        Trail trail = trails.valueAt(position);
         holder.tv.setText(trail.getName());
         holder.img1.setImageResource(trail.getImageByDifficulty());
 
@@ -59,11 +58,10 @@ public class CustomAdapter extends BaseAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: when clicked, enter into John's page for specific item
-                Intent intent = new Intent(context, ViewTrailActivity.class);
-                Trail trail = trails.get(position+1);
-                intent.putExtra("Trail_ID", trail.getId());
-                context.startActivity(intent);
+            Intent intent = new Intent(context, ViewTrailActivity.class);
+            Trail trail = trails.valueAt(position);
+            intent.putExtra("Trail_ID", trail.getId());
+            context.startActivity(intent);
             }
         });
         return rowView;

@@ -25,11 +25,17 @@ public class ViewTrailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_trail);
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
-//        this.trail = getTrailByID(id);
-        this.trail = MainActivity.getAllTrails().get(id); // Jhon: Temporary but an ugly fix for id
+        this.trail = getTrailByID(id);
+        setMyActionBar();
         fillFields();
     }
 
+    private void setMyActionBar() {
+        //Allow icon to be displayed in ActionBar
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setIcon(R.mipmap.ic_launcher);
+    }
     private Trail getTrailByID(int id) {
         String ID = "" + id; // Short Cast
         DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(this);

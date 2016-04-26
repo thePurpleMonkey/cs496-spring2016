@@ -57,12 +57,13 @@ public class CommentAdapter extends BaseAdapter {
     {
         TextView textView;
         EditText editText;
-        private View fillView(final int position) {
+
+        private View fillView(final int position, CommentAdapter adapter) {
             View rowView;
             if (comments.get(position).equals(ADD_COMMENT_STRING)) {
                 rowView = inflater.inflate(R.layout.comment_field, null);
                 this.editText = (EditText) rowView.findViewById(R.id.commentField);
-                setOnEditorActionListener();
+                setOnEditorActionListener(adapter);
 
             } else {
                 rowView = inflater.inflate(R.layout.text_view_for_comments, null);
@@ -72,7 +73,7 @@ public class CommentAdapter extends BaseAdapter {
             return rowView;
         }
 
-        private void setOnEditorActionListener() {
+        private void setOnEditorActionListener(final CommentAdapter adapter) {
             editText.setOnEditorActionListener(
                     new EditText.OnEditorActionListener() {
                         @Override
@@ -91,6 +92,7 @@ public class CommentAdapter extends BaseAdapter {
                                     InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                     notifyDataSetChanged();
+                                    listView.setSelection(adapter.getCount() - 1);
                                     return true;
                                 }
                             }
@@ -103,7 +105,7 @@ public class CommentAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Holder holder = new Holder();
-        return holder.fillView(position);
+        return holder.fillView(position, this);
     }
 
 }

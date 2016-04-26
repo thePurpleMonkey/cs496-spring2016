@@ -1,6 +1,7 @@
 package com.best_slopes.bestslopes;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,7 +28,8 @@ public class CommentAdapter extends BaseAdapter {
     private ArrayList<String> comments;
     private Trail trail;
     private ListView listView;
-    public CommentAdapter(ViewTrailActivity activity, Trail trail, ListView listView) {
+
+    public CommentAdapter(AppCompatActivity activity, Trail trail, ListView listView) {
         context = activity;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.trail = trail;
@@ -35,7 +38,12 @@ public class CommentAdapter extends BaseAdapter {
     }
 
     private void loadComments() {
-        this.comments = this.trail.getCommentsList();
+        if (!this.trail.isNew()) {
+            this.comments = this.trail.getCommentsList();
+        }
+        else {
+            this.comments = new ArrayList<>();
+        }
         this.comments.add(ADD_COMMENT_STRING);
     }
     @Override
@@ -58,12 +66,12 @@ public class CommentAdapter extends BaseAdapter {
         TextView textView;
         EditText editText;
 
-        private View fillView(final int position, CommentAdapter adapter) {
+        private View fillView(final int position) {
             View rowView;
             if (comments.get(position).equals(ADD_COMMENT_STRING)) {
                 rowView = inflater.inflate(R.layout.comment_field, null);
                 this.editText = (EditText) rowView.findViewById(R.id.commentField);
-                setOnEditorActionListener(adapter);
+                setOnEditorActionListener();
 
             } else {
                 rowView = inflater.inflate(R.layout.text_view_for_comments, null);
@@ -73,7 +81,7 @@ public class CommentAdapter extends BaseAdapter {
             return rowView;
         }
 
-        private void setOnEditorActionListener(final CommentAdapter adapter) {
+        private void setOnEditorActionListener() {
             editText.setOnEditorActionListener(
                     new EditText.OnEditorActionListener() {
                         @Override
@@ -83,16 +91,8 @@ public class CommentAdapter extends BaseAdapter {
                                     event.getAction() == KeyEvent.ACTION_DOWN &&
                                             event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                                 if (!event.isShiftPressed()) {
-                                    String newComment = editText.getText().toString();
-                                    trail.addComment(newComment);
-                                    comments.remove(ADD_COMMENT_STRING);
-                                    comments.add(newComment);
-                                    comments.add(ADD_COMMENT_STRING);
-                                    editText.clearFocus();
-                                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                    notifyDataSetChanged();
-                                    listView.setSelection(adapter.getCount() - 1);
+                                    addComment(editText, v);
+                                    updateListView();
                                     return true;
                                 }
                             }
@@ -102,10 +102,35 @@ public class CommentAdapter extends BaseAdapter {
         }
     }
 
+    private void addComment(EditText editText, View v) {
+        String newComment = editText.getText().toString();
+        if (newComment.equals("")) {
+            return;
+        }
+        trail.addComment(newComment);
+        comments.remove(ADD_COMMENT_STRING);
+        comments.add(newComment);
+        comments.add(ADD_COMMENT_STRING);
+        editText.clearFocus();
+        if (!trail.isNew()) {
+            new DatabaseContract.UpdateTrailTask(context).execute(trail);
+        }
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+    }
+
+    private void updateListView() {
+        if (this.getCount() < 3) {
+            listView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 170));
+        }
+        notifyDataSetChanged();
+        this.listView.setSelection(this.getCount() - 1);
+    }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Holder holder = new Holder();
-        return holder.fillView(position, this);
+        return holder.fillView(position);
     }
 
 }

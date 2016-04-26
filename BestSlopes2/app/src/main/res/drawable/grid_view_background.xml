@@ -7,11 +7,6 @@
         android:color="@android:color/darker_gray" >
     </solid>
 
-    <stroke
-        android:width="2dp"
-        android:color="@android:color/black" >
-    </stroke>
-
     <padding
         android:left="5dp"
         android:top="5dp"

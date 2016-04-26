@@ -10,5 +10,6 @@
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="110dp"
+        android:scaleType="fitXY"
         android:background="@drawable/grid_view_background" />
 </RelativeLayout>

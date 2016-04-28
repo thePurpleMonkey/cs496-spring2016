@@ -6,6 +6,7 @@ package com.best_slopes.bestslopes;
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,54 +19,47 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import java.io.File;
-import java.util.ArrayList;
 
-public class ImageAdapter extends BaseAdapter {
-    static final private String ADD_IMAGE_ICON = "#$%#$%#$%";
-    private ArrayList<String> imagePaths;
+public class ImageAdapter extends NewAdapter {
     private static String baseDir;
     private Context context;
     private static LayoutInflater inflater=null;
+    private Trail trail;
 
     public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
         this.context = mainActivity;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        loadImages(trail);
+        this.trail = trail;
+            loadImages();
     }
 
-    private void loadImages(Trail trail) {
+    private void loadImages() {
         if(baseDir == null)
             baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        if (!trail.isNew()) {
-            this.imagePaths = new ArrayList<>(trail.getImagePaths());
-            getDebuggingImages(); // JUST FOR DEBUGGING
+        if (trail.isNew()) {
+            getDebuggingImages();
         }
-        else {
-            this.imagePaths = new ArrayList<>();
-        }
-        this.imagePaths.add(ADD_IMAGE_ICON);
     }
 
     private void getDebuggingImages() {
-        this.imagePaths = new ArrayList<>();
         for (int i = 1; i < 8; i += 1) {
-            imagePaths.add("DCIM/BestSlopes2/IMG_0" + i + ".JPG");
+            trail.addImagePath("DCIM/BestSlopes2/IMG_0" + i + ".JPG");
         }
     }
     public int getCount() {
-        return this.imagePaths.size();
+        return this.trail.getImagePaths().size()+1;
     }
 
     public Object getItem(int position) {
-        return this.imagePaths.get(position);
+        return this.trail.getImagePaths().get(position);
     }
 
     public long getItemId(int position) {
@@ -77,23 +71,29 @@ public class ImageAdapter extends BaseAdapter {
         View cellView;
         cellView = inflater.inflate(R.layout.image_view_for_grid, null);
         holder.imageView = (ImageView) cellView.findViewById(R.id.imageViewForGrid);
-        holder.setImageView(this.imagePaths.get(position));
+        holder.setImageView(position);
         return cellView;
     }
 
     private class ImageViewHolder {
-        private ViewGroup.LayoutParams defaultParams;
+        private int position;
         private ImageView imageView;
         private String imagePath;
         private boolean isIcon;
 
-        public void setImageView(final String imagePath) {
-            this.imagePath = imagePath;
-            this.isIcon = imagePath.equals(ADD_IMAGE_ICON);
+        public void setImageView(int position) {
+            ImageAdapter adapter = ImageAdapter.this;
+            if (position >= adapter.getCount()-1) {
+                this.isIcon = true;
+            }
+            else {
+                this.imageView.setOnLongClickListener(getOnLongClickListener(context, ImageAdapter.this));
+                this.imagePath = adapter.trail.getImagePaths().get(position);
+            }
             chooseBitmap();
+            this.position = position;
             this.imageView.setClickable(true);
             setOnClickListener();
-
         }
 
         private void chooseBitmap() {
@@ -122,6 +122,7 @@ public class ImageAdapter extends BaseAdapter {
             }
             return result;
         }
+
         private Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
             Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                     .getHeight(), Bitmap.Config.ARGB_8888);
@@ -143,6 +144,7 @@ public class ImageAdapter extends BaseAdapter {
 
             return output;
         }
+
         private void setOnClickListener() {
             this.imageView.setOnClickListener(new View.OnClickListener() {
                 //@Override
@@ -157,8 +159,30 @@ public class ImageAdapter extends BaseAdapter {
             });
         }
 
+
+        // John: Common method for our adapters to delete items
+        public View.OnLongClickListener getOnLongClickListener(final Context context, final NewAdapter adapter) {
+            return new View.OnLongClickListener() {
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder adb=new AlertDialog.Builder(context);
+                    adb.setTitle("Delete?");
+                    adb.setMessage("Are you sure you want to delete this image?");
+                    final int positionToRemove = position;
+                    adb.setNegativeButton("Cancel", null);
+                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            adapter.deleteItem(positionToRemove);
+                            new DatabaseContract.UpdateTrailTask(context).execute(trail);
+                            adapter.notifyDataSetChanged();
+                        }});
+                    adb.show();
+                    return false;
+                }
+            };
+        }
+
         void openImage() {
-            final File file = new File(this.imagePath);
+            final File file = new File(baseDir + File.separator + this.imagePath);
             if (file.exists()) {
                 Uri uri = Uri.fromFile(file);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -172,6 +196,11 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         public ImageView getImageView() { return this.imageView; }
+    }
+    
+    public void deleteItem(final int position) {
+        trail.removeImagePath(position);
+        notifyDataSetChanged();
     }
 
 }

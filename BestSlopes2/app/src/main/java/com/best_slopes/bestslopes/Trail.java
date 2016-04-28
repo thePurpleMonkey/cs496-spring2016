@@ -10,7 +10,7 @@ public class Trail {
     private String name;
     private float rating;
     private int difficulty;
-    private String comments;
+    private ArrayList<String> comments;
     private boolean isNew;
     private ArrayList<String> imagePaths; // Jhon: we should also handle with this
 
@@ -18,7 +18,7 @@ public class Trail {
         this.name = "";
         this.rating = 0.0f;
         this.difficulty = 0;
-        this.comments = "";
+        this.comments = new ArrayList<String>();
         this.id = -1;
         this.isNew = true;
         this.imagePaths = new ArrayList<String>();
@@ -28,13 +28,13 @@ public class Trail {
         this.name = name;
         this.rating = rating;
         this.difficulty = difficulty;
-        this.comments = "";
+        this.comments = new ArrayList<String>();
         this.id = -1;
         this.isNew = true;
         this.imagePaths = new ArrayList<String>();
     }
 
-    public Trail(String name, float rating, int difficulty, String comments) {
+    public Trail(String name, float rating, int difficulty, ArrayList<String> comments) {
         this.name = name;
         this.rating = rating;
         this.difficulty = difficulty;
@@ -44,7 +44,7 @@ public class Trail {
         this.imagePaths = new ArrayList<String>();
     }
 
-    public Trail(String name, float rating, int difficulty, String comments, int id) {
+    public Trail(String name, float rating, int difficulty, ArrayList<String> comments, int id) {
         this.name = name;
         this.rating = rating;
         this.difficulty = difficulty;
@@ -79,23 +79,36 @@ public class Trail {
     }
 
     public ArrayList<String> getCommentsList() { // TODO: John: Comments should be handled.
-        comments = "Great#Dangerous#I love it#Fine";
-        ArrayList<String> commentsList = new ArrayList<>();
-        String[] arr = comments.split("#");
-        for (String comment: arr) {
-            commentsList.add(comment);
-        }
-        return commentsList;
+        return comments;
     }
 
-    public String getComments() { return comments; }
+    public String getComments() {
+        if (comments.isEmpty()) {
+            return "";
+        }
+        String commentsString = comments.get(0);
+        for (int i = 1; i < comments.size(); i++) {
+            commentsString = commentsString + "###" + comments.get(i);
+        }
+        return commentsString; }
 
     public void addComment(String comment) {
-        this.comments = comments + "#" + comments;
+        comments.add(comment);
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void removeComment(String comment) {
+        comments.remove(comment);
+    }
+
+    public void removeComment(int commentPos) {
+        comments.remove(commentPos);
+    }
+
+    public void setComments(String commentsString) {
+        String[] arr = commentsString.split("###");
+        for (String comment: arr) {
+            comments.add(comment);
+        }
     }
 
     public int getId() {
@@ -121,10 +134,13 @@ public class Trail {
         }
     }
 
-    public ArrayList<String> getImagePaths() {  return imagePaths;
-    }
+    public ArrayList<String> getImagePaths() {  return imagePaths; }
 
     public void addImagePath(String imagePath) { imagePaths.add(imagePath); }
+
+    public void removeImagePath(String imagePath) { imagePaths.remove(imagePath); }
+
+    public void removeImagePath(int imagePathPos) { imagePaths.remove(imagePathPos); }
 
     public boolean isNew() {
         return isNew;

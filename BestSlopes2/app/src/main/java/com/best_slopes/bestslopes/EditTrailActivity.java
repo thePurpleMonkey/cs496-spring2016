@@ -33,9 +33,13 @@ public class EditTrailActivity extends AppCompatActivity {
         int id = b.getInt("Trail_ID");
         if (id != -1) { // John: if an existing trail will be edited
             this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
+            setTitle(trail.getName());
+            int icon = trail.getImageByDifficulty();
+            getSupportActionBar().setIcon(icon);
         }
         else {
             this.trail = new Trail();
+            setTitle("New Trail...");
         }
         //Allow icon to be displayed in ActionBar
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -103,6 +107,8 @@ public class EditTrailActivity extends AppCompatActivity {
 
     public void difficultyChanged(View view) {
         ToggleButton clicked = (ToggleButton) view;
+        int icon = trail.getImageByDifficulty();
+        getSupportActionBar().setIcon(icon);
 
         for (int id : toggles) {
             ToggleButton button = (ToggleButton) findViewById(id);
@@ -205,9 +211,9 @@ public class EditTrailActivity extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     v.clearFocus();
-//                    if (v.getId() == R.id.commentField) {
-//                        ((EditText) v).setText("");
-//                    }
+                    if (v.getId() == R.id.commentField) {
+                        ((EditText) v).setText("");
+                    }
                 }
             }
         }

@@ -10,33 +10,21 @@
     android:orientation="vertical"
     tools:context="com.best_slopes.bestslopes.ViewTrailActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:hint="@string/edit_trail_name_hint"
-        android:id="@+id/trailNameText" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/difficultyImage"
-            android:src="@drawable/easy"/>
-
-        <RatingBar
-            android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:id="@+id/trailRatingBar"
-            android:isIndicator="true" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:id="@+id/trailRatingBar"
+        android:isIndicator="true"
+        android:layout_gravity="center_horizontal" />
 
     <Space
         android:layout_width="match_parent"
@@ -45,9 +33,10 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:id="@+id/commentsLayout"
         android:background="@drawable/grid_view_background">
 
         <TextView
@@ -65,12 +54,13 @@
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/commentsListView"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
-
+</LinearLayout>
+    </ScrollView>
     <Space
         android:layout_width="match_parent"
         android:layout_height="15dp"
@@ -79,7 +69,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/grid_view_background"
         android:textColor="@android:color/transparent" >
@@ -95,7 +85,7 @@
         <GridView
             android:id="@+id/imageGridView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:numColumns="2"
             android:verticalSpacing="5dp"
             android:horizontalSpacing="5dp"

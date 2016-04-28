@@ -7,10 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.provider.BaseColumns;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Michael Humphrey on 4/20/2016.
@@ -24,14 +21,16 @@ public final class DatabaseContract {
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";
+        public static final String COMMENTS_TABLE_NAME = "comments";
 
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DIFFICULTY = "difficulty";
         public static final String COLUMN_NAME_RATING = "rating";
-        public static final String COLUMN_NAME_COMMENTS = "comments";
 
         public static final String COLUMN_NAME_FILENAME = "filename";
         public static final String COLUMN_NAME_TRAIL_ID = "trail";
+
+        public static final String COLUMN_NAME_COMMENT = "comment";
 
         public static final int INVALID_DIFFICULTY = -1;
         public static final int EASY_DIFFICULTY = 1;
@@ -44,8 +43,7 @@ public final class DatabaseContract {
                         TrailContract._ID + " INTEGER PRIMARY KEY, " +
                         TrailContract.COLUMN_NAME_TITLE + " TEXT, " +
                         TrailContract.COLUMN_NAME_DIFFICULTY + " INTEGER, " +
-                        TrailContract.COLUMN_NAME_RATING + " INTEGER, " +
-                        TrailContract.COLUMN_NAME_COMMENTS + " TEXT)";
+                        TrailContract.COLUMN_NAME_RATING + " INTEGER)";
 
         private static final String SQL_DELETE_TRAILS =
                 "DROP TABLE IF EXISTS " + TrailContract.TABLE_NAME;
@@ -60,6 +58,17 @@ public final class DatabaseContract {
         private static final String SQL_DELETE_IMAGE_TABLE =
                 "DROP TABLE IF EXISTS " + TrailContract.IMAGE_TABLE_NAME;
 
+        private static final String SQL_CREATE_COMMENTS_TABLE =
+                "CREATE TABLE " + TrailContract.COMMENTS_TABLE_NAME + " (" +
+                        "_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        TrailContract.COLUMN_NAME_COMMENT + " TEXT, " +
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " INTEGER, " +
+                        "FOREIGN KEY(" + TrailContract.COLUMN_NAME_TRAIL_ID + ") REFERENCES " +
+                        TrailContract.TABLE_NAME + "(" + TrailContract._ID + "))";
+        private static final String SQL_DELETE_COMMENTS_TABLE =
+                "DROP TABLE IF EXISTS " + TrailContract.COMMENTS_TABLE_NAME;
+
+
         public TrailContract(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
@@ -68,12 +77,14 @@ public final class DatabaseContract {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_TABLE);
             db.execSQL(SQL_CREATE_IMAGE_TABLE);
+            db.execSQL(SQL_CREATE_COMMENTS_TABLE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL(SQL_DELETE_TRAILS);
             db.execSQL(SQL_DELETE_IMAGE_TABLE);
+            db.execSQL(SQL_DELETE_COMMENTS_TABLE);
 
             onCreate(db);
         }
@@ -100,8 +111,6 @@ public final class DatabaseContract {
 
             // Create a new map of values, where column names are the keys
             ContentValues values = new ContentValues();
-            values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
-            values.put(TrailContract.COLUMN_NAME_COMMENTS, trail.getComments());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
 
@@ -121,6 +130,18 @@ public final class DatabaseContract {
 
                 db.insert(
                         TrailContract.IMAGE_TABLE_NAME,
+                        "null",
+                        values);
+            }
+
+            // Save comments to database
+            for (String comment : trail.getComments()) {
+                values = new ContentValues();
+                values.put(TrailContract.COLUMN_NAME_COMMENT, comment);
+                values.put(TrailContract.COLUMN_NAME_TRAIL_ID, trail.getId());
+
+                db.insert(
+                        TrailContract.COMMENTS_TABLE_NAME,
                         "null",
                         values);
             }
@@ -151,7 +172,6 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_TITLE,
                     TrailContract.COLUMN_NAME_DIFFICULTY,
                     TrailContract.COLUMN_NAME_RATING,
-                    TrailContract.COLUMN_NAME_COMMENTS
             };
 
             // How you want the results sorted in the resulting Cursor
@@ -175,27 +195,41 @@ public final class DatabaseContract {
             while (!c.isAfterLast()) {
                 Trail trail = new Trail();
 
-                trail.setOld();
-                trail.setId((int) c.getLong(c.getColumnIndexOrThrow(TrailContract._ID)));
+                trail.setId(c.getColumnIndexOrThrow(TrailContract._ID));
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))/2.0));
-                trail.setComments(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENTS)));
 
-                Cursor cc = db.query(
-                        TrailContract.IMAGE_TABLE_NAME,
-                        new String[] {},
+                Cursor commentCursor = db.query(
+                        TrailContract.COMMENTS_TABLE_NAME,
+                        new String[] {TrailContract.COLUMN_NAME_COMMENT},
                         TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
-                        new String[] {String.valueOf(trail.getId())},
+                        new String[] { String.valueOf(trail.getId()) },
                         null,
                         null,
                         null
                 );
 
-                cc.moveToFirst();
-                while (!cc.isAfterLast()) {
-                    trail.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
-                    cc.moveToNext();
+                commentCursor.moveToFirst();
+                while (!commentCursor.isAfterLast()) {
+                    trail.addComment(commentCursor.getString(commentCursor.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENT)));
+                    commentCursor.moveToNext();
+                }
+
+                Cursor imageCursor = db.query(
+                        TrailContract.IMAGE_TABLE_NAME,
+                        new String[] {TrailContract.COLUMN_NAME_FILENAME},
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
+                        new String[] {String.valueOf((trail.getId()))},
+                        null,
+                        null,
+                        null
+                );
+
+                imageCursor.moveToFirst();
+                while (!imageCursor.isAfterLast()) {
+                    trail.addImagePath(imageCursor.getString(imageCursor.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+                    imageCursor.moveToNext();
                 }
 
                 results[index] = trail;
@@ -220,22 +254,6 @@ public final class DatabaseContract {
             mContext = context;
         }
 
-
-        static public Trail getTrailByID(AppCompatActivity mContext, int id) {
-            String ID = "" + id; // Short Cast
-            DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(mContext);
-            task.execute(ID);
-            try {
-                task.get();
-            } catch (ExecutionException e) {
-                Log.e("Database", e.getMessage());
-                mContext.finish();
-            } catch (InterruptedException e) {
-                Log.e("Database", e.getMessage());
-                mContext.finish();
-            }
-            return task.getResult();
-        }
         @Override
         protected Trail doInBackground(String... params) {
             if (params.length < 1) {
@@ -254,7 +272,6 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_TITLE,
                     TrailContract.COLUMN_NAME_DIFFICULTY,
                     TrailContract.COLUMN_NAME_RATING,
-                    TrailContract.COLUMN_NAME_COMMENTS
             };
 
             Cursor c = db.query(
@@ -274,12 +291,10 @@ public final class DatabaseContract {
                 c.moveToFirst();
 
                 result = new Trail();
-                result.setOld();
                 result.setId(c.getInt(c.getColumnIndexOrThrow(TrailContract._ID)));
                 result.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 result.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING)) / 2.0));
-                result.setComments(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENTS)));
 
                 Cursor cc = db.query(
                         TrailContract.IMAGE_TABLE_NAME,
@@ -291,10 +306,25 @@ public final class DatabaseContract {
                         null
                 );
 
+                Cursor imageCursor = db.query(
+                        TrailContract.IMAGE_TABLE_NAME,
+                        new String[] {TrailContract.COLUMN_NAME_FILENAME},
+                        TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
+                        new String[] {String.valueOf((result.getId()))},
+                        null,
+                        null,
+                        null
+                );
+
+                imageCursor.moveToFirst();
+                while (!imageCursor.isAfterLast()) {
+                    result.addImagePath(imageCursor.getString(imageCursor.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+                    imageCursor.moveToNext();
+                }
+
                 cc.moveToFirst();
                 while (!cc.isAfterLast()) {
                     result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
-                    cc.moveToNext();
                 }
 
                 return result;
@@ -408,7 +438,6 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
-            values.put(TrailContract.COLUMN_NAME_COMMENTS, trail.getComments());
 
             // Which row to update, based on the ID
             String selection = TrailContract._ID + " = ?";
@@ -420,18 +449,13 @@ public final class DatabaseContract {
                     selection,
                     selectionArgs);
 
-            Log.v("Database", "Updated " + count + " rows.");
-
             // Define 'where' part of query.
             selection = TrailContract.COLUMN_NAME_TRAIL_ID + " = ?";
             // Specify arguments in placeholder order.
             selectionArgs[0] = String.valueOf(trail.getId());
+
             // Issue SQL statement.
-            count = db.delete(TrailContract.IMAGE_TABLE_NAME, selection, selectionArgs);
-
-            Log.v("Database", "Deleted " + count + "rows from image database.");
-
-            count = 0;
+            db.delete(TrailContract.IMAGE_TABLE_NAME, selection, selectionArgs);
 
             // Save image paths to database
             for (String path : trail.getImagePaths()) {
@@ -443,10 +467,21 @@ public final class DatabaseContract {
                         TrailContract.IMAGE_TABLE_NAME,
                         "null",
                         values);
-                count++;
             }
 
-            Log.v("Database", "Inserted " + count + " rows");
+            db.delete(TrailContract.COMMENTS_TABLE_NAME, TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
+                    new String[] {String.valueOf(trail.getId())});
+
+            for (String comment : trail.getComments()) {
+                values = new ContentValues();
+                values.put(TrailContract.COLUMN_NAME_COMMENT, comment);
+                values.put(TrailContract.COLUMN_NAME_TRAIL_ID, trail.getId());
+
+                db.insert(
+                        TrailContract.COMMENTS_TABLE_NAME,
+                        "null",
+                        values);
+            }
 
             return null;
         }

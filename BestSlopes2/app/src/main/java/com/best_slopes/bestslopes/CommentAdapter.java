@@ -37,7 +37,7 @@ public class CommentAdapter extends NewAdapter {
 
     @Override
     public int getCount() {
-        return trail.getCommentsList().size()+1;
+        return trail.getComments().length+1;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CommentAdapter extends NewAdapter {
             } else {
                 rowView = inflater.inflate(R.layout.text_view_for_comments, null);
                 this.textView = (TextView) rowView.findViewById(R.id.textView);
-                this.textView.setText(trail.getCommentsList().get(position));
+                this.textView.setText(trail.getComments()[position]);
                 rowView.setOnLongClickListener(getOnLongClickListener(context, CommentAdapter.this, position));
             }
             return rowView;

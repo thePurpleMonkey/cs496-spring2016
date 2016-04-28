@@ -13,10 +13,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<Trail> trails;
+    private static Map<Integer, Trail> trails;  // All trails // Should not be static when id stuff works
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
+        ArrayList<String> trailNames = new ArrayList<String>();
+        ArrayList<Integer> trailDifficultyImage = new ArrayList<Integer>();
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
         task.execute();
@@ -58,16 +62,24 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         Trail[] trailsArray = task.getResults();
-        trails = new ArrayList<>(); // Jhon: Used SparseArray<> for better performance
+        trails = new HashMap<Integer, Trail>(); // Jhon: map for Trails by ID // A kind of caching
         for(Trail trail : trailsArray) {
-           trails.add(trail);
+            int currentID = trail.getId();
+            while (trails.containsKey(currentID)) {
+                currentID++;
+            }
+            trails.put(currentID, trail);
         }
         //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
-        if(trails.size() != 0){
-            CustomAdapter customAdapter = new CustomAdapter(this, trails);
-            myListView.setAdapter(customAdapter);
+        if(!trails.isEmpty()){
+            myListView.setAdapter(new CustomAdapter(this));  // Jhon: I modified Peter's  adapter
+
         }
+    }
+
+    public static Map<Integer, Trail> getAllTrails() {
+        return trails;
     }
 
     @Override
@@ -94,13 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_add_run:
-                Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
-                editTrailIntent.putExtra("Trail_ID", -1); // John: -1 means trail will be created, not edited
+                Intent editTrailIntent = new Intent(this, EditTrail.class);
                 startActivity(editTrailIntent);
-                return true;
-
-            case R.id.menu_debug:
-                startActivity(new Intent(this, TestDatabase.class));
                 return true;
 
             default:
@@ -118,9 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterTrail(View view){
         Context context = getApplicationContext();
-
     }
-
 
 
 }

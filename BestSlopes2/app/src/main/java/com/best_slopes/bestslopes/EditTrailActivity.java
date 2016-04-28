@@ -21,6 +21,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.util.concurrent.ExecutionException;
+
 public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
@@ -32,7 +34,17 @@ public class EditTrailActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
         if (id != -1) { // John: if an existing trail will be edited
-            this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
+            DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(this);
+            task.execute(String.valueOf(id));
+            try {
+                task.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            this.trail = task.getResult();
             setTitle(trail.getName());
             int icon = trail.getImageByDifficulty();
             getSupportActionBar().setIcon(icon);
@@ -73,7 +85,7 @@ public class EditTrailActivity extends AppCompatActivity {
         ((GridView) findViewById(R.id.imageGridView)).setAdapter(new ImageAdapter(this, trail));
         ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
         commentsView.setAdapter(new CommentAdapter(this, trail, commentsView));
-        commentsView.setSelection(trail.getCommentsList().size()-1);
+        commentsView.setSelection(trail.getComments().length-1);
         if (this.trail.isNew()) {
             commentsView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
@@ -140,7 +152,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 }
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
-                    editedTrail.setOld();
+                    //editedTrail.setOld();
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
                 }
                 finish();
@@ -159,7 +171,7 @@ public class EditTrailActivity extends AppCompatActivity {
 
         trail.setName(trailName.getText().toString());
         trail.setRating((int) ratingBar.getRating() * 2);
-        for (String comment : this.trail.getCommentsList()) {
+        for (String comment : this.trail.getComments()) {
             trail.addComment(comment);
         }
 

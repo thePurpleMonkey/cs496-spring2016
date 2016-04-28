@@ -20,7 +20,7 @@ public final class DatabaseContract {
     }
 
     public static class TrailContract extends SQLiteOpenHelper implements BaseColumns {
-        public static final int DATABASE_VERSION = 3;
+        public static final int DATABASE_VERSION = 4;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";

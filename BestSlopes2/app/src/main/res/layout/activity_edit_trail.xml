@@ -89,7 +89,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:id="@+id/commentsLayout"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/grid_view_background">
 
@@ -108,8 +108,7 @@
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:minHeight="180dp"
+            android:layout_height="wrap_content"
             android:id="@+id/commentsListView"
             android:layout_gravity="center_horizontal" />
 

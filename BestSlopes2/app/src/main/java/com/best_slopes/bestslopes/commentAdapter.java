@@ -1,31 +1,29 @@
 package com.best_slopes.bestslopes;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 /**
  * Created by Muratcan a.k.a John on 4/25/2016.
  *
  */
 
-public class CommentAdapter extends BaseAdapter {
-    static final private String ADD_COMMENT_STRING = "#$%#$%#$%";
+public class CommentAdapter extends NewAdapter {
     Context context;
     private static LayoutInflater inflater=null;
-    private ArrayList<String> comments;
     private Trail trail;
     private ListView listView;
 
@@ -34,21 +32,12 @@ public class CommentAdapter extends BaseAdapter {
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.trail = trail;
         this.listView = listView;
-        loadComments();
+        updateListView();
     }
 
-    private void loadComments() {
-        if (!this.trail.isNew()) {
-            this.comments = this.trail.getCommentsList();
-        }
-        else {
-            this.comments = new ArrayList<>();
-        }
-        this.comments.add(ADD_COMMENT_STRING);
-    }
     @Override
     public int getCount() {
-        return comments.size();
+        return trail.getCommentsList().size()+1;
     }
 
     @Override
@@ -65,18 +54,19 @@ public class CommentAdapter extends BaseAdapter {
     {
         TextView textView;
         EditText editText;
-
+        boolean isField;
         private View fillView(final int position) {
             View rowView;
-            if (comments.get(position).equals(ADD_COMMENT_STRING)) {
+            this.isField = position >= CommentAdapter.this.getCount()-1;
+            if (this.isField) {
                 rowView = inflater.inflate(R.layout.comment_field, null);
                 this.editText = (EditText) rowView.findViewById(R.id.commentField);
                 setOnEditorActionListener();
-
             } else {
                 rowView = inflater.inflate(R.layout.text_view_for_comments, null);
                 this.textView = (TextView) rowView.findViewById(R.id.textView);
-                this.textView.setText(comments.get(position));
+                this.textView.setText(trail.getCommentsList().get(position));
+                rowView.setOnLongClickListener(getOnLongClickListener(context, CommentAdapter.this, position));
             }
             return rowView;
         }
@@ -100,6 +90,28 @@ public class CommentAdapter extends BaseAdapter {
                         }
                     });
         }
+
+        // John: Common method for our adapters to delete items
+        public View.OnLongClickListener getOnLongClickListener(final Context context, final NewAdapter adapter, final int position) {
+            return new View.OnLongClickListener() {
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder adb=new AlertDialog.Builder(context);
+                    adb.setTitle("Delete?");
+                    adb.setMessage("Are you sure you want to delete " + position);
+                    final int positionToRemove = position;
+                    adb.setNegativeButton("Cancel", null);
+                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            adapter.deleteItem(positionToRemove);
+                            new DatabaseContract.UpdateTrailTask(context).execute(trail);
+                            adapter.notifyDataSetChanged();
+                        }});
+                    adb.show();
+                    return false;
+                }
+            };
+        }
+
     }
 
     private void addComment(EditText editText, View v) {
@@ -108,9 +120,6 @@ public class CommentAdapter extends BaseAdapter {
             return;
         }
         trail.addComment(newComment);
-        comments.remove(ADD_COMMENT_STRING);
-        comments.add(newComment);
-        comments.add(ADD_COMMENT_STRING);
         notifyDataSetChanged();
         editText.clearFocus();
         if (!trail.isNew()) {
@@ -118,15 +127,36 @@ public class CommentAdapter extends BaseAdapter {
         }
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
     }
 
     private void updateListView() {
-        if (this.getCount() < 3) {
-            listView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 170));
-        }
+        setListViewHeightBasedOnChildren(listView);
         notifyDataSetChanged();
         this.listView.setSelection(this.getCount() - 1);
+    }
+    private void setListViewHeightBasedOnChildren(ListView listView) {
+        Log.e("Listview Size ", "" + listView.getCount());
+        int totalHeight = 0;
+        int a = 0;
+        int itemLimit = this.getCount() < 4 ? this.getCount() : 4;
+        for (int i = 0; i < itemLimit; i++) {
+            View listItem = this.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+            a = listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight
+                + (listView.getDividerHeight() * (this.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+        TextView tv = (TextView) ((AppCompatActivity)context).findViewById(R.id.commentsTitleText);
+        tv.measure(0, 0);
+        LinearLayout l = (LinearLayout) ((AppCompatActivity)context).findViewById(R.id.commentsLayout);
+        l.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, params.height+2* a));
+        l.requestLayout();
+
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -134,4 +164,9 @@ public class CommentAdapter extends BaseAdapter {
         return holder.fillView(position);
     }
 
+    public void deleteItem(final int position) {
+        trail.removeComment(position);
+        new DatabaseContract.UpdateTrailTask(context).execute(trail);
+        notifyDataSetChanged();
+    }
 }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-    private SparseArray<Trail> trails;
+    private ArrayList<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -46,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
-        ArrayList<String> trailNames = new ArrayList<String>();
-        ArrayList<Integer> trailDifficultyImage = new ArrayList<Integer>();
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
         task.execute();
@@ -61,14 +58,15 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         Trail[] trailsArray = task.getResults();
-        trails = new SparseArray<Trail>(); // Jhon: Used SparseArray<> for better performance
+        trails = new ArrayList<>(); // Jhon: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
-           trails.put(trail.getId(), trail);
+           trails.add(trail);
         }
         //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
         if(trails.size() != 0){
-            myListView.setAdapter(new CustomAdapter(this, trails));
+            CustomAdapter customAdapter = new CustomAdapter(this, trails);
+            myListView.setAdapter(customAdapter);
         }
     }
 
@@ -122,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
 
     }
+
 
 
 }

@@ -1,20 +1,22 @@
 package com.best_slopes.bestslopes;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.SparseArray;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomAdapter extends BaseAdapter {
-    private SparseArray<Trail> trails;
+import java.util.ArrayList;
+
+public class CustomAdapter extends NewAdapter {
+    private ArrayList<Trail> trails;
     Context context;
     private static LayoutInflater inflater=null;
-    public CustomAdapter(MainActivity mainActivity, SparseArray<Trail> trails) {
+    public CustomAdapter(MainActivity mainActivity, ArrayList<Trail> trails) {
         context=mainActivity;
         this.trails = trails;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -48,7 +50,7 @@ public class CustomAdapter extends BaseAdapter {
         rowView = inflater.inflate(R.layout.trail_row, null);
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
         holder.img1=(ImageView) rowView.findViewById(R.id.imageView1);
-        Trail trail = trails.valueAt(position);
+        Trail trail = trails.get(position);
         holder.tv.setText(trail.getName());
         holder.img1.setImageResource(trail.getImageByDifficulty());
 
@@ -59,12 +61,39 @@ public class CustomAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
             Intent intent = new Intent(context, ViewTrailActivity.class);
-            Trail trail = trails.valueAt(position);
+            Trail trail = trails.get(position);
             intent.putExtra("Trail_ID", trail.getId());
             context.startActivity(intent);
             }
         });
-        return rowView;
+    rowView.setOnLongClickListener(getOnLongClickListener(context, CustomAdapter.this, position));
+    return rowView;
+}
+
+
+    // John: Common method for our adapters to delete items
+    public View.OnLongClickListener getOnLongClickListener(final Context context, final NewAdapter adapter, final int position) {
+        return new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder adb=new AlertDialog.Builder(context);
+                adb.setTitle("Delete?");
+                adb.setMessage("Are you sure you want to delete " + position);
+                final int positionToRemove = position;
+                adb.setNegativeButton("Cancel", null);
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        adapter.deleteItem(positionToRemove);
+                        adapter.notifyDataSetChanged();
+                    }});
+                adb.show();
+                return false;
+            }
+        };
     }
 
+    public void deleteItem(final int position) {
+        new DatabaseContract.DeleteTrailTask(context).execute(new Long(trails.get(position).getId()));
+        trails.remove(position);
+        notifyDataSetChanged();
+    }
 }

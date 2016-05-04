@@ -26,6 +26,11 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".ViewTrailActivity" />
+
+        <activity android:name="About"
+            android:theme="@style/AppTheme.CustomTheme"
+        ></activity>
+
     </application>
 
 </manifest>

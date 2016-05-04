@@ -110,6 +110,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(editTrailIntent);
                 return true;
 
+            case R.id.menu_about:
+                Intent about = new Intent(this, About.class);
+                startActivity(about);
+                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }

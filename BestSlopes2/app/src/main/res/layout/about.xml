@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- PlainText1-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Camera icon made by "
+        android:id="@+id/about_textView1"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginLeft="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <!-- Link1-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="www.danielbruce.se"
+        android:id="@+id/about_link1"
+        android:autoLink="all"
+        android:clickable="true"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/about_textView1" />
+
+    <!-- PlainText2-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_textView2"
+        android:text="from "
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_alignTop="@+id/about_link2"
+        android:layout_alignStart="@+id/about_textView1" />
+
+    <!-- Link2-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_link2"
+        android:text="www.flaticon.com"
+        android:autoLink="all"
+        android:clickable="true"
+        android:textColor="#fff"
+        android:textSize="15sp"
+
+        android:layout_below="@+id/about_textView1"
+        android:layout_toEndOf="@+id/about_textView2" />
+
+    <!-- PlainText3-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="App icon retrieved from:"
+        android:id="@+id/about_textView3"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginTop="27dp"
+        android:layout_below="@+id/about_textView2"
+        android:layout_alignStart="@+id/about_textView2" />
+
+    <!-- Link3-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="http://www.flaticon.com/free-icon/snowboard-race_92814#term=snowboard&amp;page=1&amp;position=16"
+        android:id="@+id/about_link3"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginRight="25dp"
+        android:autoLink="all"
+        android:clickable="true"
+        android:layout_below="@+id/about_textView3"
+        android:layout_alignStart="@+id/about_textView3" />
+
+    <!-- PlainText4-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trail difficulty symbols retrieved from:"
+        android:id="@+id/about_textView4"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/about_link3"
+        android:layout_alignStart="@+id/about_link3" />
+
+    <!-- Link4-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="http://www.belleayre.com/snowsports-school/beginner-s-guide/terms "
+        android:id="@+id/about_link4"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:autoLink="all"
+        android:clickable="true"
+        android:layout_below="@+id/about_textView4"
+        android:layout_alignStart="@+id/about_textView4" />
+
+    <!-- PlainText5-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check mark symbol retrieved from:"
+        android:id="@+id/about_textView5"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/about_link4"
+        android:layout_alignStart="@+id/about_link4" />
+
+    <!-- Link5-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="http://iconizer.net/files/Retina_Display_Icons/orig/checkmark.png"
+        android:id="@+id/about_link5"
+        android:layout_marginRight="25dp"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:autoLink="all"
+        android:clickable="true"
+        android:layout_below="@+id/about_textView5"
+        android:layout_alignStart="@+id/about_textView5" />
+
+    <!-- PlainText6-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add symbol retrieved from:"
+        android:id="@+id/about_textView6"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/about_link5"
+        android:layout_alignStart="@+id/about_link5" />
+
+    <!-- Link6 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="http://www.flaticon.com/free-icon/plus-black-symbol_25304#term=plus&amp;page=1&amp;position=38"
+        android:id="@+id/about_link6"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:autoLink="all"
+        android:clickable="true"
+        android:layout_below="@+id/about_textView6"
+        android:layout_alignStart="@+id/about_textView6" />
+
+    <!-- PlainText7 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arrow icon retrieved from:"
+        android:id="@+id/textView"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/about_link6"
+        android:layout_alignStart="@+id/textView2" />
+
+    <!-- Link7 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="http://www.flaticon.com/free-icon/right-arrow_118740#term=arrow&amp;page=1&amp;position=1"
+        android:id="@+id/textView2"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:autoLink="all"
+        android:clickable="true"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/about_link6" />
+
+
+</RelativeLayout>

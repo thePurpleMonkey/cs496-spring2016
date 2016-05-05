@@ -114,7 +114,7 @@ public final class DatabaseContract {
 
             // Create a new map of values, where column names are the keys
             ContentValues values = new ContentValues();
-            valeus.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
+            values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
 

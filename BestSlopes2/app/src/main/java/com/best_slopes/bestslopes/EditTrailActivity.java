@@ -140,7 +140,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 }
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
-                    editedTrail.setOld();
+                    //editedTrail.setOld();
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
                 }
                 finish();
@@ -159,7 +159,7 @@ public class EditTrailActivity extends AppCompatActivity {
 
         trail.setName(trailName.getText().toString());
         trail.setRating((int) ratingBar.getRating() * 2);
-        for (String comment : this.trail.getCommentsList()) {
+        for (String comment : this.trail.getComments()) {
             trail.addComment(comment);
         }
 

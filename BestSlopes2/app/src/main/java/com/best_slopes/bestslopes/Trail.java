@@ -1,17 +1,19 @@
 package com.best_slopes.bestslopes;
 
+import android.os.Environment;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
  * Created by Michael Humphrey on 4/22/2016.
  */
 public class Trail {
-    private int id;
     private String name;
     private float rating;
     private int difficulty;
     private ArrayList<String> comments;
-    private boolean isNew;
+    private int id;
     private ArrayList<String> imagePaths; // Jhon: we should also handle with this
 
     public Trail() {
@@ -20,8 +22,6 @@ public class Trail {
         this.difficulty = 0;
         this.comments = new ArrayList<String>();
         this.id = -1;
-        this.isNew = true;
-        this.imagePaths = new ArrayList<String>();
     }
 
     public Trail(String name, float rating, int difficulty) {
@@ -30,29 +30,37 @@ public class Trail {
         this.difficulty = difficulty;
         this.comments = new ArrayList<String>();
         this.id = -1;
-        this.isNew = true;
-        this.imagePaths = new ArrayList<String>();
     }
 
-    public Trail(String name, float rating, int difficulty, ArrayList<String> comments) {
+    public Trail(String name, float rating, int difficulty, String comments) {
         this.name = name;
         this.rating = rating;
         this.difficulty = difficulty;
-        this.comments = comments;
+        this.comments = new ArrayList<String>();
         this.id = -1;
-        this.isNew = true;
-        this.imagePaths = new ArrayList<String>();
     }
 
-    public Trail(String name, float rating, int difficulty, ArrayList<String> comments, int id) {
+    public Trail(String name, float rating, int difficulty, String[] comments, int id) {
         this.name = name;
         this.rating = rating;
         this.difficulty = difficulty;
-        this.comments = comments;
+        this.comments = new ArrayList<String>();
         this.id = id;
-        this.isNew = true;
-        this.imagePaths = new ArrayList<String>();
+
+        for (String comment : comments) {
+            addComment(comment);
+        }
     }
+
+    public void addComment(String comment) {
+        comments.add(comment);
+    }
+
+    public String removeComment(int position) {
+        return comments.remove(position);
+    }
+
+    public boolean isNew() { return id == -1; }
 
     public String getName() {
         return name;
@@ -78,37 +86,8 @@ public class Trail {
         this.difficulty = difficulty;
     }
 
-    public ArrayList<String> getCommentsList() { // TODO: John: Comments should be handled.
-        return comments;
-    }
-
-    public String getComments() {
-        if (comments.isEmpty()) {
-            return "";
-        }
-        String commentsString = comments.get(0);
-        for (int i = 1; i < comments.size(); i++) {
-            commentsString = commentsString + "###" + comments.get(i);
-        }
-        return commentsString; }
-
-    public void addComment(String comment) {
-        comments.add(comment);
-    }
-
-    public void removeComment(String comment) {
-        comments.remove(comment);
-    }
-
-    public void removeComment(int commentPos) {
-        comments.remove(commentPos);
-    }
-
-    public void setComments(String commentsString) {
-        String[] arr = commentsString.split("###");
-        for (String comment: arr) {
-            comments.add(comment);
-        }
+    public String[] getComments() {
+        return comments.toArray(new String[0]);
     }
 
     public int getId() {
@@ -118,8 +97,6 @@ public class Trail {
     public void setId(int id) {
         this.id = id;
     }
-
-    public void setId(long id) { this.id = (int) id; }
 
     public int getImageByDifficulty() { // Jhon: It works for both screens
         switch (difficulty) {
@@ -134,33 +111,16 @@ public class Trail {
         }
     }
 
-    public ArrayList<String> getImagePaths() {  return imagePaths; }
+    public ArrayList<String> getImagePaths() {  // Jhon: It should be filled from database // This is just for debug
+        imagePaths = new ArrayList<String>();
+
+        return imagePaths;
+    }
 
     public void addImagePath(String imagePath) { imagePaths.add(imagePath); }
 
-    public void removeImagePath(String imagePath) { imagePaths.remove(imagePath); }
-
-    public void removeImagePath(int imagePathPos) { imagePaths.remove(imagePathPos); }
-
-    public boolean isNew() {
-        return isNew;
-    }
-
-    public void setOld() {
-        isNew = false;
-    }
 
     public String toString() {
-        String result = "ID: " + id + ", isNew: " + isNew + ", Name: " + name +
-                ", Rating: " + rating + ", Difficulty: " +difficulty +
-                ", Comments: \"" +comments + "\", Paths: [";
-
-        for (String path : getImagePaths()) {
-            result += path;
-        }
-
-        result += "]";
-
-        return result;
+        return "ID: " + id + ", Name: " + name + ", Rating: " + rating + ", Difficulty: " + difficulty + ", Comments: \"" +comments + "\"";
     }
 }

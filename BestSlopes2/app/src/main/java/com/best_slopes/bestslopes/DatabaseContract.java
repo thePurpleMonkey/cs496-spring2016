@@ -275,6 +275,7 @@ public final class DatabaseContract {
             DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(mContext);
             task.execute(ID);
             try {
+                //TODO: add loading screen while this takes a long time!
                 task.get();
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("Database", e.getMessage());
@@ -356,6 +357,7 @@ public final class DatabaseContract {
                 cc.moveToFirst();
                 while (!cc.isAfterLast()) {
                     result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+                    cc.moveToNext();
                 }
 
                 Log.d("Database", "Loaded trail: " + result);

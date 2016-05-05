@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -24,6 +26,10 @@ public class ViewTrailActivity extends AppCompatActivity {
         this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
         setMyActionBar();
         fillFields();
+
+        //Peter: Makes keyboard not pop up on screen! #necessary :)
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
     }
 
     private void setMyActionBar() {
@@ -37,8 +43,12 @@ public class ViewTrailActivity extends AppCompatActivity {
         if (this.trail != null) {
             setTitle(trail.getName());
             int icon = trail.getImageByDifficulty();
-            getSupportActionBar().setIcon(icon);
-            ((RatingBar) findViewById(R.id.trailRatingBar)).setRating(trail.getRating());
+            if(getSupportActionBar() != null)
+                getSupportActionBar().setIcon(icon);
+            else
+                Log.e("Null catch", "Actionbar = Null");
+
+           ( (RatingBar) findViewById(R.id.trailRatingBar)).setRating(trail.getRating());
             GridView gridView = (GridView) findViewById(R.id.imageGridView);
             ImageAdapter imageAdapter = new ImageAdapter(this, trail);
             gridView.setAdapter(imageAdapter);

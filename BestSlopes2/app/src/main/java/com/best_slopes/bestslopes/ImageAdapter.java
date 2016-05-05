@@ -45,7 +45,7 @@ public class ImageAdapter extends NewAdapter {
         if(baseDir == null)
             baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         if (trail.isNew()) {
-            getDebuggingImages();
+         //   getDebuggingImages();
         }
     }
 

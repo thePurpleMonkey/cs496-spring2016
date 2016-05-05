@@ -58,15 +58,18 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         Trail[] trailsArray = task.getResults();
-        trails = new ArrayList<>(); // Jhon: Used SparseArray<> for better performance
+        trails = new ArrayList<>(); // John: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
             trails.add(trail);
         }
         //verifies list is not empty!
-        //TODO: add a row item that says "Add item..." when empty
         if(trails.size() != 0){
             CustomAdapter customAdapter = new CustomAdapter(this, trails);
             myListView.setAdapter(customAdapter);
+        }
+        //TODO: add a row item that says "Add item..." when empty
+        else{
+
         }
     }
 

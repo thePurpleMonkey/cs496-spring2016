@@ -74,7 +74,7 @@ public class CustomAdapter extends NewAdapter {
             }
         });
 
-
+        //TODO: John, we need to call getOnLongClickListener() for this row and button, but I don't get the adapter
         return rowView;
     }
 

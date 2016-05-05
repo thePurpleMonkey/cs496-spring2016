@@ -62,12 +62,20 @@ public class MainActivity extends AppCompatActivity {
         for(Trail trail : trailsArray) {
            trails.add(trail);
         }
-        //verifies list is not empty!
-        //TODO: add a row item that says "Add item..." when empty
-        if(trails.size() != 0){
-            CustomAdapter customAdapter = new CustomAdapter(this, trails);
-            myListView.setAdapter(customAdapter);
+        //verifies list is not empty and then sets the adapter.
+        if(!trails.isEmpty()){
+            myListView.setAdapter(new CustomAdapter(this));  // Jhon: I modified Peter's  adapter
+
         }
+        //TODO: add a row item that says "Add item..." when empty
+        else{
+
+        }
+
+    }
+
+    public static Map<Integer, Trail> getAllTrails() {
+        return trails;
     }
 
     @Override
@@ -118,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterTrail(View view){
         Context context = getApplicationContext();
-
     }
 
 

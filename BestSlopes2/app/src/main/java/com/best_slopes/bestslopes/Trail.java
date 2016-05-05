@@ -18,6 +18,7 @@ public class Trail {
         this.rating = 0.0f;
         this.difficulty = 0;
         this.comments = new ArrayList<String>();
+        this.imagePaths = new ArrayList<String>();
         this.id = -1;
     }
 
@@ -26,6 +27,7 @@ public class Trail {
         this.rating = rating;
         this.difficulty = difficulty;
         this.comments = new ArrayList<String>();
+        this.imagePaths = new ArrayList<String>();
         this.id = -1;
     }
 
@@ -34,6 +36,7 @@ public class Trail {
         this.rating = rating;
         this.difficulty = difficulty;
         this.comments = new ArrayList<String>();
+        this.imagePaths = new ArrayList<String>();
         this.id = -1;
     }
 
@@ -42,6 +45,7 @@ public class Trail {
         this.rating = rating;
         this.difficulty = difficulty;
         this.comments = new ArrayList<String>();
+        this.imagePaths = new ArrayList<String>();
         this.id = id;
 
         for (String comment : comments) {
@@ -107,9 +111,7 @@ public class Trail {
         }
     }
 
-    public ArrayList<String> getImagePaths() {  // Jhon: It should be filled from database // This is just for debug
-        imagePaths = new ArrayList<String>();
-
+    public ArrayList<String> getImagePaths() {
         return imagePaths;
     }
 

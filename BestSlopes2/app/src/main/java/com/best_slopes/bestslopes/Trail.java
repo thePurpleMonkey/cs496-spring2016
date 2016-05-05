@@ -1,8 +1,5 @@
 package com.best_slopes.bestslopes;
 
-import android.os.Environment;
-
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -89,7 +86,6 @@ public class Trail {
     public String[] getComments() {
         return comments.toArray(new String[0]);
     }
-
     public int getId() {
         return id;
     }
@@ -118,6 +114,10 @@ public class Trail {
     }
 
     public void addImagePath(String imagePath) { imagePaths.add(imagePath); }
+
+    public void removeImagePath(int imagePath) { imagePaths.remove(imagePath); }
+
+    public void removeImagePath(String imagePath) { imagePaths.remove(imagePath); }
 
 
     public String toString() {

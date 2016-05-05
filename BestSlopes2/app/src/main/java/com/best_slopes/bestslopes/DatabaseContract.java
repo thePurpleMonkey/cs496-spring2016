@@ -291,7 +291,6 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_TITLE,
                     TrailContract.COLUMN_NAME_DIFFICULTY,
                     TrailContract.COLUMN_NAME_RATING,
-                    TrailContract.COLUMN_NAME_COMMENTS
             };
 
             Cursor c = db.query(

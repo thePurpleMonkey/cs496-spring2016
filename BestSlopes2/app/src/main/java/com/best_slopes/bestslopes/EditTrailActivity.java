@@ -73,7 +73,7 @@ public class EditTrailActivity extends AppCompatActivity {
         ((GridView) findViewById(R.id.imageGridView)).setAdapter(new ImageAdapter(this, trail));
         ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
         commentsView.setAdapter(new CommentAdapter(this, trail, commentsView));
-        commentsView.setSelection(trail.getCommentsList().size()-1);
+        commentsView.setSelection(trail.getComments().length-1);
         if (this.trail.isNew()) {
             commentsView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }

@@ -20,12 +20,13 @@ public final class DatabaseContract {
     }
 
     public static class TrailContract extends SQLiteOpenHelper implements BaseColumns {
-        public static final int DATABASE_VERSION = 4;
+        public static final int DATABASE_VERSION = 6;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";
         public static final String COMMENTS_TABLE_NAME = "comments";
 
+        public static final String _ID = "_ID";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DIFFICULTY = "difficulty";
         public static final String COLUMN_NAME_RATING = "rating";
@@ -43,7 +44,7 @@ public final class DatabaseContract {
 
         private static final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + TrailContract.TABLE_NAME + " (" +
-                        TrailContract._ID + " INTEGER PRIMARY KEY, " +
+                        "_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         TrailContract.COLUMN_NAME_TITLE + " TEXT, " +
                         TrailContract.COLUMN_NAME_DIFFICULTY + " INTEGER, " +
                         TrailContract.COLUMN_NAME_RATING + " INTEGER)";
@@ -90,6 +91,7 @@ public final class DatabaseContract {
             db.execSQL(SQL_DELETE_COMMENTS_TABLE);
 
             onCreate(db);
+            Log.d("Database", "Database recreated.");
         }
 
         @Override
@@ -155,6 +157,8 @@ public final class DatabaseContract {
                         values);
             }
 
+            Log.d("Database", "Saved trail: " + trail);
+
             return null;
         }
     }
@@ -204,7 +208,7 @@ public final class DatabaseContract {
             while (!c.isAfterLast()) {
                 Trail trail = new Trail();
 
-                trail.setId(c.getColumnIndexOrThrow(TrailContract._ID));
+                trail.setId(c.getInt(c.getColumnIndexOrThrow(TrailContract._ID)));
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))/2.0));
@@ -244,6 +248,8 @@ public final class DatabaseContract {
                 results[index] = trail;
                 c.moveToNext();
                 index++;
+
+                Log.d("Database", "Loaded trail: " + trail);
             }
 
             return results;

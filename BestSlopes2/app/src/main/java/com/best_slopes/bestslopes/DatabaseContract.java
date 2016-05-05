@@ -276,15 +276,13 @@ public final class DatabaseContract {
             task.execute(ID);
             try {
                 task.get();
-            } catch (ExecutionException e) {
-                Log.e("Database", e.getMessage());
-                mContext.finish();
-            } catch (InterruptedException e) {
+            } catch (ExecutionException | InterruptedException e) {
                 Log.e("Database", e.getMessage());
                 mContext.finish();
             }
             return task.getResult();
         }
+
         @Override
         protected Trail doInBackground(String... params) {
             if (params.length < 1) {
@@ -292,6 +290,8 @@ public final class DatabaseContract {
             } else {
                 id = params[0];
             }
+
+            Log.d("Database", "Starting to load trail " + id);
 
             TrailContract mDbHelper = new TrailContract(mContext);
             SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -357,6 +357,8 @@ public final class DatabaseContract {
                 while (!cc.isAfterLast()) {
                     result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
                 }
+
+                Log.d("Database", "Loaded trail: " + result);
 
                 return result;
             }

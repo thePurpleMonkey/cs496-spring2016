@@ -94,6 +94,7 @@ public class ImageAdapter extends NewAdapter {
             this.position = position;
             this.imageView.setClickable(true);
             setOnClickListener();
+            this.imageView.setOnLongClickListener(getOnLongClickListener(context, ImageAdapter.this));
         }
 
         private void chooseBitmap() {

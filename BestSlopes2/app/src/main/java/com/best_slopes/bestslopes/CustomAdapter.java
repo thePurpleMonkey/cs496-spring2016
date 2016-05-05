@@ -73,8 +73,8 @@ public class CustomAdapter extends NewAdapter {
                 startViewTrailActivity(position);
             }
         });
+        rowView.setOnLongClickListener(getOnLongClickListener(context, CustomAdapter.this, position));
 
-        //TODO: John, we need to call getOnLongClickListener() for this row and button, but I don't get the adapter
         return rowView;
     }
 

@@ -60,22 +60,14 @@ public class MainActivity extends AppCompatActivity {
         Trail[] trailsArray = task.getResults();
         trails = new ArrayList<>(); // Jhon: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
-           trails.add(trail);
+            trails.add(trail);
         }
-        //verifies list is not empty and then sets the adapter.
-        if(!trails.isEmpty()){
-            myListView.setAdapter(new CustomAdapter(this));  // Jhon: I modified Peter's  adapter
-
-        }
+        //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
-        else{
-
+        if(trails.size() != 0){
+            CustomAdapter customAdapter = new CustomAdapter(this, trails);
+            myListView.setAdapter(customAdapter);
         }
-
-    }
-
-    public static Map<Integer, Trail> getAllTrails() {
-        return trails;
     }
 
     @Override
@@ -126,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterTrail(View view){
         Context context = getApplicationContext();
+
     }
 
 

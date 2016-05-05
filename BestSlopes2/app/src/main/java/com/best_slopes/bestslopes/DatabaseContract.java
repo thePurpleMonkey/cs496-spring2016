@@ -91,6 +91,11 @@ public final class DatabaseContract {
 
             onCreate(db);
         }
+
+        @Override
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            onUpgrade(db, oldVersion, newVersion);
+        }
     }
 
     public static class SaveTrailTask extends AsyncTask<Trail, Void, Void> {

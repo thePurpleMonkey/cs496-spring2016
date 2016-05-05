@@ -21,8 +21,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.util.concurrent.ExecutionException;
-
 public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
@@ -34,17 +32,7 @@ public class EditTrailActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
         if (id != -1) { // John: if an existing trail will be edited
-            DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(this);
-            task.execute(String.valueOf(id));
-            try {
-                task.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            this.trail = task.getResult();
+            this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
             setTitle(trail.getName());
             int icon = trail.getImageByDifficulty();
             getSupportActionBar().setIcon(icon);

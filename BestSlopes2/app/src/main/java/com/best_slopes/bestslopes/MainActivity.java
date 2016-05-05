@@ -13,12 +13,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-    private static Map<Integer, Trail> trails;  // All trails // Should not be static when id stuff works
+    private ArrayList<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -47,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
-        ArrayList<String> trailNames = new ArrayList<String>();
-        ArrayList<Integer> trailDifficultyImage = new ArrayList<Integer>();
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
         task.execute();
@@ -62,28 +58,16 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         Trail[] trailsArray = task.getResults();
-        trails = new HashMap<Integer, Trail>(); // Jhon: map for Trails by ID // A kind of caching
+        trails = new ArrayList<>(); // Jhon: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
-            int currentID = trail.getId();
-            while (trails.containsKey(currentID)) {
-                currentID++;
-            }
-            trails.put(currentID, trail);
+            trails.add(trail);
         }
-        //verifies list is not empty and then sets the adapter.
-        if(!trails.isEmpty()){
-            myListView.setAdapter(new CustomAdapter(this));  // Jhon: I modified Peter's  adapter
-
-        }
+        //verifies list is not empty!
         //TODO: add a row item that says "Add item..." when empty
-        else{
-
+        if(trails.size() != 0){
+            CustomAdapter customAdapter = new CustomAdapter(this, trails);
+            myListView.setAdapter(customAdapter);
         }
-
-    }
-
-    public static Map<Integer, Trail> getAllTrails() {
-        return trails;
     }
 
     @Override
@@ -110,15 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_add_run:
-                Intent editTrailIntent = new Intent(this, EditTrail.class);
+                Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
+                editTrailIntent.putExtra("Trail_ID", -1); // John: -1 means trail will be created, not edited
                 startActivity(editTrailIntent);
                 return true;
 
-            case R.id.menu_about:
-                Intent about = new Intent(this, About.class);
-                startActivity(about);
+            case R.id.menu_debug:
+                startActivity(new Intent(this, TestDatabase.class));
                 return true;
-
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -135,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterTrail(View view){
         Context context = getApplicationContext();
+
     }
+
 
 
 }

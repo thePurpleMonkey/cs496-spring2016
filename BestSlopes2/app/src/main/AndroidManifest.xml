@@ -3,7 +3,6 @@
     package="com.best_slopes.bestslopes">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -21,16 +20,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditTrail" />
+        <activity android:name=".EditTrailActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity android:name=".TestDatabase" />
         <activity android:name=".ViewTrailActivity" />
 
         <activity android:name="About"
             android:theme="@style/AppTheme.CustomTheme"
         ></activity>
 
+        <activity android:name=".TestDatabase" />
     </application>
 
 </manifest>

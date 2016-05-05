@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.provider.BaseColumns;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Michael Humphrey on 4/20/2016.
@@ -254,6 +257,22 @@ public final class DatabaseContract {
             mContext = context;
         }
 
+
+        static public Trail getTrailByID(AppCompatActivity mContext, int id) {
+            String ID = "" + id; // Short Cast
+            DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(mContext);
+            task.execute(ID);
+            try {
+                task.get();
+            } catch (ExecutionException e) {
+                Log.e("Database", e.getMessage());
+                mContext.finish();
+            } catch (InterruptedException e) {
+                Log.e("Database", e.getMessage());
+                mContext.finish();
+            }
+            return task.getResult();
+        }
         @Override
         protected Trail doInBackground(String... params) {
             if (params.length < 1) {

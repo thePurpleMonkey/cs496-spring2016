@@ -451,6 +451,8 @@ public final class DatabaseContract {
             if (params.length < 1) {
                 Log.e("Database", "Insufficient parameters. Expected 1, got " + params.length);
                 return null;
+            } else if (params[0] == null) {
+                return null;
             } else {
                 trail = params[0];
             }

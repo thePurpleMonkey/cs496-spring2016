@@ -73,7 +73,27 @@ public class CustomAdapter extends NewAdapter {
                 startViewTrailActivity(position);
             }
         });
+
         rowView.setOnLongClickListener(getOnLongClickListener(context, CustomAdapter.this, position));
+
+        rowView.findViewById(R.id.imageView2).setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View arg0) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(context);
+                adb.setTitle("Delete?");
+                adb.setMessage("Are you sure you want to delete " + position);
+                final int positionToRemove = position;
+                adb.setNegativeButton("Cancel", null);
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        CustomAdapter.this.deleteItem(positionToRemove);
+                        CustomAdapter.this.notifyDataSetChanged();
+                    }
+                });
+                adb.show();
+                return false;
+            }
+        });
+
 
         return rowView;
     }

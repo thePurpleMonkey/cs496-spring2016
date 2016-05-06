@@ -68,7 +68,7 @@ public class EditTrail extends AppCompatActivity {
 
         // Gather data from layout objects
         trail.setName(trailName.getText().toString());
-        trail.setRating((int) ratingBar.getRating() * 2);
+        trail.setRating((int) ratingBar.getRating());
 
         //TODO: Load comments into trail object to be saved.
         //trail.setComments(commentsText.getText().toString());

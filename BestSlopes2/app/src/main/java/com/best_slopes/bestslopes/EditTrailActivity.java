@@ -158,7 +158,7 @@ public class EditTrailActivity extends AppCompatActivity {
         Trail trail = new Trail();
 
         trail.setName(trailName.getText().toString());
-        trail.setRating((int) ratingBar.getRating() * 2);
+        trail.setRating((int) ratingBar.getRating());
         for (String comment : this.trail.getComments()) {
             trail.addComment(comment);
         }

@@ -211,7 +211,7 @@ public final class DatabaseContract {
                 trail.setId(c.getInt(c.getColumnIndexOrThrow(TrailContract._ID)));
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
-                trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))/2.0));
+                trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))));
 
                 Cursor commentCursor = db.query(
                         TrailContract.COMMENTS_TABLE_NAME,
@@ -326,7 +326,7 @@ public final class DatabaseContract {
                 result.setId(c.getInt(c.getColumnIndexOrThrow(TrailContract._ID)));
                 result.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 result.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
-                result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING)) / 2.0));
+                result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))));
 
                 Cursor cc = db.query(
                         TrailContract.IMAGE_TABLE_NAME,

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -28,21 +30,26 @@ public class EditTrailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+
         setContentView(R.layout.activity_edit_trail);
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
         if (id != -1) { // John: if an existing trail will be edited
             this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
             setTitle(trail.getName());
+
+            //Set icon on action bar for existing trail
             int icon = trail.getImageByDifficulty();
-            getSupportActionBar().setIcon(icon);
+
+            actionBar.setIcon(icon);
+//            getSupportActionBar().set
         }
         else {
             this.trail = new Trail();
             setTitle("New Trail...");
         }
         //Allow icon to be displayed in ActionBar
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
         fillFields();
@@ -74,9 +81,12 @@ public class EditTrailActivity extends AppCompatActivity {
         ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
         commentsView.setAdapter(new CommentAdapter(this, trail, commentsView));
         commentsView.setSelection(trail.getComments().length-1);
+
+        //If new trail sets up layout and doesn't fill anything out
         if (this.trail.isNew()) {
             commentsView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
+        //else trail already exists and we just display it.
         else {
             TextView editName = ((TextView) findViewById(R.id.edit_trail_name));
             editName.setText(trail.getName());
@@ -107,8 +117,6 @@ public class EditTrailActivity extends AppCompatActivity {
 
     public void difficultyChanged(View view) {
         ToggleButton clicked = (ToggleButton) view;
-        int icon = trail.getImageByDifficulty();
-        getSupportActionBar().setIcon(icon);
 
         for (int id : toggles) {
             ToggleButton button = (ToggleButton) findViewById(id);

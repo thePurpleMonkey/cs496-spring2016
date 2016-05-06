@@ -45,10 +45,14 @@ public class EditTrailActivity extends AppCompatActivity {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
+
+        //Fills fields onCreate of activity
         fillFields();
     }
 
     private void fillFields() {
+        RatingBar ratingbar = (RatingBar) findViewById(R.id.edit_rating);
+
         ListView lv = (ListView) findViewById(R.id.commentsListView);
         lv.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
@@ -75,6 +79,9 @@ public class EditTrailActivity extends AppCompatActivity {
         commentsView.setAdapter(new CommentAdapter(this, trail, commentsView));
         commentsView.setSelection(trail.getComments().length-1);
         if (this.trail.isNew()) {
+            //TODO: get rating bar to display half steps.
+//            ratingbar.setStepSize(1.5f);
+            ratingbar.setRating(1.5f);
             commentsView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
         else {
@@ -83,7 +90,11 @@ public class EditTrailActivity extends AppCompatActivity {
             setOnEditorActionListener(editName);
             ((ToggleButton) findViewById(toggles[0])).setChecked(false);
             ((ToggleButton) findViewById(toggles[trail.getDifficulty()-1])).setChecked(true);
-            ((RatingBar) findViewById(R.id.edit_rating)).setRating(trail.getRating());
+
+            //Rating bar values
+            ratingbar.setRating(trail.getRating());
+//            ((RatingBar) findViewById(R.id.edit_rating)).setStepSize(trail.getRating());
+
         }
     }
 
@@ -157,8 +168,11 @@ public class EditTrailActivity extends AppCompatActivity {
 
         Trail trail = new Trail();
 
+        //Set rating bar step size to 0.5
+//        ratingBar.setStepSize(0.5f);
+
         trail.setName(trailName.getText().toString());
-        trail.setRating((int) ratingBar.getRating() * 2);
+        trail.setRating( ratingBar.getRating());
         for (String comment : this.trail.getComments()) {
             trail.addComment(comment);
         }

@@ -25,6 +25,8 @@ public class ViewTrailActivity extends AppCompatActivity {
         int id = b.getInt("Trail_ID");
         this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
         setMyActionBar();
+
+        //Fills fields onCreate
         fillFields();
 
         //Peter: Makes keyboard not pop up on screen! #necessary :)
@@ -48,7 +50,13 @@ public class ViewTrailActivity extends AppCompatActivity {
             else
                 Log.e("Null catch", "Actionbar = Null");
 
-           ( (RatingBar) findViewById(R.id.trailRatingBar)).setRating(trail.getRating());
+            //Rating bar values
+            ( (RatingBar) findViewById(R.id.trailRatingBar)).setRating(trail.getRating());
+//            ( (RatingBar) findViewById(R.id.trailRatingBar)).setStepSize(trail.getRating());        //step size
+
+            float num_stars =  (((RatingBar) findViewById(R.id.trailRatingBar)).getRating());
+            Log.d("Rating bar value", Float.toString(num_stars));
+
             GridView gridView = (GridView) findViewById(R.id.imageGridView);
             ImageAdapter imageAdapter = new ImageAdapter(this, trail);
             gridView.setAdapter(imageAdapter);

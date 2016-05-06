@@ -78,7 +78,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:id="@+id/edit_rating"
-        android:numStars="5" />
+        android:isIndicator="true"
+        android:max = "5"
+        android:numStars="5"
+        android:stepSize="0.01" />
 
     <Space
         android:layout_width="match_parent"

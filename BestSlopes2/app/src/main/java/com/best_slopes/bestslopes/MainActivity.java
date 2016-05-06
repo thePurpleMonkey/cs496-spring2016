@@ -102,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(editTrailIntent);
                 return true;
 
+            case R.id.menu_about:
+                Intent aboutIntent = new Intent(this, About.class);
+                startActivity(aboutIntent);
+                return true;
+
             case R.id.menu_debug:
                 startActivity(new Intent(this, TestDatabase.class));
                 return true;

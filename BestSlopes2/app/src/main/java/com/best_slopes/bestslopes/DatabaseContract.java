@@ -169,8 +169,8 @@ public final class DatabaseContract {
         private Trail[] results;
         private int sortOrderIndex = 0;
         private String[] sortOrder = {  DatabaseContract.TrailContract.COLUMN_NAME_DIFFICULTY + " DESC",
-                                        DatabaseContract.TrailContract.COLUMN_NAME_TITLE + " DESC",
-                                        DatabaseContract.TrailContract.COLUMN_NAME_RATING + " DESC" };
+                                        DatabaseContract.TrailContract.COLUMN_NAME_RATING + " DESC",
+                                        DatabaseContract.TrailContract.COLUMN_NAME_TITLE + " DESC"};
 
         public LoadTask (Context context){
             mContext = context;

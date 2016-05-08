@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private Box<Integer> sortOrderIndex = new Box<>(SORT_DIFFICULTY);
 
     private static final int SORT_DIFFICULTY =    0;
-    private static final int SORT_TITLE =         1;
-    private static final int SORT_RATING =        2;
+    private static final int SORT_RATING =        1;
+    private static final int SORT_TITLE =         2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +108,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_settings:
-                final Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-
             case R.id.action_add_run:
                 Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
                 editTrailIntent.putExtra("Trail_ID", -1); // John: -1 means trail will be created, not edited
@@ -129,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_sort_by:
-                final CharSequence[] items = {"Trail Difficulty", "Trail Rating", "Trail Title"};
+                final CharSequence[] items = {"Trail Difficulty (hardest top)", "Trail Rating (highest top)", "Trail Title (Z-A)"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Sort By");

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.provider.BaseColumns;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -163,16 +164,20 @@ public final class DatabaseContract {
         }
     }
 
-    public static class LoadTask extends AsyncTask<Void, Void, Trail[]> {
+    public static class LoadTask extends AsyncTask<Integer, Void, Trail[]> {
         private Context mContext;
         private Trail[] results;
+        private int sortOrderIndex = 0;
+        private String[] sortOrder = {  DatabaseContract.TrailContract.COLUMN_NAME_DIFFICULTY + " DESC",
+                                        DatabaseContract.TrailContract.COLUMN_NAME_TITLE + " DESC",
+                                        DatabaseContract.TrailContract.COLUMN_NAME_RATING + " DESC" };
 
         public LoadTask (Context context){
             mContext = context;
         }
 
         @Override
-        protected Trail[] doInBackground(Void... params) {
+        protected Trail[] doInBackground(Integer... params) {
             int index = 0;
 
             TrailContract mDbHelper = new TrailContract(mContext);
@@ -187,11 +192,8 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_RATING,
             };
 
-            // How you want the results sorted in the resulting Cursor
-            //TODO: add app functionality to sort by different methods
-            String sortOrder =
-                    TrailContract.COLUMN_NAME_DIFFICULTY + " DESC";
 
+            // How you want the results sorted in the resulting Cursor
             Cursor c = db.query(
                     TrailContract.TABLE_NAME,        // The table to query
                     projection,                               // The columns to return
@@ -199,7 +201,7 @@ public final class DatabaseContract {
                     null,                                     // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
-                    sortOrder                                 // The sort order
+                    sortOrder[params[0]]                      // The sort order
             );
 
             results = new Trail[c.getCount()];

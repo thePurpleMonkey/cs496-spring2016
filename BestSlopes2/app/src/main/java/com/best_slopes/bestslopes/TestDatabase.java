@@ -17,7 +17,7 @@ public class TestDatabase extends Activity {
         setContentView(R.layout.activity_test_database);
 
         DatabaseContract.LoadTask allTrailsTask = new DatabaseContract.LoadTask(this);
-        allTrailsTask.execute();
+        allTrailsTask.execute(0);
         try {
             allTrailsTask.get();
         } catch (InterruptedException e) {
@@ -28,16 +28,17 @@ public class TestDatabase extends Activity {
 
         Trail[] trails =  allTrailsTask.getResults();
 
+
         Trail first = trails[0];
         Log.d("Test", "ID of first: " + first.getId());
         first.addImagePath("/example/path/one.jpg");
         first.addImagePath("/example/path/two.png");
         first.addImagePath("/example/path/three.bmp");
-
         new DatabaseContract.UpdateTrailTask(this).execute(first);
 
+
         allTrailsTask = new DatabaseContract.LoadTask(this);
-        allTrailsTask.execute();
+        allTrailsTask.execute(0);
         try {
             allTrailsTask.get();
         } catch (InterruptedException e) {

@@ -1,14 +1,17 @@
 package com.best_slopes.bestslopes;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -20,6 +23,14 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
+
+    //initialize sortOrderIndex
+    private Box<Integer> sortOrderIndex = new Box<>(SORT_DIFFICULTY);
+
+    private static final int SORT_DIFFICULTY =    0;
+    private static final int SORT_TITLE =         1;
+    private static final int SORT_RATING =        2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
 
-        task.execute();
+        //Calls LoadTask
+        task.execute(sortOrderIndex.getValue());
+
         try {
             task.get();
         } catch (ExecutionException e) {
@@ -81,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
             myListView.setAdapter(adapter);
 
             listItems.add("\n   Add trail\n");
-
-
         }
     }
 
@@ -115,6 +126,32 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_debug:
                 startActivity(new Intent(this, TestDatabase.class));
+                return true;
+
+            case R.id.menu_sort_by:
+                final CharSequence[] items = {"Trail Difficulty", "Trail Rating", "Trail Title"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Sort By");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item){
+                            case SORT_DIFFICULTY:
+                                sortOrderIndex.setValue(SORT_DIFFICULTY);
+                                break;
+                            case SORT_RATING:
+                                sortOrderIndex.setValue(SORT_RATING);
+                                break;
+                            case SORT_TITLE:
+                                sortOrderIndex.setValue(SORT_TITLE);
+                                break;
+                        }
+                        loadListViewMain();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
                 return true;
 
             default:

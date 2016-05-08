@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();       //must be called first
 
-        //TODO: might be a bad way to add the newest item to the list. Probably want to add it when saving (works for now)
         loadListViewMain();
 
     }
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
+
         task.execute();
         try {
             task.get();
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Database", e.getMessage());
             finish();
         }
+
         Trail[] trailsArray = task.getResults();
         trails = new ArrayList<>(); // John: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
@@ -67,8 +69,19 @@ public class MainActivity extends AppCompatActivity {
             CustomAdapter customAdapter = new CustomAdapter(this, trails);
             myListView.setAdapter(customAdapter);
         }
-        //TODO: add a row item that says "Add item..." when empty
+        //Adds row telling user to add a trail
         else{
+            //TODO: make this occur when the last item is deleted, not just onCreate/Resume
+            ArrayAdapter<String> adapter;
+            ArrayList<String> listItems=new ArrayList<String>();
+
+            adapter = new ArrayAdapter<String>(this,
+                    (R.layout.row_empty),
+                    listItems);
+            myListView.setAdapter(adapter);
+
+            listItems.add("\n   Add trail\n");
+
 
         }
     }
@@ -83,17 +96,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Context context = getApplicationContext();
-        CharSequence text = "Currently the default settings layout";
-        int duration = Toast.LENGTH_LONG;
-
-        Toast toast = Toast.makeText(context, text, duration);
-
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 final Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
-                //toast.show();           //shows that the settings tab is temporary
                 return true;
 
             case R.id.action_add_run:
@@ -123,12 +129,5 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-
-    public void enterTrail(View view){
-        Context context = getApplicationContext();
-
-    }
-
-
 
 }

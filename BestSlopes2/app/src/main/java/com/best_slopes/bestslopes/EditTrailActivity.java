@@ -77,7 +77,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 return false;
             }
         });
-        ((GridView) findViewById(R.id.imageGridView)).setAdapter(new ImageAdapter(this, trail));
+        //((GridView) findViewById(R.id.imageGridView)).setAdapter(new ImageAdapter(this, trail));
         ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
         commentsView.setAdapter(new CommentAdapter(this, trail, commentsView));
         commentsView.setSelection(trail.getComments().length-1);

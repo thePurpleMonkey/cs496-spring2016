@@ -34,11 +34,13 @@ public class ImageAdapter extends NewAdapter {
     private static LayoutInflater inflater=null;
     private Trail trail;
 
-    public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
+    public ImageAdapter(AppCompatActivity mainActivity, Trail trail, String paths[], int num_images) {
         this.context = mainActivity;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.trail = trail;
-            loadImages();
+        getDebuggingImages(paths, num_images);
+
+            //loadImages();
     }
 
     private void loadImages() {
@@ -49,9 +51,9 @@ public class ImageAdapter extends NewAdapter {
         }
     }
 
-    private void getDebuggingImages() {
-        for (int i = 1; i < 8; i += 1) {
-            trail.addImagePath("DCIM/BestSlopes2/IMG_0" + i + ".JPG");
+    public void getDebuggingImages(String paths[], int num_images) {
+        for (int i = 0; i < num_images; ++i) {
+            trail.addImagePath(paths[i]);
         }
     }
     public int getCount() {

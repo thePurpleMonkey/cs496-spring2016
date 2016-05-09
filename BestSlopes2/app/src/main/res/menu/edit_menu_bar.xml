@@ -7,4 +7,11 @@
         android:icon="@drawable/edit_button_128"
         android:title="@string/action_save"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_camera"
+        android:icon= "@drawable/camer_finalfinal"
+        android:title="@string/action_save"
+        app:showAsAction="ifRoom"/>
+
 </menu>

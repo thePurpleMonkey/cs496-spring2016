@@ -72,7 +72,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="http://www.flaticon.com/free-icon/snowboard-race_92814#term=snowboard&amp;page=1&amp;position=16"
+        android:text="http://www.flaticon.com/free-icon/snowboard-race_92814#term=snowboard&amp;page=1&amp;currentPosition=16"
         android:id="@+id/about_link3"
         android:textColor="#fff"
         android:textSize="15sp"
@@ -149,7 +149,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="http://www.flaticon.com/free-icon/plus-black-symbol_25304#term=plus&amp;page=1&amp;position=38"
+        android:text="http://www.flaticon.com/free-icon/plus-black-symbol_25304#term=plus&amp;page=1&amp;currentPosition=38"
         android:id="@+id/about_link6"
         android:textColor="#fff"
         android:textSize="15sp"
@@ -174,7 +174,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="http://www.flaticon.com/free-icon/right-arrow_118740#term=arrow&amp;page=1&amp;position=1"
+        android:text="http://www.flaticon.com/free-icon/right-arrow_118740#term=arrow&amp;page=1&amp;currentPosition=1"
         android:id="@+id/textView2"
         android:textColor="#fff"
         android:textSize="15sp"

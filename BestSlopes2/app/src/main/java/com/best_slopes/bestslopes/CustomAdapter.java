@@ -49,10 +49,10 @@ public class CustomAdapter extends AdapterForClickables {
         holder.img2.setImageResource(R.drawable.arrow_enter_trail);
 
         /*Set ClickListener to arrow image */
-        holder.img2.setOnClickListener(getOnClickListener());
+        holder.img2.setOnClickListener(getOnClickListener(position));
 
         /*Set ClickListener to row */
-        rowView.setOnClickListener(getOnClickListener());
+        rowView.setOnClickListener(getOnClickListener(position));
 
         rowView.setOnLongClickListener(getOnLongClickListenerToDelete(context, CustomAdapter.this, position));
 
@@ -60,7 +60,7 @@ public class CustomAdapter extends AdapterForClickables {
     }
 
     @Override
-    public void onClickListener(View v) {
+    public void onClickListener(View v, int currentPosition) {
         Intent intent = new Intent(context, ViewTrailActivity.class);
         Trail trail = trails.get(currentPosition);
         intent.putExtra("Trail_ID", trail.getId());

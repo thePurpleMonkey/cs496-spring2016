@@ -16,7 +16,7 @@ import android.widget.TextView;
  */
 public abstract class AdapterForClickables extends BaseAdapter {
     protected int currentPosition;
-    abstract public void onClickListener(View v);
+    abstract public void onClickListener(View v, int currentPosition);
     abstract public boolean onPositiveButtonOnLongClick(final Context context, final AdapterForClickables adapter, final int position);
     abstract public void onPositiveButtonOnLongClickToDelete(final Context context, final AdapterForClickables adapter, final int position);
     abstract public void onEditorActionListener(TextView v, int actionId, KeyEvent event);
@@ -24,11 +24,11 @@ public abstract class AdapterForClickables extends BaseAdapter {
     private String onLongClickMessageToDelete = "Are you sure you want to delete this";
     private String onLongClickTitleToDelete = "Delete?";
 
-    public View.OnClickListener getOnClickListener() {
+    public View.OnClickListener getOnClickListener(final int currentPos) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickListener(v);
+                onClickListener(v, currentPos);
             }
         };
     }

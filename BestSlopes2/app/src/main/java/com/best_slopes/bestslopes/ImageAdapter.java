@@ -67,8 +67,11 @@ public class ImageAdapter extends AdapterForClickables {
         private boolean isIcon;
 
         public void setImageView(int position) {
+            this.position = position;
+            ImageAdapter.this.currentPosition = position;
+            ImageAdapter.this.currentHolder = this;
             ImageAdapter adapter = ImageAdapter.this;
-            if (position >= adapter.getCount()-1) {
+            if (this.position == adapter.getCount()-1) {
                 this.isIcon = true;
             }
             else {
@@ -76,9 +79,8 @@ public class ImageAdapter extends AdapterForClickables {
                 this.imagePath = adapter.trail.getImagePaths().get(position);
             }
             chooseBitmap();
-            this.position = position;
             this.imageView.setClickable(true);
-            this.imageView.setOnClickListener(getOnClickListener());
+            this.imageView.setOnClickListener(getOnClickListener(position));
         }
 
         private void chooseBitmap() {
@@ -132,17 +134,18 @@ public class ImageAdapter extends AdapterForClickables {
     }
 
     @Override
-    public void onClickListener(View v) {
-        if (currentHolder.isIcon) {
+    public void onClickListener(View v, int currentPosition) {
+
+        if (currentPosition == this.getCount()-1) {
             pickImage();
         }
         else {
-            openImage();
+            openImage(currentPosition);
         }
     }
 
-    void openImage() {
-        final File file = new File(baseDir + File.separator + currentHolder.imagePath);
+    void openImage(int currentPosition) {
+        final File file = new File(baseDir + File.separator + trail.getImagePaths().get(currentPosition));
         if (file.exists()) {
             Uri uri = Uri.fromFile(file);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);

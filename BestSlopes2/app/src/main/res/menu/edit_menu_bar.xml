@@ -8,10 +8,10 @@
         android:title="@string/action_save"
         app:showAsAction="ifRoom"/>
 
-    <item
+    <!--<item
         android:id="@+id/action_camera"
         android:icon= "@drawable/camera_white"
         android:title="@string/action_save"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>&ndash;&gt;-->
 
 </menu>

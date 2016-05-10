@@ -41,7 +41,7 @@ public class ViewTrailActivity extends AppCompatActivity {
         //Allow icon to be displayed in ActionBar
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setIcon(R.mipmap.ic_launcher);
+        //actionBar.setIcon(R.mipmap.ic_launcher);
     }
 
     private void fillFields() {

@@ -18,6 +18,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,18 +30,17 @@ import android.widget.TextView;
 import java.io.File;
 
 public class ImageAdapter extends AdapterForClickables {
+    public static final int REQUEST_TAKE_PICTURE = -1453;
     private static String baseDir;
     private Context context;
     private static LayoutInflater inflater;
     private Trail trail;
     private ImageViewHolder currentHolder;
 
-    public ImageAdapter(AppCompatActivity mainActivity, Trail trail, String paths[], int num_images) {
+    public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
         this.context = mainActivity;
-        inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.trail = trail;
-        getDebuggingImages(paths, num_images);
-
+        inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //loadImages();
     }
 
@@ -52,9 +52,9 @@ public class ImageAdapter extends AdapterForClickables {
         }
     }
 
-    public void getDebuggingImages(String paths[], int num_images) {
-        for (int i = 0; i < num_images; ++i) {
-            trail.addImagePath(paths[i]);
+    public void getDebuggingImages() {
+        for (int i = 0; i < 0; ++i) {
+//            trail.addImagePath(paths[i]);
         }
     }
     public int getCount() {
@@ -90,7 +90,6 @@ public class ImageAdapter extends AdapterForClickables {
             this.position = position;
             this.imageView.setClickable(true);
             this.imageView.setOnClickListener(getOnClickListener());
-            this.imageView.setOnLongClickListener(getOnLongClickListenerToDelete(context, ImageAdapter.this, position));
         }
 
         private void chooseBitmap() {
@@ -143,6 +142,16 @@ public class ImageAdapter extends AdapterForClickables {
         }
     }
 
+    @Override
+    public void onClickListener(View v) {
+        if (currentHolder.isIcon) {
+            pickImage();
+        }
+        else {
+            openImage();
+        }
+    }
+
     void openImage() {
         final File file = new File(baseDir + File.separator + currentHolder.imagePath);
         if (file.exists()) {
@@ -153,19 +162,10 @@ public class ImageAdapter extends AdapterForClickables {
         }
     }
 
-    private void pickImage() {
-        // TODO: Open camera or file browser to add image
-    }
-
-    @Override
-    public void onClickListener(View v) {
-        if (currentHolder.isIcon) {
-            pickImage();
+        private void pickImage() {
+            Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            (( AppCompatActivity)context).startActivityForResult(camera_intent, REQUEST_TAKE_PICTURE);
         }
-        else {
-            openImage();
-        }
-    }
 
     @Override
     public boolean onPositiveButtonOnLongClick(final Context context, final AdapterForClickables adapter, final int position) { return false; }

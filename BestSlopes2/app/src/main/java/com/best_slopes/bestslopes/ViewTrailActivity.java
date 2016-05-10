@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
@@ -25,7 +24,6 @@ public class ViewTrailActivity extends AppCompatActivity {
     static final int REQUEST_EDIT_TRAIL = 1;
     private Trail trail;
     Button camera_button;
-    private static final int REQUEST_CODE = 2;
     GridView myGrid;
     String test;
     int image_counter = 0;
@@ -38,8 +36,8 @@ public class ViewTrailActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
         this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
-        setMyActionBar();
         fillFields();
+        setMyActionBar();
 
         //Peter: Makes keyboard not pop up on screen! #necessary :)
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -62,10 +60,10 @@ public class ViewTrailActivity extends AppCompatActivity {
                 Log.e("Null catch", "Actionbar = Null");
 
            ( (RatingBar) findViewById(R.id.trailRatingBar)).setRating(trail.getRating());
-
             GridView gridView = (GridView) findViewById(R.id.imageGridView);
-            ImageAdapter imageAdapter = new ImageAdapter(this, trail, image_path, image_counter);
+            ImageAdapter imageAdapter = new ImageAdapter(this, trail);
             gridView.setAdapter(imageAdapter);
+
 
             /*for (int i = 0 ; i < image_counter ; ++i) { //loading all images taken into ImageAdapter (GridView)
                 imageAdapter.getDebuggingImages(image_path[i]);
@@ -120,10 +118,10 @@ public class ViewTrailActivity extends AppCompatActivity {
                 editTrailIntent.putExtra("Trail_ID", trail.getId());
                 startActivityForResult(editTrailIntent, REQUEST_EDIT_TRAIL);
                 return true;
-
-            case R.id.action_camera:
-                Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(camera_intent, REQUEST_CODE);
+//
+//            case R.id.action_camera:
+//                Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(camera_intent, REQUEST_CODE);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -141,15 +139,11 @@ public class ViewTrailActivity extends AppCompatActivity {
                     }
                 }
             case 2: //camera
-                if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+                if (requestCode == ImageAdapter.REQUEST_TAKE_PICTURE && resultCode == RESULT_OK) {
                     Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
                     Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
-                    if (image_counter < 20) { //maximum amount of images to store in one TrailView
-                        image_path[image_counter] = getRealPathFromURI(tempUri);
-                        ++image_counter;
+                    trail.addImagePath(tempUri.getPath());
                         fillFields();
-
-                    }
                 }
         }
     }

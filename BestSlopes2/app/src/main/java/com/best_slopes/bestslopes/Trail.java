@@ -123,6 +123,8 @@ public class Trail {
 
 
     public String toString() {
-        return "ID: " + id + ", Name: " + name + ", Rating: " + rating + ", Difficulty: " + difficulty + ", Comments: \"" +comments + "\"";
+        return "ID: " + id + ", Name: " + name + ", Rating: " + rating +
+                ", Difficulty: " + difficulty + ", Comments: \"" + comments + "\"" +
+                "# of ImagePaths: " + imagePaths.size();
     }
 }

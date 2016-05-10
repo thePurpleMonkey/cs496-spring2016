@@ -73,7 +73,7 @@ public class ViewTrailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_file, menu);
+        getMenuInflater().inflate(R.menu.view_trail_menu_file, menu);
         getMenuInflater().inflate(R.menu.edit_menu_bar, menu);
         return true;
     }
@@ -81,10 +81,6 @@ public class ViewTrailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Context context = getApplicationContext();
-        CharSequence text = "Currently the default settings layout";
-        int duration = Toast.LENGTH_LONG;
-
-        Toast toast = Toast.makeText(context, text, duration);
 
         switch (item.getItemId()) {
             case R.id.action_edit:
@@ -92,6 +88,14 @@ public class ViewTrailActivity extends AppCompatActivity {
                 editTrailIntent.putExtra("Trail_ID", trail.getId());
                 startActivityForResult(editTrailIntent, REQUEST_EDIT_TRAIL);
                 return true;
+            case R.id.menu_about:
+                Intent aboutIntent = new Intent(this, About.class);
+                startActivity(aboutIntent);
+                return true;
+            case R.id.menu_debug:
+                startActivity(new Intent(this, TestDatabase.class));
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -105,11 +109,14 @@ public class ViewTrailActivity extends AppCompatActivity {
                     this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, trail.getId());
                     fillFields();
                 }
+                break;
             case ImageAdapter.REQUEST_TAKE_PICTURE:
                 if (resultCode == RESULT_OK) {
                 Bundle b = getIntent().getExtras();
                 fillFields();
                 }
+                break;
+
         }
     }
 

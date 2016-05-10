@@ -6,7 +6,6 @@ package com.best_slopes.bestslopes;
  */
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,20 +18,22 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 
-public class ImageAdapter extends NewAdapter {
+public class ImageAdapter extends AdapterForClickables {
     private static String baseDir;
     private Context context;
-    private static LayoutInflater inflater=null;
+    private static LayoutInflater inflater;
     private Trail trail;
+    private ImageViewHolder currentHolder;
 
     public ImageAdapter(AppCompatActivity mainActivity, Trail trail, String paths[], int num_images) {
         this.context = mainActivity;
@@ -47,7 +48,7 @@ public class ImageAdapter extends NewAdapter {
         if(baseDir == null)
             baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         if (trail.isNew()) {
-         //   getDebuggingImages();
+            //getDebuggingImages();
         }
     }
 
@@ -60,20 +61,13 @@ public class ImageAdapter extends NewAdapter {
         return this.trail.getImagePaths().size()+1;
     }
 
-    public Object getItem(int position) {
-        return this.trail.getImagePaths().get(position);
-    }
-
-    public long getItemId(int position) {
-        return 0;
-    }
-
     public View getView(final int position, View convertView, ViewGroup parent) {
         ImageViewHolder holder = new ImageViewHolder();
         View cellView;
         cellView = inflater.inflate(R.layout.image_view_for_grid, null);
         holder.imageView = (ImageView) cellView.findViewById(R.id.imageViewForGrid);
         holder.setImageView(position);
+        currentHolder = holder;
         return cellView;
     }
 
@@ -89,14 +83,14 @@ public class ImageAdapter extends NewAdapter {
                 this.isIcon = true;
             }
             else {
-                this.imageView.setOnLongClickListener(getOnLongClickListener(context, ImageAdapter.this));
+                this.imageView.setOnLongClickListener(getOnLongClickListenerToDelete(context, ImageAdapter.this, position));
                 this.imagePath = adapter.trail.getImagePaths().get(position);
             }
             chooseBitmap();
             this.position = position;
             this.imageView.setClickable(true);
-            setOnClickListener();
-            this.imageView.setOnLongClickListener(getOnLongClickListener(context, ImageAdapter.this));
+            this.imageView.setOnClickListener(getOnClickListener());
+            this.imageView.setOnLongClickListener(getOnLongClickListenerToDelete(context, ImageAdapter.this, position));
         }
 
         private void chooseBitmap() {
@@ -147,63 +141,42 @@ public class ImageAdapter extends NewAdapter {
 
             return output;
         }
-
-        private void setOnClickListener() {
-            this.imageView.setOnClickListener(new View.OnClickListener() {
-                //@Override
-                public void onClick(View v) {
-                    if (isIcon) {
-                        pickImage();
-                    }
-                    else {
-                        openImage();
-                    }
-                }
-            });
-        }
-
-
-        // John: Common method for our adapters to delete items
-        public View.OnLongClickListener getOnLongClickListener(final Context context, final NewAdapter adapter) {
-            return new View.OnLongClickListener() {
-                public boolean onLongClick(View v) {
-                    AlertDialog.Builder adb=new AlertDialog.Builder(context);
-                    adb.setTitle("Delete?");
-                    adb.setMessage("Are you sure you want to delete this image?");
-                    final int positionToRemove = position;
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            adapter.deleteItem(positionToRemove);
-                            new DatabaseContract.UpdateTrailTask(context).execute(trail);
-                            adapter.notifyDataSetChanged();
-                        }});
-                    adb.show();
-                    return false;
-                }
-            };
-        }
-
-        void openImage() {
-            final File file = new File(baseDir + File.separator + this.imagePath);
-            if (file.exists()) {
-                Uri uri = Uri.fromFile(file);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                intent.setDataAndType(uri, "image/*");
-                context.startActivity(intent);
-            }
-        }
-
-        private void pickImage() {
-            // TODO: Open camera or file browser to add image
-        }
-
-        public ImageView getImageView() { return this.imageView; }
     }
-    
-    public void deleteItem(final int position) {
+
+    void openImage() {
+        final File file = new File(baseDir + File.separator + currentHolder.imagePath);
+        if (file.exists()) {
+            Uri uri = Uri.fromFile(file);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.setDataAndType(uri, "image/*");
+            context.startActivity(intent);
+        }
+    }
+
+    private void pickImage() {
+        // TODO: Open camera or file browser to add image
+    }
+
+    @Override
+    public void onClickListener(View v) {
+        if (currentHolder.isIcon) {
+            pickImage();
+        }
+        else {
+            openImage();
+        }
+    }
+
+    @Override
+    public boolean onPositiveButtonOnLongClick(final Context context, final AdapterForClickables adapter, final int position) { return false; }
+
+    @Override
+    public void onPositiveButtonOnLongClickToDelete(Context context, AdapterForClickables adapter, int position) {
         trail.removeImagePath(position);
-        notifyDataSetChanged();
+        new DatabaseContract.UpdateTrailTask(context).execute(trail);
+        adapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onEditorActionListener(TextView v, int actionId, KeyEvent event) { }
 }

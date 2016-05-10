@@ -2,11 +2,7 @@ package com.best_slopes.bestslopes;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -17,8 +13,6 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 
 public class ViewTrailActivity extends AppCompatActivity {
     static final int REQUEST_EDIT_TRAIL = 1;
@@ -75,23 +69,6 @@ public class ViewTrailActivity extends AppCompatActivity {
             commentsView.setAdapter(commentAdapter);
         }
     }
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent event) {
-//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//            View v = getCurrentFocus();
-//            if (v instanceof EditText) {
-//                Rect outRect = new Rect();
-//                v.getGlobalVisibleRect(outRect);
-//                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-//                    ((EditText) v).setText("");
-//                    v.clearFocus();
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//                }
-//            }
-//        }
-//        return super.dispatchTouchEvent(event);
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,9 +77,6 @@ public class ViewTrailActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.edit_menu_bar, menu);
         return true;
     }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -118,11 +92,6 @@ public class ViewTrailActivity extends AppCompatActivity {
                 editTrailIntent.putExtra("Trail_ID", trail.getId());
                 startActivityForResult(editTrailIntent, REQUEST_EDIT_TRAIL);
                 return true;
-//
-//            case R.id.action_camera:
-//                Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(camera_intent, REQUEST_CODE);
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -131,35 +100,17 @@ public class ViewTrailActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case 1:
-                if (requestCode == REQUEST_EDIT_TRAIL) {
-                    if (resultCode == RESULT_OK) {
-                        this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, trail.getId());
-                        fillFields();
-                    }
+            case REQUEST_EDIT_TRAIL:
+                if (resultCode == RESULT_OK) {
+                    this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, trail.getId());
+                    fillFields();
                 }
-            case 2: //camera
-                if (requestCode == ImageAdapter.REQUEST_TAKE_PICTURE && resultCode == RESULT_OK) {
-                    Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                    Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
-                    trail.addImagePath(tempUri.getPath());
-                        fillFields();
+            case ImageAdapter.REQUEST_TAKE_PICTURE:
+                if (resultCode == RESULT_OK) {
+                Bundle b = getIntent().getExtras();
+                fillFields();
                 }
         }
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
     }
 
     public void onDestroy() {

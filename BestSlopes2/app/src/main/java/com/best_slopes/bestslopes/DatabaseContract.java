@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.provider.BaseColumns;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -356,11 +355,11 @@ public final class DatabaseContract {
                     imageCursor.moveToNext();
                 }
 
-                cc.moveToFirst();
-                while (!cc.isAfterLast()) {
-                    result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
-                    cc.moveToNext();
-                }
+//                cc.moveToFirst();
+//                while (!cc.isAfterLast()) {
+//                    result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
+//                    cc.moveToNext();
+//                }
 
                 Log.d("Database", "Loaded trail: " + result);
 

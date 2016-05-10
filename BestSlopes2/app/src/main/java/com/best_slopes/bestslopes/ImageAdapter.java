@@ -28,9 +28,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ImageAdapter extends AdapterForClickables {
-    public static final int REQUEST_TAKE_PICTURE = -1453;
+    public static final int REQUEST_TAKE_PICTURE = 1453;
     private static String baseDir;
     private Context context;
     private static LayoutInflater inflater;
@@ -38,25 +40,12 @@ public class ImageAdapter extends AdapterForClickables {
     private ImageViewHolder currentHolder;
 
     public ImageAdapter(AppCompatActivity mainActivity, Trail trail) {
+        baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         this.context = mainActivity;
         this.trail = trail;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            //loadImages();
     }
 
-    private void loadImages() {
-        if(baseDir == null)
-            baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        if (trail.isNew()) {
-            //getDebuggingImages();
-        }
-    }
-
-    public void getDebuggingImages() {
-        for (int i = 0; i < 0; ++i) {
-//            trail.addImagePath(paths[i]);
-        }
-    }
     public int getCount() {
         return this.trail.getImagePaths().size()+1;
     }
@@ -164,6 +153,17 @@ public class ImageAdapter extends AdapterForClickables {
 
         private void pickImage() {
             Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            String path = baseDir + File.separator + "DCIM" + File.separator + "BestSlopes2";
+            String name = "BS_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".JPG";
+            File imagesFolder = new File(path, "Trail"+trail.getId());
+            imagesFolder.mkdirs();
+
+            File image = new File(imagesFolder,name);
+            Uri uriSavedImage = Uri.fromFile(image);
+            String fullP = "DCIM" + File.separator + "BestSlopes2" + File.separator +  "Trail"+trail.getId()+ File.separator + name;
+            camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+            camera_intent.putExtra("FULLIMGPATH", fullP);
+            trail.addImagePath(fullP);
             (( AppCompatActivity)context).startActivityForResult(camera_intent, REQUEST_TAKE_PICTURE);
         }
 

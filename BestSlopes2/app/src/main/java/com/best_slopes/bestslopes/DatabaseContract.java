@@ -171,6 +171,7 @@ public final class DatabaseContract {
                                         DatabaseContract.TrailContract.COLUMN_NAME_RATING + " DESC",
                                         DatabaseContract.TrailContract.COLUMN_NAME_TITLE + " DESC"};
 
+        // Obtain context for database. [1]
         public LoadTask (Context context){
             mContext = context;
         }

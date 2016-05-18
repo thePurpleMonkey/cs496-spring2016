@@ -104,4 +104,14 @@ public class Trail {
 		return rv;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List<Trail> loadOwnerTrails(long id, PersistenceManager pm) {
+		//Queries on all trails with specified owner_id
+		Query query = pm.newQuery(Trail.class, "owner_id == :id");
+		
+		List<Trail> rv = (List<Trail>) query.execute(id);
+		rv.size(); // forces all records to load into memory
+		query.closeAll();
+		return rv;
+	}
 }

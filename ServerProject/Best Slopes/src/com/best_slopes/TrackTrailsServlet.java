@@ -27,7 +27,7 @@ public class TrackTrailsServlet extends HttpServlet {
 				id = -1L;
 			}
 			try {
-				owner_id = Long.parseLong(req.getParameter("owner") + "");
+				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
 			} catch (NumberFormatException nfe) {
 				owner_id = -1L;
 			}
@@ -69,17 +69,23 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-			long id = getLong(req, "id", -1L); 		// for getting one item
-			long age = getLong(req, "age", -1L); 	// for getting all modified in
-													// a certain # seconds
+			long id = getLong(req, "id", -1L); 				// for getting one item
+			long age = getLong(req, "age", -1L); 			// for getting all modified in a certain # seconds
+			long owner_id = getLong(req, "owner_id", -1L);	//for getting all trails from one owner
 
 			if (id > 0) {
 				Trail trail = Trail.load(id, pm);
 				out.write(formatAsJson(trail));
-			} else if (age > 0) {
+			} 
+			else if (owner_id > 0){
+				List<Trail> trails = Trail.loadOwnerTrails(owner_id, pm);
+				streamAsJson(out, trails);
+			}
+			else if (age > 0) {
 				List<Trail> trails = Trail.loadRecent(age, pm);
 				streamAsJson(out, trails);
-			} else {
+			} 
+			else {
 				List<Trail> trails = Trail.loadAll(pm);
 				streamAsJson(out, trails);
 			}
@@ -103,7 +109,7 @@ public class TrackTrailsServlet extends HttpServlet {
 	public static String formatAsJson(Trail trail) {
 		HashMap<String, String> obj = new HashMap<String, String>();
 		obj.put("id", Long.toString(trail.getId()));
-		obj.put("owner", Long.toString(trail.getOwnerID()));
+		obj.put("owner_id", Long.toString(trail.getOwnerID()));
 		obj.put("title", trail.getTitle());
 		obj.put("comment", trail.getComment());
 		obj.put("modified", Long.toString(trail.getLastModified()));

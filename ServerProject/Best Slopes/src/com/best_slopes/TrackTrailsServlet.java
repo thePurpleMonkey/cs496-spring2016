@@ -9,7 +9,7 @@ import javax.jdo.PersistenceManager;
 import javax.servlet.http.*;
 
 @SuppressWarnings("serial")
-public class Best_SlopesServlet extends HttpServlet {
+public class TrackTrailsServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 //		resp.setContentType("text/plain");
 //		resp.getWriter().println("F, world");

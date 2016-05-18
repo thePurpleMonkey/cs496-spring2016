@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Log in</title>
+	
+	<style>
+		label {
+			display: inline-block;
+			width: 150px;
+			text-align: right;
+		}
+		
+		.submitbutton {
+			margin-left: 150px;
+		}
+		
+		.field {
+			margin: 5px
+		}
+	</style>
+</head>
+<body>
+	<h1>Please log in</h1>
+	<hr>
+	
+	<form method="post" id="login">
+		<input type="hidden" id="op" value="login">
+		
+	</form>
+	
+	<form method="post" id="register">
+		<input type="hidden" id="op" name="op" value="register">
+		
+		<div class="field">
+			<label for="username">Email: </label>
+			<input type="email" id="username" name="username">
+		</div>
+		
+		<div class="field">
+			<label for="password">Password: </label>
+			<input type="password" id="password" name="password">
+		</div>
+		
+		<div class="field">
+			<label for="comfirm">Confirm password: </label>
+			<input type="password" id="confirm" name="confirm">
+		</div>
+		
+		<div class="submitbutton">
+			<input type="submit">
+		</div>
+	</form>
+</body>
+</html>

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.common.io.BaseEncoding;;
 
 public class UtilJson {
 
@@ -32,8 +33,7 @@ public class UtilJson {
 			md.update(salt.getBytes("UTF-8"));
 			md.update(message.getBytes("UTF-8"));
 			byte[] digest = md.digest();
-			//return Base64.encodeToString(digest);
-			return null;
+			return BaseEncoding.base64().encode(digest);
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalStateException(e);
 		} catch (NoSuchAlgorithmException e) {

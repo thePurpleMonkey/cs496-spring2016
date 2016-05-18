@@ -20,7 +20,7 @@ public class TrackTrailsServlet extends HttpServlet {
 		try {
 			long id;
 			long owner_id;
-			
+
 			try {
 				id = Long.parseLong(req.getParameter("id") + "");
 			} catch (NumberFormatException nfe) {
@@ -32,6 +32,7 @@ public class TrackTrailsServlet extends HttpServlet {
 				owner_id = -1L;
 			}
 			
+			Integer rating = Integer.parseInt(req.getParameter("rating") + "");
 			String 	title = req.getParameter("title");
 			String 	comment = req.getParameter("comment");
 			String 	active = req.getParameter("active");
@@ -40,6 +41,9 @@ public class TrackTrailsServlet extends HttpServlet {
 				throw new IllegalArgumentException("Invalid trail id");
 			if (owner_id < 0)
 				throw new IllegalArgumentException("Invalid owner id");
+			if (rating < 0){
+				throw new IllegalArgumentException("Invalid rating value");
+			}
 			if (title == null || title.length() == 0)
 				throw new IllegalArgumentException("Invalid course title");
 			if (comment == null || comment.length() == 0)
@@ -48,6 +52,7 @@ public class TrackTrailsServlet extends HttpServlet {
 			Trail trail = new Trail();
 			trail.setId(id);
 			trail.setOwnerID(owner_id);
+			trail.setRating(rating);
 			trail.setTitle(title);
 			trail.setComment(comment);
 			trail.setLastModified(System.currentTimeMillis());
@@ -111,6 +116,7 @@ public class TrackTrailsServlet extends HttpServlet {
 		obj.put("id", Long.toString(trail.getId()));
 		obj.put("owner_id", Long.toString(trail.getOwnerID()));
 		obj.put("title", trail.getTitle());
+		obj.put("rating", Long.toString(trail.getRating()));
 		obj.put("comment", trail.getComment());
 		obj.put("modified", Long.toString(trail.getLastModified()));
 		obj.put("active", trail.isActive() ? "1" : "0");

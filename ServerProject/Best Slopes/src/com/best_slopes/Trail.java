@@ -20,6 +20,9 @@ public class Trail {
 	
 	@Persistent
 	private String title;
+	
+	@Persistent
+	private Integer rating;
 
 	@Persistent
 	private Text comment;
@@ -38,6 +41,10 @@ public class Trail {
 		return owner_id != null ? owner_id.longValue() : -1L;
 	}
 
+	public int getRating() {
+		return rating!= null ? rating.intValue() : -1;
+	}
+	
 	public long getLastModified() {
 		return modified;
 	}
@@ -62,6 +69,10 @@ public class Trail {
 		this.comment = new Text(comment != null ? comment : "");
 	}
 
+	public Integer setRating(int rating) {
+		return this.rating = rating;
+	}
+	
 	public void setOwnerID(long id){
 		this.owner_id = id;
 	}

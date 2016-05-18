@@ -11,16 +11,16 @@ import javax.servlet.http.*;
 @SuppressWarnings("serial")
 public class Best_SlopesServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		resp.setContentType("text/plain");
-		resp.getWriter().println("Hello, world");
+//		resp.setContentType("text/plain");
+//		resp.getWriter().println("F, world");
 		
-//		resp.setContentType("application/json");
-//		PrintWriter out = resp.getWriter();
-//		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
-//		
-//		out.write(UtilJson.toJsonPair("errormsg", "course not found"));
-//		
-//		pm.close();
+		resp.setContentType("application/json");
+		PrintWriter out = resp.getWriter();
+		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
+		
+		out.write(UtilJson.toJsonPair("errormsg", "course not found"));
+//		out.write("suck");
+		pm.close();
 		
 	}
 	

@@ -15,6 +15,9 @@ public class Trail {
 	@PrimaryKey
 	private Long id;
 
+	@Persistent 
+	private Long owner_id;
+	
 	@Persistent
 	private String title;
 
@@ -31,8 +34,8 @@ public class Trail {
 		return active != null ? active.booleanValue() : false;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public long getOwnerID(){
+		return owner_id != null ? owner_id.longValue() : -1L;
 	}
 
 	public long getLastModified() {
@@ -57,6 +60,14 @@ public class Trail {
 
 	public void setComment(String comment) {
 		this.comment = new Text(comment != null ? comment : "");
+	}
+
+	public void setOwnerID(long id){
+		this.owner_id = id;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public void setId(long id) {

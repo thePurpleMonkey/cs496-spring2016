@@ -19,17 +19,27 @@ public class TrackTrailsServlet extends HttpServlet {
 		
 		try {
 			long id;
+			long owner_id;
+			
 			try {
 				id = Long.parseLong(req.getParameter("id") + "");
 			} catch (NumberFormatException nfe) {
 				id = -1L;
 			}
-			String title = req.getParameter("title");
-			String comment = req.getParameter("comment");
-			String active = req.getParameter("active");
+			try {
+				owner_id = Long.parseLong(req.getParameter("owner") + "");
+			} catch (NumberFormatException nfe) {
+				owner_id = -1L;
+			}
+			
+			String 	title = req.getParameter("title");
+			String 	comment = req.getParameter("comment");
+			String 	active = req.getParameter("active");
 
 			if (id < 0)
 				throw new IllegalArgumentException("Invalid trail id");
+			if (owner_id < 0)
+				throw new IllegalArgumentException("Invalid owner id");
 			if (title == null || title.length() == 0)
 				throw new IllegalArgumentException("Invalid course title");
 			if (comment == null || comment.length() == 0)
@@ -37,6 +47,7 @@ public class TrackTrailsServlet extends HttpServlet {
 
 			Trail trail = new Trail();
 			trail.setId(id);
+			trail.setOwnerID(owner_id);
 			trail.setTitle(title);
 			trail.setComment(comment);
 			trail.setLastModified(System.currentTimeMillis());
@@ -58,8 +69,8 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-			long id = getLong(req, "id", -1L); // for getting one item
-			long age = getLong(req, "age", -1L); // for getting all modified in
+			long id = getLong(req, "id", -1L); 		// for getting one item
+			long age = getLong(req, "age", -1L); 	// for getting all modified in
 													// a certain # seconds
 
 			if (id > 0) {
@@ -92,6 +103,7 @@ public class TrackTrailsServlet extends HttpServlet {
 	public static String formatAsJson(Trail trail) {
 		HashMap<String, String> obj = new HashMap<String, String>();
 		obj.put("id", Long.toString(trail.getId()));
+		obj.put("owner", Long.toString(trail.getOwnerID()));
 		obj.put("title", trail.getTitle());
 		obj.put("comment", trail.getComment());
 		obj.put("modified", Long.toString(trail.getLastModified()));

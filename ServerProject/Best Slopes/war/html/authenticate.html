@@ -24,26 +24,43 @@
 	<hr>
 	
 	<form method="post" id="login">
-		<input type="hidden" id="op" value="login">
-		
-	</form>
-	
-	<form method="post" id="register">
-		<input type="hidden" id="op" name="op" value="register">
+		<input type="hidden" name="op" value="login">
 		
 		<div class="field">
 			<label for="username">Email: </label>
-			<input type="email" id="username" name="username">
+			<input type="email" name="username">
 		</div>
 		
 		<div class="field">
 			<label for="password">Password: </label>
-			<input type="password" id="password" name="password">
+			<input type="password" name="password">
+		</div>
+		
+		<div class="submitbutton">
+			<input type="submit">
+		</div>
+		
+	</form>
+	
+	<h1>Or register</h1>
+	<hr>
+	
+	<form method="post" id="register">
+		<input type="hidden" name="op" value="register">
+		
+		<div class="field">
+			<label for="username">Email: </label>
+			<input type="email" name="username">
+		</div>
+		
+		<div class="field">
+			<label for="password">Password: </label>
+			<input type="password" name="password">
 		</div>
 		
 		<div class="field">
 			<label for="comfirm">Confirm password: </label>
-			<input type="password" id="confirm" name="confirm">
+			<input type="password" name="confirm">
 		</div>
 		
 		<div class="submitbutton">

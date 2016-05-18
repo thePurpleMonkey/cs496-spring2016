@@ -35,7 +35,9 @@ body {
 
 			var params = {
 				id : $("#num").val(),
+				owner_id : $("#person").val(),
 				title : $("#title").val(),
+				rating : $("#rating").val(),
 				comment : $("#comment").val(),
 				active : $("#active:checked").length
 			};
@@ -62,18 +64,32 @@ body {
 		<div>
 			<input type="text" id="num">
 		</div>
+		
+		<div class="label">Owner ID:</div>
+		<div>
+			<input type="text" id="person">
+		</div>
+		
 		<div class="label">Title:</div>
 		<div>
 			<input type="text" id="title">
 		</div>
+		
+		<div class="label">Rating:</div>
+		<div>
+			<input type="text" id="rating">
+		</div>
+		
 		<div class="label">Comment:</div>
 		<div>
 			<input type="text" id="comment">
 		</div>
+		
 		<div class="label">Active?</div>
 		<div>
 			<input type="checkbox" id="active" checked>
 		</div>
+		
 		<div class="label">
 			<input type="submit" value="Send"> <input type="reset"
 				value="Clear form">

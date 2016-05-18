@@ -27,15 +27,6 @@ public class Trail {
 	@Persistent
 	private Text comment;
 
-	@Persistent
-	private long modified;
-
-	@Persistent
-	private Boolean active;
-
-	public boolean isActive() {
-		return active != null ? active.booleanValue() : false;
-	}
 
 	public long getOwnerID(){
 		return owner_id != null ? owner_id.longValue() : -1L;
@@ -45,24 +36,16 @@ public class Trail {
 		return rating!= null ? rating.intValue() : -1;
 	}
 	
-	public long getLastModified() {
-		return modified;
-	}
-
 	public String getComment() {
 		return comment != null ? comment.getValue() : "";
 	}
 
 	public long getId() {
-		return id != null ? id.longValue() : -1L;
+		return id != null ? id.intValue() : -1;
 	}
 
 	public String getTitle() {
 		return title != null ? title : "";
-	}
-
-	public void setLastModified(long modified) {
-		this.modified = modified;
 	}
 
 	public void setComment(String comment) {
@@ -77,10 +60,6 @@ public class Trail {
 		this.owner_id = id;
 	}
 	
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -91,18 +70,6 @@ public class Trail {
 
 	public static Trail load(long id, PersistenceManager pm) {
 		return pm.getObjectById(Trail.class, id);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static List<Trail> loadRecent(long age, PersistenceManager pm) {
-		// count back a certain number of seconds
-		long since = System.currentTimeMillis() - age * 1000;
-		Query query = pm.newQuery(Trail.class, "modified >= :since && active == :ac");
-		query.setOrdering("modified");
-		List<Trail> rv = (List<Trail>) query.execute(since, true);
-		rv.size(); // forces all records to load into memory
-		query.closeAll();
-		return rv;
 	}
 
 	@SuppressWarnings("unchecked")

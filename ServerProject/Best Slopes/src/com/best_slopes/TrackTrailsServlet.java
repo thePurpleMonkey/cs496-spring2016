@@ -24,7 +24,7 @@ public class TrackTrailsServlet extends HttpServlet {
 			try {
 				id = Long.parseLong(req.getParameter("id") + "");
 			} catch (NumberFormatException nfe) {
-				id = -1L;
+				id = -1;
 			}
 			try {
 				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
@@ -35,7 +35,6 @@ public class TrackTrailsServlet extends HttpServlet {
 			Integer rating = Integer.parseInt(req.getParameter("rating") + "");
 			String 	title = req.getParameter("title");
 			String 	comment = req.getParameter("comment");
-			String 	active = req.getParameter("active");
 
 			if (id < 0)
 				throw new IllegalArgumentException("Invalid trail id");
@@ -55,8 +54,6 @@ public class TrackTrailsServlet extends HttpServlet {
 			trail.setRating(rating);
 			trail.setTitle(title);
 			trail.setComment(comment);
-			trail.setLastModified(System.currentTimeMillis());
-			trail.setActive("1".equals(active) || "true".equalsIgnoreCase(active));
 			pm.makePersistent(trail);
 
 			out.write(formatAsJson(trail));
@@ -74,8 +71,7 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-			long id = getLong(req, "id", -1L); 				// for getting one item
-			long age = getLong(req, "age", -1L); 			// for getting all modified in a certain # seconds
+			long id = 	getLong(req, "id", -1); 			// for getting one item
 			long owner_id = getLong(req, "owner_id", -1L);	//for getting all trails from one owner
 
 			if (id > 0) {
@@ -86,10 +82,6 @@ public class TrackTrailsServlet extends HttpServlet {
 				List<Trail> trails = Trail.loadOwnerTrails(owner_id, pm);
 				streamAsJson(out, trails);
 			}
-			else if (age > 0) {
-				List<Trail> trails = Trail.loadRecent(age, pm);
-				streamAsJson(out, trails);
-			} 
 			else {
 				List<Trail> trails = Trail.loadAll(pm);
 				streamAsJson(out, trails);
@@ -116,10 +108,8 @@ public class TrackTrailsServlet extends HttpServlet {
 		obj.put("id", Long.toString(trail.getId()));
 		obj.put("owner_id", Long.toString(trail.getOwnerID()));
 		obj.put("title", trail.getTitle());
-		obj.put("rating", Long.toString(trail.getRating()));
+		obj.put("rating", Integer.toString(trail.getRating()));
 		obj.put("comment", trail.getComment());
-		obj.put("modified", Long.toString(trail.getLastModified()));
-		obj.put("active", trail.isActive() ? "1" : "0");
 		return UtilJson.toJsonObject(obj);
 	}
 

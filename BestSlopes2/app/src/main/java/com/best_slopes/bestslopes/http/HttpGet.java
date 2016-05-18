@@ -1,4 +1,4 @@
-package edu.oregonstate.eecs.corvallis.http;
+package com.best_slopes.bestslopes.http;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

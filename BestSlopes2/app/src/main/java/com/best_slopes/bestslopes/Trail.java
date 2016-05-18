@@ -1,5 +1,8 @@
 package com.best_slopes.bestslopes;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -53,6 +56,23 @@ public class Trail {
         }
     }
 
+    public void serialize(DataOutputStream dos) throws IOException {
+        dos.writeInt(getId());     //TODO: might not use id here
+        dos.writeUTF(getName());
+        dos.writeFloat(getRating());
+//        dos.writeUTF("Comment");    //TODO: will need to setup comment
+        dos.flush();
+    }
+
+    public static Trail deserialize(DataInputStream dis) throws IOException {
+        Trail trail = new Trail();
+        trail.setId(dis.readInt());
+        trail.setName(dis.readUTF());
+        trail.setRating(dis.readFloat());
+//        trail.setComment(dis.readUTF));   //TODO: setup setComment field!
+        return trail;
+    }
+
     public void addComment(String comment) {
         comments.add(comment);
     }
@@ -90,6 +110,7 @@ public class Trail {
     public String[] getComments() {
         return comments.toArray(new String[0]);
     }
+
     public int getId() {
         return id;
     }

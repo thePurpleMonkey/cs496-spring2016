@@ -1,4 +1,4 @@
-package edu.oregonstate.eecs.corvallis.http;
+package com.best_slopes.bestslopes.http;
 
 // adapted from http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
 

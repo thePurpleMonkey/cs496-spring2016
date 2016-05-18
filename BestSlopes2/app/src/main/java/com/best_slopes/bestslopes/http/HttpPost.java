@@ -1,4 +1,4 @@
-package edu.oregonstate.eecs.corvallis.http;
+package com.best_slopes.bestslopes.http;
 
 // code adapted from http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
 

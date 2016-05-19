@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -100,14 +101,17 @@ public final class DatabaseContract {
         }
     }
 
+    // Don't forget to change the type of the AsyncTask object! [4]
     public static class SaveTrailTask extends AsyncTask<Trail, Void, Void> {
         Trail trail;
         private Context mContext;
 
+        // Obtain a context [1]
         public SaveTrailTask (Context mContext) {
             this.mContext = mContext;
         }
 
+        // Accept the object to save as a parameter to doInBackground [3]
         protected Void doInBackground(Trail... params) {
             if (params.length < 1) {
                 Log.e("Database", "Insufficient parameters. Expected 1, got " + params.length);
@@ -116,6 +120,7 @@ public final class DatabaseContract {
                 trail = params[0];
             }
 
+            // Instantiate database handler [2]
             TrailContract mDbHelper = new TrailContract(mContext);
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -165,7 +170,7 @@ public final class DatabaseContract {
 
     public static class LoadTask extends AsyncTask<Integer, Void, Trail[]> {
         private Context mContext;
-        private Trail[] results;
+        private Trail[] results; // Store the results of the query [3]
         private int sortOrderIndex = 0;
         private String[] sortOrder = {  DatabaseContract.TrailContract.COLUMN_NAME_DIFFICULTY + " DESC",
                                         DatabaseContract.TrailContract.COLUMN_NAME_RATING + " DESC",
@@ -180,8 +185,9 @@ public final class DatabaseContract {
         protected Trail[] doInBackground(Integer... params) {
             int index = 0;
 
+            // Obtain a reference to the database [2]
             TrailContract mDbHelper = new TrailContract(mContext);
-            SQLiteDatabase db = mDbHelper.getReadableDatabase();
+            SQLiteDatabase db = mDbHelper.getReadableDatabase(); // COULD TAKE A LONG TIME
 
             // Define a projection that specifies which columns from the database
             // you will actually use after this query.
@@ -257,6 +263,7 @@ public final class DatabaseContract {
             return results;
         }
 
+        // Retrieve the results of the query [4]
         public Trail[] getResults() {
             return results;
         }
@@ -521,6 +528,37 @@ public final class DatabaseContract {
                         "null",
                         values);
             }
+
+            return null;
+        }
+    }
+
+    public static class RefreshDatabaseTask extends  AsyncTask<ArrayList<Trail>, Void, Void> {
+        private Context mContext;
+        private Trail[] trails;
+
+        public void RefreshDatabaseTask(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        @Override
+        public Void  doInBackground(ArrayList<Trail>... params) {
+            if (params.length < 1) {
+                Log.e("Database", "Insufficient parameters. Expected 1, got " + params.length);
+                return null;
+            } else if (params[0] == null) {
+                return null;
+            } else {
+                trails = params[0].toArray(new Trail[] {});
+            }
+
+            TrailContract mDbHelper = new TrailContract(mContext);
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+            // Issue SQL statement.
+            db.delete(TrailContract.TABLE_NAME, "", null);
+            db.delete(TrailContract.COMMENTS_TABLE_NAME, "", null);
+            db.delete(TrailContract.IMAGE_TABLE_NAME, "", null);
 
             return null;
         }

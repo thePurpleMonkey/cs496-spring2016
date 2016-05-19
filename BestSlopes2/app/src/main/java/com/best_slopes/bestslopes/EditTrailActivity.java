@@ -148,6 +148,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 //TODO: might want in those if statements?
                 Trail editedTrail = redTrailFromScreen();
 
+                //TODO: add this to DB contract to know the trail id
                 sendTrailsToServer.execute(editedTrail);
 
                 if (!this.trail.isNew()) {
@@ -174,10 +175,12 @@ public class EditTrailActivity extends AppCompatActivity {
 
         protected Void doInBackground(Trail... trail) {
             HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
-
+            Long owner_id = 10L;
+            String id_concatenated = (Long.toString(owner_id) + Integer.toString(trail[0].getId()));
             if(trail[0] != null) {
-                sendTrails.addFormField("id", Long.toString((long) 11));        //todo, change this to use ownerID
-                sendTrails.addFormField("owner_id", Long.toString(10L));        //TODO: don't hardcode ownerID
+                sendTrails.addFormField("id", id_concatenated);        //todo, change this to use ownerID
+//                sendTrails.addFormField("id", "10");        //todo, change this to use ownerID
+                sendTrails.addFormField("owner_id", Long.toString(owner_id));        //TODO: don't hardcode ownerID
                 sendTrails.addFormField("title", trail[0].getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail[0].getRating()));
                 sendTrails.addFormField("difficulty", Integer.toString((int) trail[0].getDifficulty()));
@@ -186,12 +189,18 @@ public class EditTrailActivity extends AppCompatActivity {
                 StringBuilder everyComment = new StringBuilder();
 
                 comments = trail[0].getComments();
+
                 for(String s : comments)
                     everyComment.append(s+","); //comma separate comments to store on server
 
-                sendTrails.addFormField("comment", everyComment.toString());
+                if(comments != null && comments.length > 0)
+                    sendTrails.addFormField("comment", everyComment.toString());
+                else
+                    sendTrails.addFormField("comment", Constants.NULL_STR);     //must send something to server for comment
+
                 try {
-                    String valResult = sendTrails.finish();
+                    String valResult = sendTrails.finish();     //send to server
+                    Log.d("HttpPost result", valResult);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -8,4 +8,5 @@ public class Constants {
     public static final String TRACKER_URL = (BASE_URL + "/track_trails");
     public static final String CHARSET = "UTF-8";
     public static int LARGE = 0;
+    public static String NULL_STR = "NULL";
 }

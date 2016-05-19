@@ -178,9 +178,9 @@ public class MainActivity extends AppCompatActivity {
 
                 for(int i = 0; i< jsonArray.length(); i++){
                     Trail temp_trail = new Trail();
-                    jsonObject = jsonArray.getJSONObject(i);
+                    jsonObject = jsonArray.getJSONObject(i);        //TODO: parse the id
 
-                    temp_trail.setId(i);
+//                    temp_trail.setId(i);      //TODO: uncomment
                     temp_trail.setName(jsonObject.getString("title"));
                     temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
                     temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
@@ -188,8 +188,12 @@ public class MainActivity extends AppCompatActivity {
                     //Parse comments from server by commas
                     String[] commentArray = ((jsonObject.getString("comment").split(",")));
                     ArrayList<String> commentList = new ArrayList<>();
-                    for(String s : commentArray)
-                        commentList.add(s);     //add to temp commentList to set later
+
+                    //iterate over all strings after split
+                    for(String s : commentArray) {
+                        if (!s.equals(Constants.NULL_STR))     //null when there is no comment
+                            commentList.add(s);     //add to temp commentList to set later
+                    }
                     temp_trail.setComment(commentList);     //set comments from server to phone.
 
                     trails.add(temp_trail);     //adds generated trial to ArrayList

@@ -18,26 +18,27 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-			long id;
 			long owner_id;
 
-			try {
-				id = Long.parseLong(req.getParameter("id") + "");
-			} catch (NumberFormatException nfe) {
-				id = -1;
-			}
+//			long id;
+//			try {
+//				id = Long.parseLong(req.getParameter("id") + "");
+//			} catch (NumberFormatException nfe) {
+//				id = -1;
+//			}
 			try {
 				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
 			} catch (NumberFormatException nfe) {
 				owner_id = -1L;
 			}
 			
+			String 	id = req.getParameter("id"); 
 			Integer rating = Integer.parseInt(req.getParameter("rating") + "");
 			Integer difficulty = Integer.parseInt(req.getParameter("difficulty") + "");
 			String 	title = req.getParameter("title");
 			String 	comment = req.getParameter("comment");
 
-			if (id < 0)
+			if (id == null || id.length() == 0)
 				throw new IllegalArgumentException("Invalid trail id");
 			if (owner_id < 0)
 				throw new IllegalArgumentException("Invalid owner id");
@@ -55,8 +56,9 @@ public class TrackTrailsServlet extends HttpServlet {
 			Trail trail = new Trail();
 			trail.setId(id);
 			trail.setOwnerID(owner_id);
-			trail.setRating(rating);
 			trail.setTitle(title);
+			trail.setRating(rating);
+			trail.setDifficutly(difficulty);
 			trail.setComment(comment);
 			pm.makePersistent(trail);
 
@@ -75,14 +77,14 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-			long id = 	getLong(req, "id", -1); 			// for getting one item
+//			long id = 	getLong(req, "id", -1); 			// for getting one item
 			long owner_id = getLong(req, "owner_id", -1L);	//for getting all trails from one owner
 
-			if (id > 0) {
-				Trail trail = Trail.load(id, pm);
-				out.write(formatAsJson(trail));
-			} 
-			else if (owner_id > 0){
+//			if (id > 0) {
+//				Trail trail = Trail.load(id, pm);
+//				out.write(formatAsJson(trail));
+//			} 
+			if (owner_id > 0){
 				List<Trail> trails = Trail.loadOwnerTrails(owner_id, pm);
 				streamAsJson(out, trails);
 			}
@@ -109,7 +111,7 @@ public class TrackTrailsServlet extends HttpServlet {
 	
 	public static String formatAsJson(Trail trail) {
 		HashMap<String, String> obj = new HashMap<String, String>();
-		obj.put("id", Long.toString(trail.getId()));
+		obj.put("id", trail.getId());
 		obj.put("owner_id", Long.toString(trail.getOwnerID()));
 		obj.put("title", trail.getTitle());
 		obj.put("rating", Integer.toString(trail.getRating()));

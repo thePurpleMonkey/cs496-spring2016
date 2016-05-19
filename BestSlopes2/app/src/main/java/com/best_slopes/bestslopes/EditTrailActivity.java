@@ -175,11 +175,12 @@ public class EditTrailActivity extends AppCompatActivity {
 
         protected Void doInBackground(Trail... trail) {
             HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
+
             Long owner_id = 10L;
             String id_concatenated = (Long.toString(owner_id) + Integer.toString(trail[0].getId()));
+
             if(trail[0] != null) {
                 sendTrails.addFormField("id", id_concatenated);        //todo, change this to use ownerID
-//                sendTrails.addFormField("id", "10");        //todo, change this to use ownerID
                 sendTrails.addFormField("owner_id", Long.toString(owner_id));        //TODO: don't hardcode ownerID
                 sendTrails.addFormField("title", trail[0].getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail[0].getRating()));

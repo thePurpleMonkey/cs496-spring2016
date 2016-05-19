@@ -20,7 +20,6 @@ import android.view.ViewDebug;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.best_slopes.bestslopes.Uploader;
 
 import org.json.JSONArray;
 import org.json.JSONException;

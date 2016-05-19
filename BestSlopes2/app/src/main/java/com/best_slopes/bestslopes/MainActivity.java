@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.best_slopes.bestslopes.Uploader;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +30,9 @@ import com.best_slopes.bestslopes.Constants;
 import com.best_slopes.bestslopes.http.HttpGet;
 import com.best_slopes.bestslopes.http.HttpPost;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -61,16 +65,14 @@ public class MainActivity extends AppCompatActivity {
         loadListViewMain();
 
         LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
-      //  loadTrails.execute();
+        loadTrails.execute();
 
 
-//        OutgoingBuffer.startUploaderThread(this);
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-//        OutgoingBuffer.stopUploaderThread();        //kills buffer thread with main dying
     }
 
     @Override
@@ -91,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                OutgoingBuffer.write(mainActivity, load_trail(trails.get(0)));
 
                 //turns off refresh symbol after
                 new Handler().postDelayed(new Runnable() {
@@ -105,11 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    public MainActivity getMain(){
-        return this;
-    }
-
 
     private void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
@@ -130,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        /*
+
         Trail[] trailsArray = task.getResults();
         trails = new ArrayList<>(); // John: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
@@ -155,32 +151,53 @@ public class MainActivity extends AppCompatActivity {
 
             listItems.add("\n   Add trail\n");
         }
-        */
+
     }
 
-    class LoadTrailsFromServer extends AsyncTask<Void, Void, Trail> {
+    class LoadTrailsFromServer extends AsyncTask<Void, Void, ArrayList<Trail>> {
 
-        protected Trail doInBackground(Void... voids) {
-            Trail trail = new Trail();
+        protected ArrayList<Trail> doInBackground(Void... voids) {
+            ArrayList<Trail> trails = new ArrayList<Trail>();
 
             try {
                 HttpGet getTrails = new HttpGet(Constants.TRACKER_URL, Constants.CHARSET);
 
                 getTrails.addFormField("garbage", "garbage");   //might not need
                 String valResult = getTrails.finish();
-                JSONObject json = new JSONObject(valResult);
+                JSONArray jsonArray = new JSONArray(valResult);
 
                 String get;
-                get = json.getString("title");
-                trail.setName(get);
+                JSONObject jsonObject;
+
+                for(int i = 0; i< jsonArray.length(); i++){
+                    Trail temp_trail = new Trail();
+                    jsonObject = jsonArray.getJSONObject(i);
+
+                    temp_trail.setName(jsonObject.getString("title"));
+//                    temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
+                    temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
+                    trails.add(temp_trail);
+
+                    Log.d("jsonObject", jsonObject.toString());
+                }
+
+//                jsonObject = jsonArray.getJSONObject(0);
+//                Log.d("jsonObject", jsonObject.toString());
+//                jsonObject = jsonArray.getJSONObject(1);
+//                Log.d("jsonObject", jsonObject.toString());
+//                jsonObject = jsonArray.getJSONObject(3);
+//                Log.d("jsonObject", jsonObject.toString());
+//                get = json.getString("title");
+//                trail.setName(get);
 
 //                trail.setName(valJson.toString());
             } catch(Exception e){
                 Log.e("Async get trails exc.", e.toString());
             }
 
-            return trail;
+            return trails;
         }
+
         protected Trail onPostExecute(Void... voids){
 
             return null;

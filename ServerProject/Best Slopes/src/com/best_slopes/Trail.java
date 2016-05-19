@@ -13,62 +13,70 @@ import com.google.appengine.api.datastore.Text;
 @PersistenceCapable
 public class Trail {
 	@PrimaryKey
-	private Long id;
+	private Long id;				//change to string
 
 	@Persistent 
 	private Long owner_id;
 	
 	@Persistent
 	private String title;
-	
+
 	@Persistent
 	private Integer rating;
 
 	@Persistent
-	private Integer difficulty;
-
+	private Integer difficulty;		
+	
 	@Persistent
 	private Text comment;
-
-
-	public long getOwnerID(){
-		return owner_id != null ? owner_id.longValue() : -1L;
-	}
-
-	public int getRating() {
-		return rating!= null ? rating.intValue() : -1;
-	}
 	
-	public String getComment() {
-		return comment != null ? comment.getValue() : "";
-	}
+
 
 	public long getId() {
 		return id != null ? id.intValue() : -1;
+	}
+
+	public long getOwnerID(){
+		return owner_id != null ? owner_id.longValue() : -1L;
 	}
 
 	public String getTitle() {
 		return title != null ? title : "";
 	}
 
-	public void setComment(String comment) {
-		this.comment = new Text(comment != null ? comment : "");
+	public int getRating() {
+		return rating!= null ? rating.intValue() : -1;
+	}
+	
+	public int getDifficulty(){
+		return difficulty != null ? difficulty.intValue() : -1;
+	}
+	
+	public String getComment() {
+		return comment != null ? comment.getValue() : "";
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setOwnerID(long id){
+		this.owner_id = id;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title != null ? title : "";
 	}
 
 	public Integer setRating(int rating) {
 		return this.rating = rating;
 	}
 	
-	public void setOwnerID(long id){
-		this.owner_id = id;
+	public void setDifficutly(int diff){
+		this.difficulty = diff;
 	}
-	
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public void setTitle(String title) {
-		this.title = title != null ? title : "";
+	public void setComment(String comment) {
+		this.comment = new Text(comment != null ? comment : "");
 	}
 
 	public static Trail load(long id, PersistenceManager pm) {

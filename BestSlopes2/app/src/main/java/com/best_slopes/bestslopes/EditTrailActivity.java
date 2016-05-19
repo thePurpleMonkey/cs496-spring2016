@@ -174,10 +174,11 @@ public class EditTrailActivity extends AppCompatActivity {
 
             if(trail[0] != null) {
                 sendTrails.addFormField("id", Long.toString((long) 11));
-                sendTrails.addFormField("title", trail[0].getName());
-                sendTrails.addFormField("comment", "COMMENT");
                 sendTrails.addFormField("owner_id", Long.toString(10L));
+                sendTrails.addFormField("title", trail[0].getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail[0].getRating()));
+                //TODO: add difficulty
+                sendTrails.addFormField("comment", "COMMENT");  //make comment work!
                 try {
                     String valResult = sendTrails.finish();
                 } catch (Exception e) {

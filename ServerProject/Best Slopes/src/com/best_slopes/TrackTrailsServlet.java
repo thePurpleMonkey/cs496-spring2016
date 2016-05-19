@@ -33,6 +33,7 @@ public class TrackTrailsServlet extends HttpServlet {
 			}
 			
 			Integer rating = Integer.parseInt(req.getParameter("rating") + "");
+			Integer difficulty = Integer.parseInt(req.getParameter("difficulty") + "");
 			String 	title = req.getParameter("title");
 			String 	comment = req.getParameter("comment");
 
@@ -42,6 +43,9 @@ public class TrackTrailsServlet extends HttpServlet {
 				throw new IllegalArgumentException("Invalid owner id");
 			if (rating < 0){
 				throw new IllegalArgumentException("Invalid rating value");
+			}
+			if (difficulty < 0){
+				throw new IllegalArgumentException("Invalid difficulty value");
 			}
 			if (title == null || title.length() == 0)
 				throw new IllegalArgumentException("Invalid course title");
@@ -109,6 +113,7 @@ public class TrackTrailsServlet extends HttpServlet {
 		obj.put("owner_id", Long.toString(trail.getOwnerID()));
 		obj.put("title", trail.getTitle());
 		obj.put("rating", Integer.toString(trail.getRating()));
+		obj.put("difficulty", Integer.toString(trail.getDifficulty()));
 		obj.put("comment", trail.getComment());
 		return UtilJson.toJsonObject(obj);
 	}

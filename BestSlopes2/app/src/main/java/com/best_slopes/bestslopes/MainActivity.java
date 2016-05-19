@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -64,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         setupSwipeLayout();
         loadListViewMain();
 
-        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
-        loadTrails.execute();
+//        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
+//        loadTrails.execute();
 
 
     }
@@ -93,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
+                try{
+                    trails = loadTrails.execute().get();
+
+                } catch (Exception e){
+                    Log.e("Async server load error", e.toString());
+                }
 
                 //turns off refresh symbol after
                 new Handler().postDelayed(new Runnable() {
@@ -162,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 HttpGet getTrails = new HttpGet(Constants.TRACKER_URL, Constants.CHARSET);
 
-                getTrails.addFormField("garbage", "garbage");   //might not need
                 String valResult = getTrails.finish();
                 JSONArray jsonArray = new JSONArray(valResult);
 
@@ -173,24 +180,22 @@ public class MainActivity extends AppCompatActivity {
                     Trail temp_trail = new Trail();
                     jsonObject = jsonArray.getJSONObject(i);
 
+                    temp_trail.setId(i);
                     temp_trail.setName(jsonObject.getString("title"));
-//                    temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
+                    temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
                     temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
-                    trails.add(temp_trail);
 
-                    Log.d("jsonObject", jsonObject.toString());
+                    //Parse comments from server by commas
+                    String[] commentArray = ((jsonObject.getString("comment").split(",")));
+                    ArrayList<String> commentList = new ArrayList<>();
+                    for(String s : commentArray)
+                        commentList.add(s);     //add to temp commentList to set later
+                    temp_trail.setComment(commentList);     //set comments from server to phone.
+
+                    trails.add(temp_trail);     //adds generated trial to ArrayList
+//                    Log.d("jsonObject", jsonObject.toString());
                 }
 
-//                jsonObject = jsonArray.getJSONObject(0);
-//                Log.d("jsonObject", jsonObject.toString());
-//                jsonObject = jsonArray.getJSONObject(1);
-//                Log.d("jsonObject", jsonObject.toString());
-//                jsonObject = jsonArray.getJSONObject(3);
-//                Log.d("jsonObject", jsonObject.toString());
-//                get = json.getString("title");
-//                trail.setName(get);
-
-//                trail.setName(valJson.toString());
             } catch(Exception e){
                 Log.e("Async get trails exc.", e.toString());
             }

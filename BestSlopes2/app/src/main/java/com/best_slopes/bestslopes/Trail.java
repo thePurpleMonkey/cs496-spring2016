@@ -99,6 +99,10 @@ public class Trail {
         this.rating = rating;
     }
 
+    public void setComment(ArrayList<String> list){
+        this.comments = list;
+    }
+
     public int getDifficulty() {
         return difficulty;
     }

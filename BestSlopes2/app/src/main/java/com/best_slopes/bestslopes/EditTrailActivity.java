@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +27,13 @@ import android.widget.ToggleButton;
 
 import com.best_slopes.bestslopes.http.HttpPost;
 
+import java.util.ArrayList;
+
 public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
     private Trail trail;
-    private SendTrailToServer sendTrails = new SendTrailToServer();
+    private SendTrailToServer sendTrailsToServer = new SendTrailToServer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +148,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 //TODO: might want in those if statements?
                 Trail editedTrail = redTrailFromScreen();
 
-                sendTrails.execute(editedTrail);
+                sendTrailsToServer.execute(editedTrail);
 
                 if (!this.trail.isNew()) {
                     Log.d("Database", "Starting update AsyncTask...");
@@ -173,12 +176,20 @@ public class EditTrailActivity extends AppCompatActivity {
             HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
 
             if(trail[0] != null) {
-                sendTrails.addFormField("id", Long.toString((long) 11));
-                sendTrails.addFormField("owner_id", Long.toString(10L));
+                sendTrails.addFormField("id", Long.toString((long) 11));        //todo, change this to use ownerID
+                sendTrails.addFormField("owner_id", Long.toString(10L));        //TODO: don't hardcode ownerID
                 sendTrails.addFormField("title", trail[0].getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail[0].getRating()));
-                //TODO: add difficulty
-                sendTrails.addFormField("comment", "COMMENT");  //make comment work!
+                sendTrails.addFormField("difficulty", Integer.toString((int) trail[0].getDifficulty()));
+
+                String[] comments;
+                StringBuilder everyComment = new StringBuilder();
+
+                comments = trail[0].getComments();
+                for(String s : comments)
+                    everyComment.append(s+","); //comma separate comments to store on server
+
+                sendTrails.addFormField("comment", everyComment.toString());
                 try {
                     String valResult = sendTrails.finish();
                 } catch (Exception e) {

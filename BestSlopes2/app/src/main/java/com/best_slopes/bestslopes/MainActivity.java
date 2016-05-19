@@ -3,12 +3,15 @@ package com.best_slopes.bestslopes;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +22,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.best_slopes.bestslopes.Uploader;
 
-import com.best_slopes.bestslopes.Constants;
+import org.json.JSONObject;
 
+import com.best_slopes.bestslopes.Constants;
+import com.best_slopes.bestslopes.http.HttpGet;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -37,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int SORT_RATING =        1;
     private static final int SORT_TITLE =         2;
 
+    final String TRACKER_URL = Constants.BASE_URL + "/track_trails";
+    final String CHARSET = "UTF-8";
+
     private SwipeRefreshLayout swipeLayout;
 
     @Override
@@ -52,19 +62,22 @@ public class MainActivity extends AppCompatActivity {
         setupSwipeLayout();
         loadListViewMain();
 
-        OutgoingBuffer.startUploaderThread(this);
+        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
+        loadTrails.execute();
+
+//        OutgoingBuffer.startUploaderThread(this);
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        OutgoingBuffer.stopUploaderThread();        //kills buffer thread with main dying
+//        OutgoingBuffer.stopUploaderThread();        //kills buffer thread with main dying
     }
 
     @Override
     protected void onResume(){
         super.onResume();       //must be called first
-
+//        OutgoingBuffer.write(this, trails.get(trails.size()-1));
         loadListViewMain();
     }
 
@@ -75,35 +88,31 @@ public class MainActivity extends AppCompatActivity {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
         swipeLayout.setSize(Constants.LARGE);
-        swipeLayout.setOnRefreshListener(this);
 
         //set swipe listener
-//        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-////                MainActivity activity= (MainActivity) getActivity();
-//
-////                Trail write_trail = load_trail(trails.get(0));
-//                //Puts trail in buffer to write to server
-////                OutgoingBuffer.write(mainActivity, load_trail(trails.get(0)));
-//
-//                //turns off refresh symbol after
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        swipeLayout.setRefreshing(false);
-//                    }
-//                }, 5000);
-//            }
-//        });
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+//                OutgoingBuffer.write(mainActivity, load_trail(trails.get(0)));
+
+                //turns off refresh symbol after
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeLayout.setRefreshing(false);
+                    }
+                }, 5000);
+            }
+        });
 
 
     }
 
-    public void load_trail(){
-
-        OutgoingBuffer.write(this, trails.get(0));
+    public MainActivity getMain(){
+        return this;
     }
+
+
     private void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
 
@@ -122,11 +131,14 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+
+        /*
         Trail[] trailsArray = task.getResults();
         trails = new ArrayList<>(); // John: Used SparseArray<> for better performance
         for(Trail trail : trailsArray) {
             trails.add(trail);
         }
+
         //verifies list is not empty!
         if(trails.size() != 0){
             CustomAdapter customAdapter = new CustomAdapter(this, trails);
@@ -145,9 +157,40 @@ public class MainActivity extends AppCompatActivity {
 
             listItems.add("\n   Add trail\n");
         }
+        */
     }
 
-    @Override
+    class LoadTrailsFromServer extends AsyncTask<Void, Void, Trail> {
+
+        protected Trail doInBackground(Void... voids) {
+            Trail trail = new Trail();
+
+            try {
+                HttpGet getTrails = new HttpGet(TRACKER_URL, CHARSET);
+
+                getTrails.addFormField("garbage", "garbage");
+                String valResult = getTrails.finish();
+                JSONObject json = new JSONObject(valResult);
+
+                String get;
+                get = json.getString("title");
+                trail.setName(get);
+
+//                trail.setName(valJson.toString());
+            } catch(Exception e){
+                Log.e("Async get trails exc.", e.toString());
+            }
+
+            return trail;
+        }
+        protected Trail onPostExecute(Void... voids){
+
+            return null;
+        }
+    }
+
+
+        @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_file, menu);

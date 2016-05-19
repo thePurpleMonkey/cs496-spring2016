@@ -85,7 +85,7 @@ public class ImageAdapter extends AdapterForClickables {
 
         private void chooseBitmap() {
             if (this.isIcon) {
-                Bitmap addImageIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_image);
+                Bitmap addImageIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_symbol);
                 this.imageView.setImageBitmap(addImageIcon);
                 this.imageView.setBackgroundColor(Color.TRANSPARENT);
             }

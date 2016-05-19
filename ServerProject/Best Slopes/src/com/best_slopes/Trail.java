@@ -25,6 +25,9 @@ public class Trail {
 	private Integer rating;
 
 	@Persistent
+	private Integer difficulty;
+
+	@Persistent
 	private Text comment;
 
 

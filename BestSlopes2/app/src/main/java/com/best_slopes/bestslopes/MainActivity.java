@@ -22,10 +22,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.best_slopes.bestslopes.Uploader;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.best_slopes.bestslopes.Constants;
 import com.best_slopes.bestslopes.http.HttpGet;
+import com.best_slopes.bestslopes.http.HttpPost;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,16 +46,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int SORT_RATING =        1;
     private static final int SORT_TITLE =         2;
 
-    final String TRACKER_URL = Constants.BASE_URL + "/track_trails";
-    final String CHARSET = "UTF-8";
-
     private SwipeRefreshLayout swipeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //Allow icon to be displayed in ActionBar
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
@@ -63,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
         loadListViewMain();
 
         LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
-        loadTrails.execute();
+      //  loadTrails.execute();
+
 
 //        OutgoingBuffer.startUploaderThread(this);
     }
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();       //must be called first
-//        OutgoingBuffer.write(this, trails.get(trails.size()-1));
         loadListViewMain();
     }
 
@@ -166,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
             Trail trail = new Trail();
 
             try {
-                HttpGet getTrails = new HttpGet(TRACKER_URL, CHARSET);
+                HttpGet getTrails = new HttpGet(Constants.TRACKER_URL, Constants.CHARSET);
 
-                getTrails.addFormField("garbage", "garbage");
+                getTrails.addFormField("garbage", "garbage");   //might not need
                 String valResult = getTrails.finish();
                 JSONObject json = new JSONObject(valResult);
 

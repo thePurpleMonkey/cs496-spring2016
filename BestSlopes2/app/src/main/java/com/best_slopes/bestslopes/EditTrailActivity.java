@@ -3,6 +3,7 @@ package com.best_slopes.bestslopes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,10 +24,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.best_slopes.bestslopes.http.HttpPost;
+
 public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
     private Trail trail;
+    private SendTrailToServer sendTrails = new SendTrailToServer();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,7 +142,11 @@ public class EditTrailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
+                //TODO: might want in those if statements?
                 Trail editedTrail = redTrailFromScreen();
+
+                sendTrails.execute(editedTrail);
+
                 if (!this.trail.isNew()) {
                     Log.d("Database", "Starting update AsyncTask...");
                     editedTrail.setId(this.trail.getId());
@@ -158,6 +167,30 @@ public class EditTrailActivity extends AppCompatActivity {
         }
     }
 
+    class SendTrailToServer extends AsyncTask<Trail, Void, Void> {
+
+        protected Void doInBackground(Trail... trail) {
+            HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
+
+            if(trail[0] != null) {
+                sendTrails.addFormField("id", Long.toString((long) 11));
+                sendTrails.addFormField("title", trail[0].getName());
+                sendTrails.addFormField("comment", "COMMENT");
+                sendTrails.addFormField("owner_id", Long.toString(10L));
+                sendTrails.addFormField("rating", Integer.toString((int) trail[0].getRating()));
+                try {
+                    String valResult = sendTrails.finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            else
+                Log.e("Send To Server", "Trail was null, couldn't send");
+
+
+            return null;
+        }
+    }
 
     private Trail redTrailFromScreen() {
         EditText trailName = (EditText) findViewById(R.id.edit_trail_name);

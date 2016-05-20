@@ -149,7 +149,6 @@ public class EditTrailActivity extends AppCompatActivity {
 
                 //TODO: add this to DB contract to know the trail id
                 SendTrailToServer sendTrailsToServer = new SendTrailToServer();
-                sendTrailsToServer.UpdateContext(getApplicationContext());
                 sendTrailsToServer.execute(editedTrail);
 
                 if (!this.trail.isNew()) {
@@ -173,11 +172,6 @@ public class EditTrailActivity extends AppCompatActivity {
     }
 
     public static class SendTrailToServer extends AsyncTask<Trail, Void, Void> {
-        private Context mContext;
-
-        public void UpdateContext(Context mContext) {
-            this.mContext = mContext;
-        }
 
         protected Void doInBackground(Trail... trail) {
             HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);

@@ -2,20 +2,16 @@ package com.best_slopes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 @SuppressWarnings("serial")
 public class AuthenticationServlet extends HttpServlet {
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		
-		resp.setContentType("application/json");
-		PrintWriter out = resp.getWriter();
-		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
-		
-		out.write(UtilJson.toJsonPair("error", "Please use POST"));
-		pm.close();
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		RequestDispatcher view = req.getRequestDispatcher("html/authenticate.html");
+		view.forward(req, resp);
 	}
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -36,7 +32,7 @@ public class AuthenticationServlet extends HttpServlet {
 				handleUserLogin(req, out, pm);
 				break;
 			default:
-				UtilJson.toJsonPair("error", "Unrecognized command");
+				out.write(UtilJson.toJsonPair("error", "Unrecognized command " + op));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

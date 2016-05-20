@@ -9,8 +9,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Text;
-
 import javax.servlet.http.HttpServletRequest;
  
 @PersistenceCapable

@@ -561,7 +561,56 @@ public final class DatabaseContract {
             db.delete(TrailContract.COMMENTS_TABLE_NAME, "", null);
             db.delete(TrailContract.IMAGE_TABLE_NAME, "", null);
 
+            /**** from save task ****/
+
+            // Create a new map of values, where column names are the keys
+            for(Trail cur_trail : trails) {
+                ContentValues values = new ContentValues();
+                values.put(TrailContract.COLUMN_NAME_TITLE, cur_trail.getName());
+                values.put(TrailContract.COLUMN_NAME_DIFFICULTY, cur_trail.getDifficulty());
+                values.put(TrailContract.COLUMN_NAME_RATING, cur_trail.getRating());
+
+                // Insert the new row, returning the primary key value of the new row
+                long newRowId = db.insert(
+                        TrailContract.TABLE_NAME,
+                        "null",
+                        values);
+
+                trails[0].setId((int) newRowId);
+
+                // Save image paths to database
+                for (String path : trails[0].getImagePaths()) {
+                    values = new ContentValues();
+                    values.put(TrailContract.COLUMN_NAME_FILENAME, path);
+                    values.put(TrailContract.COLUMN_NAME_TRAIL_ID, trails[0].getId());
+
+                    db.insert(
+                            TrailContract.IMAGE_TABLE_NAME,
+                            "null",
+                            values);
+                }
+
+                // Save comments to database
+                for (String comment : cur_trail.getComments()) {
+                    values = new ContentValues();
+                    values.put(TrailContract.COLUMN_NAME_COMMENT, comment);
+                    values.put(TrailContract.COLUMN_NAME_TRAIL_ID, cur_trail.getId());
+
+                    db.insert(
+                            TrailContract.COMMENTS_TABLE_NAME,
+                            "null",
+                            values);
+                }
+
+                Log.d("Database", "Saved trail: " + cur_trail);
+            }
             return null;
         }
+
+
+        public Trail[] getResult() {
+            return trails;
+        }
+
     }
 }

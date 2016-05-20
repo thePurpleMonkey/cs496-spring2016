@@ -24,7 +24,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import com.best_slopes.bestslopes.DatabaseContract;
 import com.best_slopes.bestslopes.Constants;
 import com.best_slopes.bestslopes.http.HttpGet;
 import com.best_slopes.bestslopes.http.HttpPost;
@@ -62,10 +62,11 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
 
         setupSwipeLayout();
-        loadListViewMain();
+
 
 //        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
 //        loadTrails.execute();
+        loadListViewMain();
 
 
     }
@@ -95,7 +96,28 @@ public class MainActivity extends AppCompatActivity {
             public void onRefresh() {
                 LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
                 try{
-                    trails = loadTrails.execute().get();
+                    final ArrayList<Trail> temp_trail = loadTrails.execute().get();
+                    DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
+
+                    db.RefreshDatabaseTask(getApplicationContext());
+                    db.execute(temp_trail);
+
+                    Trail [] trailsArray = db.getResult();
+                    for(Trail trail : trailsArray) {
+                        trails.add(trail);
+                    }
+
+
+                } catch (Exception e){
+                    Log.e("Async server load error", e.toString());
+                }
+
+//                LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
+                try{
+//                    final ArrayList<Trail> temp_trail = loadTrails.execute().get();
+//                    DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
+//
+//                    db.execute(temp_trail);
 
                 } catch (Exception e){
                     Log.e("Async server load error", e.toString());
@@ -105,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        loadListViewMain();     //reload list on main
                         swipeLayout.setRefreshing(false);
                     }
                 }, 5000);
@@ -114,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void loadListViewMain() {
+    public void loadListViewMain() {
         ListView myListView = (ListView) findViewById(R.id.trail_list);
 
         DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);

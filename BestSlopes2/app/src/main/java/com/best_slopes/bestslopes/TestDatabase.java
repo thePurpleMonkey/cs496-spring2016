@@ -1,11 +1,13 @@
 package com.best_slopes.bestslopes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +31,15 @@ public class TestDatabase extends Activity {
         Trail[] trails =  allTrailsTask.getResults();
 
 
+        if(trails.length < 1){
+            Context context = getApplicationContext();
+            CharSequence text = "Database empty, add a trail first";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
         Trail first = trails[0];
         Log.d("Test", "ID of first: " + first.getId());
         first.addImagePath("/example/path/one.jpg");

@@ -33,7 +33,6 @@ public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
     private Trail trail;
-    private SendTrailToServer sendTrailsToServer = new SendTrailToServer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +148,8 @@ public class EditTrailActivity extends AppCompatActivity {
                 Trail editedTrail = redTrailFromScreen();
 
                 //TODO: add this to DB contract to know the trail id
+                SendTrailToServer sendTrailsToServer = new SendTrailToServer();
+                sendTrailsToServer.UpdateContext(getApplicationContext());
                 sendTrailsToServer.execute(editedTrail);
 
                 if (!this.trail.isNew()) {
@@ -171,10 +172,16 @@ public class EditTrailActivity extends AppCompatActivity {
         }
     }
 
-    class SendTrailToServer extends AsyncTask<Trail, Void, Void> {
+    public static class SendTrailToServer extends AsyncTask<Trail, Void, Void> {
+        private Context mContext;
+
+        public void UpdateContext(Context mContext) {
+            this.mContext = mContext;
+        }
 
         protected Void doInBackground(Trail... trail) {
             HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
+
 
             Long owner_id = 10L;
             String id_concatenated = (Long.toString(owner_id) + Integer.toString(trail[0].getId()));

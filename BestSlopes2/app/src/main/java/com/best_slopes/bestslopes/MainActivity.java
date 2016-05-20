@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
 //        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
 //        loadTrails.execute();
         loadListViewMain();
-
-
     }
 
     @Override
@@ -102,22 +100,12 @@ public class MainActivity extends AppCompatActivity {
                     db.RefreshDatabaseTask(getApplicationContext());
                     db.execute(temp_trail);
 
-                    Trail [] trailsArray = db.getResult();
-                    for(Trail trail : trailsArray) {
-                        trails.add(trail);
-                    }
+//                    //TODO: MICHAEL add this to DB contract to know the trail id
+//                    SendTrailToServer sendTrailsToServer = new SendTrailToServer();
+//                    sendTrailsToServer.UpdateContext(getApplicationContext());
+//                    sendTrailsToServer.execute(temp_trail);
 
 
-                } catch (Exception e){
-                    Log.e("Async server load error", e.toString());
-                }
-
-//                LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
-                try{
-//                    final ArrayList<Trail> temp_trail = loadTrails.execute().get();
-//                    DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
-//
-//                    db.execute(temp_trail);
 
                 } catch (Exception e){
                     Log.e("Async server load error", e.toString());

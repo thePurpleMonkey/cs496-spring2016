@@ -9,6 +9,8 @@ import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.*;
 
+import org.mortbay.log.Log;
+
 @SuppressWarnings("serial")
 public class TrackTrailsServlet extends HttpServlet {
 	/***** doPost *****/
@@ -33,6 +35,10 @@ public class TrackTrailsServlet extends HttpServlet {
 			}
 			
 			String 	id = req.getParameter("id"); 
+			String[] split_array = id.split("_");
+			String parsed_id = split_array[1];
+			
+//			Log.debug(parsed_id);
 			Integer rating = Integer.parseInt(req.getParameter("rating") + "");
 			Integer difficulty = Integer.parseInt(req.getParameter("difficulty") + "");
 			String 	title = req.getParameter("title");
@@ -40,6 +46,8 @@ public class TrackTrailsServlet extends HttpServlet {
 
 			if (id == null || id.length() == 0)
 				throw new IllegalArgumentException("Invalid trail id");
+			if (Integer.parseInt(parsed_id) < 0)
+				throw new IllegalArgumentException("Invalid trail id, currently negative");
 			if (owner_id < 0)
 				throw new IllegalArgumentException("Invalid owner id");
 			if (rating < 0){

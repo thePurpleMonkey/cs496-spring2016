@@ -53,6 +53,7 @@ public abstract class AdapterForClickables extends BaseAdapter {
                         onPositiveButtonOnLongClickToDelete(context, adapter, position);
                     }});
                 adb.show();
+
                 return false;
             }
         };

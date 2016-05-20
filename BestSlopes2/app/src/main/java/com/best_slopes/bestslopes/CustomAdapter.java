@@ -68,7 +68,12 @@ public class CustomAdapter extends AdapterForClickables {
     }
 
     @Override
-    public boolean onPositiveButtonOnLongClick(final Context context, final AdapterForClickables adapter, final int position) { return false; }
+    public boolean onPositiveButtonOnLongClick(
+            final Context context,
+            final AdapterForClickables adapter,
+            final int position) {
+        return false;
+    }
 
     @Override
     public void onPositiveButtonOnLongClickToDelete(final Context context, AdapterForClickables adapter, int position) {

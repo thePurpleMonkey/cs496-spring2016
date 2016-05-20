@@ -94,18 +94,16 @@ public class MainActivity extends AppCompatActivity {
             public void onRefresh() {
                 LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
                 try{
+                    //Get trails from server!
                     final ArrayList<Trail> temp_trail = loadTrails.execute().get();
-                    DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
 
-                    db.RefreshDatabaseTask(getApplicationContext());
-                    db.execute(temp_trail);
-
-//                    //TODO: MICHAEL add this to DB contract to know the trail id
-//                    SendTrailToServer sendTrailsToServer = new SendTrailToServer();
-//                    sendTrailsToServer.UpdateContext(getApplicationContext());
+//                    EditTrailActivity.SendAllTrailsToServer sendTrailsToServer = new EditTrailActivity.SendAllTrailsToServer();
 //                    sendTrailsToServer.execute(temp_trail);
 
-
+                    //Delete trails from phone's db
+                    DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
+                    db.RefreshDatabaseTask(getApplicationContext());
+                    db.execute(temp_trail);
 
                 } catch (Exception e){
                     Log.e("Async server load error", e.toString());
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 HttpGet getTrails = new HttpGet(Constants.TRACKER_URL, Constants.CHARSET);
-
+                getTrails.addFormField("owner_id", Integer.toString(Constants.OWNER_ID));
                 String valResult = getTrails.finish();
                 JSONArray jsonArray = new JSONArray(valResult);
 
@@ -188,9 +186,8 @@ public class MainActivity extends AppCompatActivity {
 
                 for(int i = 0; i< jsonArray.length(); i++){
                     Trail temp_trail = new Trail();
-                    jsonObject = jsonArray.getJSONObject(i);        //TODO: parse the id
+                    jsonObject = jsonArray.getJSONObject(i);        //TODO: parse the id, maybe don't have to.
 
-//                    temp_trail.setId(i);      //TODO: uncomment
                     temp_trail.setName(jsonObject.getString("title"));
                     temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
                     temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
@@ -207,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                     temp_trail.setComment(commentList);     //set comments from server to phone.
 
                     trails.add(temp_trail);     //adds generated trial to ArrayList
-//                    Log.d("jsonObject", jsonObject.toString());
                 }
 
             } catch(Exception e){
@@ -245,6 +241,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent aboutIntent = new Intent(this, About.class);
                 startActivity(aboutIntent);
                 return true;
+
+//            case R.id.menu_deleteDB:
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                loadListViewMain();
+//                return true;
 
             case R.id.menu_debug:
                 startActivity(new Intent(this, TestDatabase.class));

@@ -245,4 +245,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public ArrayList<Trail> getTrails(){
+        return trails;
+    }
 }

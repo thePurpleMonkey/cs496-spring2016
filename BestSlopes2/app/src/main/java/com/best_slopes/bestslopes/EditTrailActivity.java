@@ -166,6 +166,9 @@ public class EditTrailActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             ServerComms.SendSingleTrailToServer sendTrailsToServer = new ServerComms.SendSingleTrailToServer();
+//                            MainActivity.
+                            //MICHAEL
+                            editedTrail.setServerID("10_100");
                             sendTrailsToServer.execute(editedTrail);
                             Log.d("editedTrail", editedTrail.toString());
                         }

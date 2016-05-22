@@ -133,6 +133,7 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
+            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerID());
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(

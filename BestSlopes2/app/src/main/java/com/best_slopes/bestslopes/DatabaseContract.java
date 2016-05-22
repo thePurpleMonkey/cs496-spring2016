@@ -50,7 +50,9 @@ public final class DatabaseContract {
                         "_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         TrailContract.COLUMN_NAME_TITLE + " TEXT, " +
                         TrailContract.COLUMN_NAME_DIFFICULTY + " INTEGER, " +
-                        TrailContract.COLUMN_NAME_RATING + " INTEGER)";
+                        TrailContract.COLUMN_NAME_RATING + " INTEGER, " +
+                        TrailContract.COLUMN_NAME_SERVER_ID + " TEXT" +
+                        ")";
 
         private static final String SQL_DELETE_TRAILS =
                 "DROP TABLE IF EXISTS " + TrailContract.TABLE_NAME;

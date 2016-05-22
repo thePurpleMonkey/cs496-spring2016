@@ -255,6 +255,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, TestDatabase.class));
                 return true;
 
+            case R.id.menu_login:
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+
             case R.id.menu_sort_by:
                 final CharSequence[] items = {"Trail Difficulty (hardest top)", "Trail Rating (highest top)", "Trail Title (Z-A)"};
 

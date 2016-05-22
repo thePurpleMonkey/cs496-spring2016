@@ -116,12 +116,12 @@ public class Trail {
         this.difficulty = difficulty;
     }
 
-    public String getServerID(){ return serverID; }
-
     public String[] getComments() {
         return comments.toArray(new String[0]);
     }
 
+    public String getServerID() { return serverId;
+    }
     public int getId() {
         return id;
     }
@@ -153,13 +153,6 @@ public class Trail {
 
     public void removeImagePath(String imagePath) { imagePaths.remove(imagePath); }
 
-    public String getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
-    }
 
     public String toString() {
         return "ID: " + id + ", Name: " + name + ", Rating: " + rating +

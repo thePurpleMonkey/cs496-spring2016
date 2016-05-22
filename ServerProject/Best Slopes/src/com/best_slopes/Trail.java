@@ -1,6 +1,5 @@
 package com.best_slopes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -14,7 +13,7 @@ import com.google.appengine.api.datastore.Text;
 @PersistenceCapable
 public class Trail {
 	@PrimaryKey
-	private String id;				//change to string
+	private String id;	
 
 	@Persistent 
 	private Long owner_id;
@@ -31,8 +30,6 @@ public class Trail {
 	@Persistent
 	private Text comment;
 	
-
-
 	public String getId() {
 		return id != null ? id : "";
 	}

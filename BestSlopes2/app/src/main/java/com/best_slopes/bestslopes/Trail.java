@@ -14,6 +14,8 @@ public class Trail {
     private int difficulty;
     private ArrayList<String> comments;
     private int id;
+    private String serverID;
+
     private ArrayList<String> imagePaths; // Jhon: we should also handle with this
 
     public Trail() {
@@ -91,6 +93,8 @@ public class Trail {
         this.name = name;
     }
 
+    public void setServerID(String new_serverID) { this.serverID = new_serverID; }
+
     public float getRating() {
         return rating;
     }
@@ -110,6 +114,8 @@ public class Trail {
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
     }
+
+    public String getServerID(){ return serverID; }
 
     public String[] getComments() {
         return comments.toArray(new String[0]);

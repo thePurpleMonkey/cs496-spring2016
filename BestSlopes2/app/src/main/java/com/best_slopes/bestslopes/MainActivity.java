@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import com.best_slopes.bestslopes.ServerComms;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<Trail> trails;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
+                ServerComms.LoadTrailsFromServer loadTrails = new ServerComms.LoadTrailsFromServer();
                 try{
                     //Get trails from server!
                     final ArrayList<Trail> temp_trail = loadTrails.execute().get();
@@ -170,57 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class LoadTrailsFromServer extends AsyncTask<Void, Void, ArrayList<Trail>> {
-
-        protected ArrayList<Trail> doInBackground(Void... voids) {
-            ArrayList<Trail> trails = new ArrayList<Trail>();
-
-            try {
-                HttpGet getTrails = new HttpGet(Constants.TRACKER_URL, Constants.CHARSET);
-                getTrails.addFormField("owner_id", Integer.toString(Constants.OWNER_ID));
-                String valResult = getTrails.finish();
-                JSONArray jsonArray = new JSONArray(valResult);
-
-                String get;
-                JSONObject jsonObject;
-
-                for(int i = 0; i< jsonArray.length(); i++){
-                    Trail temp_trail = new Trail();
-                    jsonObject = jsonArray.getJSONObject(i);        //TODO: parse the id, maybe don't have to.
-
-                    temp_trail.setName(jsonObject.getString("title"));
-                    temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
-                    temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
-
-                    //Parse comments from server by commas
-                    String[] commentArray = ((jsonObject.getString("comment").split(",")));
-                    ArrayList<String> commentList = new ArrayList<>();
-
-                    //iterate over all strings after split
-                    for(String s : commentArray) {
-                        if (!s.equals(Constants.NULL_STR))     //null when there is no comment
-                            commentList.add(s);     //add to temp commentList to set later
-                    }
-                    temp_trail.setComment(commentList);     //set comments from server to phone.
-
-                    trails.add(temp_trail);     //adds generated trial to ArrayList
-                }
-
-            } catch(Exception e){
-                Log.e("Async get trails exc.", e.toString());
-            }
-
-            return trails;
-        }
-
-        protected Trail onPostExecute(Void... voids){
-
-            return null;
-        }
-    }
-
-
-        @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_file, menu);

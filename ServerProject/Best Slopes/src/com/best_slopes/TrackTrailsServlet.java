@@ -11,6 +11,10 @@ import javax.servlet.http.*;
 
 import org.mortbay.log.Log;
 
+import com.google.appengine.api.datastore.Query.FilterOperator;
+
+import javax.jdo.Query;
+
 @SuppressWarnings("serial")
 public class TrackTrailsServlet extends HttpServlet {
 	/***** doPost *****/
@@ -21,13 +25,14 @@ public class TrackTrailsServlet extends HttpServlet {
 		
 		try {
 			long owner_id;
+			Integer delete_trail;
 
-//			long id;
-//			try {
-//				id = Long.parseLong(req.getParameter("id") + "");
-//			} catch (NumberFormatException nfe) {
-//				id = -1;
-//			}
+			try {
+				delete_trail = Integer.parseInt(req.getParameter("delete_trail") + "");
+			} catch (NumberFormatException nfe) {
+				delete_trail = -1;
+			}
+
 			try {
 				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
 			} catch (NumberFormatException nfe) {
@@ -43,7 +48,13 @@ public class TrackTrailsServlet extends HttpServlet {
 			Integer difficulty = Integer.parseInt(req.getParameter("difficulty") + "");
 			String 	title = req.getParameter("title");
 			String 	comment = req.getParameter("comment");
+			
 
+
+			if (delete_trail < 0){
+				out.write("Delete was null");
+			}
+			
 			if (id == null || id.length() == 0)
 				throw new IllegalArgumentException("Invalid trail id");
 			if (Integer.parseInt(parsed_id) < 0)
@@ -62,14 +73,24 @@ public class TrackTrailsServlet extends HttpServlet {
 				throw new IllegalArgumentException("Invalid course comment");
 
 			Trail trail = new Trail();
-			trail.setId(id);
-			trail.setOwnerID(owner_id);
-			trail.setTitle(title);
-			trail.setRating(rating);
-			trail.setDifficutly(difficulty);
-			trail.setComment(comment);
-			pm.makePersistent(trail);
-
+			
+			//deletes trail if specified
+			if(delete_trail == 1){
+				Query q = pm.newQuery(Trail.class);
+				q.setFilter("id == idParam");
+				q.declareParameters("String idParam");
+				q.deletePersistentAll(id);
+				
+			}
+			else{
+				trail.setId(id);
+				trail.setOwnerID(owner_id);
+				trail.setTitle(title);
+				trail.setRating(rating);
+				trail.setDifficutly(difficulty);
+				trail.setComment(comment);
+				pm.makePersistent(trail);
+			}
 			out.write(formatAsJson(trail));
 		} catch (IllegalArgumentException iae) {
 			out.write(UtilJson.toJsonPair("errormsg", iae.getMessage()));

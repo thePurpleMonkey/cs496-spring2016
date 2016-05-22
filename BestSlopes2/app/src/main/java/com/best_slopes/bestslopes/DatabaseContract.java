@@ -22,7 +22,7 @@ public final class DatabaseContract {
     }
 
     public static class TrailContract extends SQLiteOpenHelper implements BaseColumns {
-        public static final int DATABASE_VERSION = 6;
+        public static final int DATABASE_VERSION = 7;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";
@@ -32,6 +32,7 @@ public final class DatabaseContract {
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DIFFICULTY = "difficulty";
         public static final String COLUMN_NAME_RATING = "rating";
+        public static final String COLUMN_NAME_SERVER_ID = "server_id";
 
         public static final String COLUMN_NAME_FILENAME = "filename";
         public static final String COLUMN_NAME_TRAIL_ID = "trail";
@@ -130,6 +131,7 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
+            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerId());
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(
@@ -197,6 +199,7 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_TITLE,
                     TrailContract.COLUMN_NAME_DIFFICULTY,
                     TrailContract.COLUMN_NAME_RATING,
+                    TrailContract.COLUMN_NAME_SERVER_ID
             };
 
 
@@ -221,6 +224,7 @@ public final class DatabaseContract {
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))));
+                trail.setServerId(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_SERVER_ID)));
 
                 Cursor commentCursor = db.query(
                         TrailContract.COMMENTS_TABLE_NAME,
@@ -314,6 +318,7 @@ public final class DatabaseContract {
                     TrailContract.COLUMN_NAME_TITLE,
                     TrailContract.COLUMN_NAME_DIFFICULTY,
                     TrailContract.COLUMN_NAME_RATING,
+                    TrailContract.COLUMN_NAME_SERVER_ID
             };
 
             Cursor c = db.query(
@@ -337,6 +342,7 @@ public final class DatabaseContract {
                 result.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 result.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))));
+                result.setServerId(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_SERVER_ID)));
 
                 Cursor cc = db.query(
                         TrailContract.IMAGE_TABLE_NAME,
@@ -485,6 +491,7 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
+            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerId());
 
             // Which row to update, based on the ID
             String selection = TrailContract._ID + " = ?";
@@ -569,6 +576,7 @@ public final class DatabaseContract {
                 values.put(TrailContract.COLUMN_NAME_TITLE, cur_trail.getName());
                 values.put(TrailContract.COLUMN_NAME_DIFFICULTY, cur_trail.getDifficulty());
                 values.put(TrailContract.COLUMN_NAME_RATING, cur_trail.getRating());
+                values.put(TrailContract.COLUMN_NAME_SERVER_ID, cur_trail.getServerId());
 
                 // Insert the new row, returning the primary key value of the new row
                 long newRowId = db.insert(

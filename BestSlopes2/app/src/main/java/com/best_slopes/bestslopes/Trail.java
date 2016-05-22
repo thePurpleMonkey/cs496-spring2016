@@ -15,6 +15,7 @@ public class Trail {
     private ArrayList<String> comments;
     private int id;
     private ArrayList<String> imagePaths; // Jhon: we should also handle with this
+    private String serverId;
 
     public Trail() {
         this.name = "";
@@ -146,6 +147,13 @@ public class Trail {
 
     public void removeImagePath(String imagePath) { imagePaths.remove(imagePath); }
 
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
+    }
 
     public String toString() {
         return "ID: " + id + ", Name: " + name + ", Rating: " + rating +

@@ -133,7 +133,6 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
-            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerID());
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(
@@ -141,7 +140,12 @@ public final class DatabaseContract {
                     "null",
                     values);
 
+//            values.put(TrailContract.COLUMN_NAME_SERVER_ID, (Long.toString(Constants.OWNER_ID) + "_" + Integer.toString((int)newRowId)));
+
+
             trail.setId((int) newRowId);
+
+//            trail.setServerID((Long.toString(Constants.OWNER_ID) + "_" + Integer.toString((int)newRowId)));
 
             // Save image paths to database
             for (String path : trail.getImagePaths()) {

@@ -147,10 +147,6 @@ public class EditTrailActivity extends AppCompatActivity {
             case R.id.action_save:
                 final Trail editedTrail = redTrailFromScreen();
 
-                //TODO: add this to DB contract to know the trail id
-//                SendTrailToServer sendTrailsToServer = new SendTrailToServer();
-//                sendTrailsToServer.execute(editedTrail);
-
                 if (!this.trail.isNew()) {
                     Log.d("Database", "Starting update AsyncTask...");
                     editedTrail.setId(this.trail.getId());
@@ -161,8 +157,11 @@ public class EditTrailActivity extends AppCompatActivity {
                 }
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
-                    //editedTrail.setOld();
+
+                    //Save new trail to DB
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
+
+                    //Sends trail to server
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

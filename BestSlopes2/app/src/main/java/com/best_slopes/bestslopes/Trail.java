@@ -17,7 +17,6 @@ public class Trail {
     private String serverID;
 
     private ArrayList<String> imagePaths; // Jhon: we should also handle with this
-    private String serverId;
 
     public Trail() {
         this.name = "";
@@ -120,8 +119,8 @@ public class Trail {
         return comments.toArray(new String[0]);
     }
 
-    public String getServerID() { return serverId;
-    }
+    public String getServerID() { return serverID; }
+
     public int getId() {
         return id;
     }
@@ -157,6 +156,7 @@ public class Trail {
     public String toString() {
         return "ID: " + id + ", Name: " + name + ", Rating: " + rating +
                 ", Difficulty: " + difficulty + ", Comments: \"" + comments + "\"" +
-                "# of ImagePaths: " + imagePaths.size();
+                "# of ImagePaths: " + imagePaths.size() + ", ServerID: " + getServerID()
+                ;
     }
 }

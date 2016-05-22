@@ -22,7 +22,7 @@ public final class DatabaseContract {
     }
 
     public static class TrailContract extends SQLiteOpenHelper implements BaseColumns {
-        public static final int DATABASE_VERSION = 7;
+        public static final int DATABASE_VERSION = 8;
         public static final String DATABASE_NAME = "trails.db";
         public static final String TABLE_NAME = "trails";
         public static final String IMAGE_TABLE_NAME = "images";
@@ -50,7 +50,9 @@ public final class DatabaseContract {
                         "_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         TrailContract.COLUMN_NAME_TITLE + " TEXT, " +
                         TrailContract.COLUMN_NAME_DIFFICULTY + " INTEGER, " +
-                        TrailContract.COLUMN_NAME_RATING + " INTEGER)";
+                        TrailContract.COLUMN_NAME_RATING + " INTEGER, " +
+                        TrailContract.COLUMN_NAME_SERVER_ID + " TEXT" +
+                        ")";
 
         private static final String SQL_DELETE_TRAILS =
                 "DROP TABLE IF EXISTS " + TrailContract.TABLE_NAME;

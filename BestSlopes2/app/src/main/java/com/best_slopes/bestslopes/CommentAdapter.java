@@ -65,6 +65,9 @@ public class CommentAdapter extends AdapterForClickables {
             return;
         }
         trail.addComment(newComment);
+
+        new ServerComms.SendSingleTrailToServer().execute(trail);       //send trail to server again
+
         notifyDataSetChanged();
         v.clearFocus();
         if (!trail.isNew()) {
@@ -73,6 +76,7 @@ public class CommentAdapter extends AdapterForClickables {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         updateListView();
+
     }
 
     private void updateListView() {
@@ -120,7 +124,9 @@ public class CommentAdapter extends AdapterForClickables {
     @Override
     public void onPositiveButtonOnLongClickToDelete(Context context, AdapterForClickables adapter, int position) {
         trail.removeComment(position);
-        new DatabaseContract.UpdateTrailTask(context).execute(trail);
+
+        new DatabaseContract.UpdateTrailTask(context).execute(trail);   //update DB
+        new ServerComms.SendSingleTrailToServer().execute(trail);       //send trail to server again
         notifyDataSetChanged();
     }
 }

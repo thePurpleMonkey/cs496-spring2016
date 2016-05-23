@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
+//    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
 
-    //initialize sortOrderIndex
+    //initialize sortOrderIndex using Box class
     private Box<Integer> sortOrderIndex = new Box<>(SORT_DIFFICULTY);
 
     private static final int SORT_DIFFICULTY =    0;
@@ -63,11 +63,8 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
 
         setupSwipeLayout();
-
-
-//        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
-//        loadTrails.execute();
         loadListViewMain();
+
     }
 
     @Override
@@ -79,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();       //must be called first
         loadListViewMain();
+
     }
 
     private void setupSwipeLayout(){
@@ -98,13 +96,10 @@ public class MainActivity extends AppCompatActivity {
                     //Get trails from server!
                     final ArrayList<Trail> temp_trail = loadTrails.execute().get();
 
-//                    EditTrailActivity.SendAllTrailsToServer sendTrailsToServer = new EditTrailActivity.SendAllTrailsToServer();
-//                    sendTrailsToServer.execute(temp_trail);
-
                     //Delete trails from phone's db
                     DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
                     db.RefreshDatabaseTask(getApplicationContext());
-                    db.execute(temp_trail);
+                    db.execute(temp_trail);     //execute refresh, passing temp_trail
 
                 } catch (Exception e){
                     Log.e("Async server load error", e.toString());
@@ -115,9 +110,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         loadListViewMain();     //reload list on main
+
                         swipeLayout.setRefreshing(false);
                     }
-                }, 5000);
+                }, 2000);
             }
         });
 
@@ -190,19 +186,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(editTrailIntent);
                 return true;
 
+            case R.id.menu_backup_trails:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ServerComms.SendAllTrailsToServer sendAll = new ServerComms.SendAllTrailsToServer();
+                        sendAll.execute(trails);
+
+                        //Send toast
+                        Toast toast = Toast.makeText(   getApplicationContext(),
+                                                        "Sending trails to server...",
+                                                        Toast.LENGTH_LONG);
+                        toast.show();
+
+                    }
+                });
+
+                return true;
+
             case R.id.menu_about:
                 Intent aboutIntent = new Intent(this, About.class);
                 startActivity(aboutIntent);
                 return true;
-
-//            case R.id.menu_deleteDB:
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                loadListViewMain();
-//                return true;
 
             case R.id.menu_debug:
                 startActivity(new Intent(this, TestDatabase.class));

@@ -1,5 +1,6 @@
 package com.best_slopes.bestslopes;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -157,9 +158,7 @@ public class ServerComms {
             for(int i = 0; i< array_param[0].size(); i++) {
                 Trail trail = array_param[0].get(i);
 
-                String id_concatenated = (Long.toString(owner_id) + "_" + Integer.toString(trail.getId()));
-
-                sendTrails.addFormField("id", id_concatenated);        //todo, change this to use ownerID
+                sendTrails.addFormField("id", trail.getServerID());        //todo, change this to use ownerID
                 sendTrails.addFormField("owner_id", Long.toString(owner_id));        //TODO: don't hardcode ownerID
                 sendTrails.addFormField("title", trail.getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));
@@ -186,6 +185,7 @@ public class ServerComms {
                 }
             }
 
+            
             return null;
         }
     }

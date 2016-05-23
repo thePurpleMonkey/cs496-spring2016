@@ -90,6 +90,8 @@ public class ViewTrailActivity extends AppCompatActivity {
             case R.id.action_edit:
                 Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
                 editTrailIntent.putExtra("Trail_ID", trail.getId());
+                editTrailIntent.putExtra("trail_string", trail.toString());     //Add the trail to the intent list
+
                 startActivityForResult(editTrailIntent, REQUEST_EDIT_TRAIL);
                 return true;
             default:

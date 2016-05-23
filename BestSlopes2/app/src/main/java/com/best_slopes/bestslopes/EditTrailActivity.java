@@ -46,7 +46,7 @@ public class EditTrailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_trail);
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
-        stringTrail = b.getString("string");
+        stringTrail = b.getString("trail_string");
 
         if (id != -1) { // John: if an existing trail will be edited
             this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
@@ -151,19 +151,35 @@ public class EditTrailActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 final Trail editedTrail = redTrailFromScreen();
-                final String serverID = calcServerID();
 
                 if (!this.trail.isNew()) {
                     Log.d("Database", "Starting update AsyncTask...");
                     editedTrail.setId(this.trail.getId());
+                    editedTrail.setServerID(this.trail.getServerID());
+
+                    //Sends trail to server
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ServerComms.SendSingleTrailToServer sendToServer = new ServerComms.SendSingleTrailToServer();
+
+                            sendToServer.execute(editedTrail);
+                            Log.d("editedTrail", editedTrail.toString());
+                        }
+                    });
+
                     new DatabaseContract.UpdateTrailTask(this).execute(editedTrail);
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("Trail_ID", trail.getId());
+
+
                     setResult(RESULT_OK,returnIntent);
                 }
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
-                    editedTrail.setServerID(serverID);
+
+                    //Setting serverID for editedTrail!
+                    editedTrail.setServerID(calcServerID());
 
                     //Save new trail to DB
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
@@ -173,12 +189,6 @@ public class EditTrailActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             ServerComms.SendSingleTrailToServer sendTrailsToServer = new ServerComms.SendSingleTrailToServer();
-
-                            //TODO: Finish this!
-                            //MICHAEL
-
-
-
 
                             sendTrailsToServer.execute(editedTrail);
                             Log.d("editedTrail", editedTrail.toString());
@@ -199,15 +209,11 @@ public class EditTrailActivity extends AppCompatActivity {
 
         List<Integer> idList = new ArrayList<>();
 
-
-//        Bundle receiveBundle = this.getIntent().getExtras();
-//        String str = receiveBundle.getString("string");
         String[] stringArray = stringTrail.split("ServerID");
-//        String idString = stringArray[1].split(",")[0].split("_")[1];
-        String idString;
 
         //search through array list and compare serverIDs
         for(int i = 1; i < stringArray.length; i++){
+            //have to sort the last item in list differently
             if(stringArray.length-1 == i)
                 idList.add(Integer.parseInt((stringArray[i].split(":")[1].split("_")[1].split("]")[0])));
             else{
@@ -226,7 +232,7 @@ public class EditTrailActivity extends AppCompatActivity {
             }
         }
 
-        //if array is empty, init to 1
+        //if array is empty, init to 0
         if(idList.size() == 0){
             serverID = Constants.OWNER_ID + "_" + "0";
         }

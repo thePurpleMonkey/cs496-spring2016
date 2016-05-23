@@ -78,6 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:id="@+id/edit_rating"
+        android:stepSize="1"
         android:numStars="5" />
 
     <Space

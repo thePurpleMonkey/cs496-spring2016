@@ -29,11 +29,14 @@ import com.best_slopes.bestslopes.ServerComms;
 import com.best_slopes.bestslopes.http.HttpPost;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
     private Trail trail;
+    private String stringTrail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class EditTrailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_trail);
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
+        stringTrail = b.getString("string");
+
         if (id != -1) { // John: if an existing trail will be edited
             this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
             setTitle(trail.getName());
@@ -146,6 +151,7 @@ public class EditTrailActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 final Trail editedTrail = redTrailFromScreen();
+                final String serverID = calcServerID();
 
                 if (!this.trail.isNew()) {
                     Log.d("Database", "Starting update AsyncTask...");
@@ -157,6 +163,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 }
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
+                    editedTrail.setServerID(serverID);
 
                     //Save new trail to DB
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
@@ -166,9 +173,13 @@ public class EditTrailActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             ServerComms.SendSingleTrailToServer sendTrailsToServer = new ServerComms.SendSingleTrailToServer();
-//                            MainActivity.
+
+                            //TODO: Finish this!
                             //MICHAEL
-                            editedTrail.setServerID("10_100");
+
+
+
+
                             sendTrailsToServer.execute(editedTrail);
                             Log.d("editedTrail", editedTrail.toString());
                         }
@@ -179,6 +190,52 @@ public class EditTrailActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private String calcServerID() {
+        String serverID;
+        String[] temp_id;
+        int id_int = 0;     //defaults to 0
+
+        List<Integer> idList = new ArrayList<>();
+
+
+//        Bundle receiveBundle = this.getIntent().getExtras();
+//        String str = receiveBundle.getString("string");
+        String[] stringArray = stringTrail.split("ServerID");
+//        String idString = stringArray[1].split(",")[0].split("_")[1];
+        String idString;
+
+        //search through array list and compare serverIDs
+        for(int i = 1; i < stringArray.length; i++){
+            if(stringArray.length-1 == i)
+                idList.add(Integer.parseInt((stringArray[i].split(":")[1].split("_")[1].split("]")[0])));
+            else{
+                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split("_")[1])));
+
+            }
+        }
+
+        Collections.sort(idList);       //sort idList
+
+        //set id_int by comparing against every value in DB
+        for(int i = 0; i < idList.size(); i++){
+            //checks if id_int is in the list
+            if(id_int == idList.get(i)){
+                id_int++;       //id_int val was already in DB so increment
+            }
+        }
+
+        //if array is empty, init to 1
+        if(idList.size() == 0){
+            serverID = Constants.OWNER_ID + "_" + "0";
+        }
+        else{
+            serverID = Constants.OWNER_ID + "_" + Integer.toString(id_int);
+        }
+
+        return serverID;
+
     }
 
 

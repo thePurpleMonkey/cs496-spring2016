@@ -185,7 +185,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add_run:
                 Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
                 editTrailIntent.putExtra("Trail_ID", -1); // John: -1 means trail will be created, not edited
+
+                editTrailIntent.putExtra("string", trails.toString());
                 startActivity(editTrailIntent);
+//                finish();
                 return true;
 
             case R.id.menu_about:

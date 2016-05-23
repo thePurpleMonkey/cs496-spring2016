@@ -78,14 +78,7 @@ public class ServerComms {
 
             Trail trail = param[0];
 
-            String id_concatenated = (Long.toString(Constants.OWNER_ID) + "_" + Integer.toString(trail.getId()));
-
-            //if this is a new trail we set the ID here.
-            if(trail.getServerID() == ""){
-                trail.setServerID(id_concatenated);
-            }
-
-            sendTrails.addFormField("id", id_concatenated);
+            sendTrails.addFormField("id", trail.getServerID());
             sendTrails.addFormField("owner_id", Long.toString(Constants.OWNER_ID));        //TODO: don't hardcode ownerID
             sendTrails.addFormField("title", trail.getName());
             sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));
@@ -127,10 +120,8 @@ public class ServerComms {
 
             Trail trail = param[0];
 
-            String id_concatenated = (Long.toString(Constants.OWNER_ID) + "_" + Integer.toString(trail.getId()));
-
             //only need to send ID and delete_trail parameter!
-            sendTrails.addFormField("id", id_concatenated);        //todo, change this to use ownerID
+            sendTrails.addFormField("id", trail.getServerID());        //todo, change this to use ownerID
             sendTrails.addFormField("owner_id", Long.toString(Constants.OWNER_ID));        //TODO: don't hardcode ownerID
             sendTrails.addFormField("title", trail.getName());
             sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));

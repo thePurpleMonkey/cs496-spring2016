@@ -78,7 +78,13 @@ public class CustomAdapter extends AdapterForClickables {
     @Override
     public void onPositiveButtonOnLongClickToDelete(final Context context, AdapterForClickables adapter, int position) {
         new DatabaseContract.DeleteTrailTask(context).execute(new Long(trails.get(position).getId()));
+
+        //Delete trail from server!
+        ServerComms.DeleteTrailFromServer deleteServer = new ServerComms.DeleteTrailFromServer();
+        deleteServer.execute(trails.get(position));
+
         trails.remove(position);
+
         notifyDataSetChanged();
     }
 

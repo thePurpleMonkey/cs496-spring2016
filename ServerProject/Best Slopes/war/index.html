@@ -40,7 +40,7 @@ body {
 				rating : $("#rating").val(),
 				difficulty : $("#difficulty").val(),
 				comment : $("#comment").val(),
-				active : $("#active:checked").length
+				delete_trail : $("#delete_trail").length
 			};
 			$.ajax({
 				url : "/track_trails",
@@ -91,9 +91,9 @@ body {
 			<input type="text" id="comment">
 		</div>
 		
-		<div class="label">Active?</div>
+		<div class="label">Delete:</div>
 		<div>
-			<input type="checkbox" id="active" checked>
+			<input type="text" id="delete_trail">
 		</div>
 		
 		<div class="label">

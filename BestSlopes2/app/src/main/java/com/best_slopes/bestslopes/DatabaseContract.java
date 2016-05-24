@@ -133,7 +133,7 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
-            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerId());
+            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerID());
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(
@@ -141,7 +141,12 @@ public final class DatabaseContract {
                     "null",
                     values);
 
+//            values.put(TrailContract.COLUMN_NAME_SERVER_ID, (Long.toString(Constants.OWNER_ID) + "_" + Integer.toString((int)newRowId)));
+
+
             trail.setId((int) newRowId);
+
+//            trail.setServerID((Long.toString(Constants.OWNER_ID) + "_" + Integer.toString((int)newRowId)));
 
             // Save image paths to database
             for (String path : trail.getImagePaths()) {
@@ -226,7 +231,7 @@ public final class DatabaseContract {
                 trail.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 trail.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 trail.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))));
-                trail.setServerId(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_SERVER_ID)));
+                trail.setServerID(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_SERVER_ID)));
 
                 Cursor commentCursor = db.query(
                         TrailContract.COMMENTS_TABLE_NAME,
@@ -287,9 +292,9 @@ public final class DatabaseContract {
 
 
         static public Trail getTrailByID(AppCompatActivity mContext, int id) {
-            String ID = "" + id; // Short Cast
+            String id_string = "" + id; // Short Cast
             DatabaseContract.LoadTrailTask task = new DatabaseContract.LoadTrailTask(mContext);
-            task.execute(ID);
+            task.execute(id_string);
             try {
                 //TODO: add loading screen while this takes a long time!
                 task.get();
@@ -344,17 +349,23 @@ public final class DatabaseContract {
                 result.setName(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_TITLE)));
                 result.setDifficulty(c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_DIFFICULTY)));
                 result.setRating((float) (c.getInt(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_RATING))));
-                result.setServerId(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_SERVER_ID)));
+                result.setServerID(c.getString(c.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_SERVER_ID)));
 
-                Cursor cc = db.query(
-                        TrailContract.IMAGE_TABLE_NAME,
-                        new String[] {},
+                Cursor commentCursor = db.query(
+                        TrailContract.COMMENTS_TABLE_NAME,
+                        new String[] {TrailContract.COLUMN_NAME_COMMENT},
                         TrailContract.COLUMN_NAME_TRAIL_ID + " = ?",
-                        new String[] {String.valueOf(result.getId())},
+                        new String[] { String.valueOf(result.getId()) },
                         null,
                         null,
                         null
                 );
+
+                commentCursor.moveToFirst();
+                while (!commentCursor.isAfterLast()) {
+                    result.addComment(commentCursor.getString(commentCursor.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_COMMENT)));
+                    commentCursor.moveToNext();
+                }
 
                 Cursor imageCursor = db.query(
                         TrailContract.IMAGE_TABLE_NAME,
@@ -371,12 +382,6 @@ public final class DatabaseContract {
                     result.addImagePath(imageCursor.getString(imageCursor.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
                     imageCursor.moveToNext();
                 }
-
-//                cc.moveToFirst();
-//                while (!cc.isAfterLast()) {
-//                    result.addImagePath(cc.getString(cc.getColumnIndexOrThrow(TrailContract.COLUMN_NAME_FILENAME)));
-//                    cc.moveToNext();
-//                }
 
                 Log.d("Database", "Loaded trail: " + result);
 
@@ -493,7 +498,7 @@ public final class DatabaseContract {
             values.put(TrailContract.COLUMN_NAME_TITLE, trail.getName());
             values.put(TrailContract.COLUMN_NAME_RATING, trail.getRating());
             values.put(TrailContract.COLUMN_NAME_DIFFICULTY, trail.getDifficulty());
-            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerId());
+            values.put(TrailContract.COLUMN_NAME_SERVER_ID, trail.getServerID());
 
             // Which row to update, based on the ID
             String selection = TrailContract._ID + " = ?";
@@ -578,7 +583,7 @@ public final class DatabaseContract {
                 values.put(TrailContract.COLUMN_NAME_TITLE, cur_trail.getName());
                 values.put(TrailContract.COLUMN_NAME_DIFFICULTY, cur_trail.getDifficulty());
                 values.put(TrailContract.COLUMN_NAME_RATING, cur_trail.getRating());
-                values.put(TrailContract.COLUMN_NAME_SERVER_ID, cur_trail.getServerId());
+                values.put(TrailContract.COLUMN_NAME_SERVER_ID, cur_trail.getServerID());
 
                 // Insert the new row, returning the primary key value of the new row
                 long newRowId = db.insert(
@@ -604,7 +609,7 @@ public final class DatabaseContract {
                 for (String comment : cur_trail.getComments()) {
                     values = new ContentValues();
                     values.put(TrailContract.COLUMN_NAME_COMMENT, comment);
-                    values.put(TrailContract.COLUMN_NAME_TRAIL_ID, cur_trail.getId());
+                    values.put(TrailContract.COLUMN_NAME_TRAIL_ID, trails[0].getId());
 
                     db.insert(
                             TrailContract.COMMENTS_TABLE_NAME,

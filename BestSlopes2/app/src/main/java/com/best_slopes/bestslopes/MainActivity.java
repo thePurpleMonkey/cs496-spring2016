@@ -36,18 +36,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import com.best_slopes.bestslopes.ServerComms;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
+//    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
 
     // User credentials for syncing
     private static String username = null;
     private static long session = -1;
 
-    //initialize sortOrderIndex
+    //initialize sortOrderIndex using Box class
     private Box<Integer> sortOrderIndex = new Box<>(SORT_DIFFICULTY);
 
     private static final int SORT_DIFFICULTY =    0;
@@ -66,11 +67,8 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
 
         setupSwipeLayout();
-
-
-//        LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
-//        loadTrails.execute();
         loadListViewMain();
+
     }
 
     @Override
@@ -82,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();       //must be called first
         loadListViewMain();
+
     }
 
     private void setupSwipeLayout(){
@@ -96,18 +95,15 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                LoadTrailsFromServer loadTrails = new LoadTrailsFromServer();
+                ServerComms.LoadTrailsFromServer loadTrails = new ServerComms.LoadTrailsFromServer();
                 try{
                     //Get trails from server!
                     final ArrayList<Trail> temp_trail = loadTrails.execute().get();
 
-//                    EditTrailActivity.SendAllTrailsToServer sendTrailsToServer = new EditTrailActivity.SendAllTrailsToServer();
-//                    sendTrailsToServer.execute(temp_trail);
-
                     //Delete trails from phone's db
                     DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
                     db.RefreshDatabaseTask(getApplicationContext());
-                    db.execute(temp_trail);
+                    db.execute(temp_trail);     //execute refresh, passing temp_trail
 
                 } catch (Exception e){
                     Log.e("Async server load error", e.toString());
@@ -118,9 +114,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         loadListViewMain();     //reload list on main
+
                         swipeLayout.setRefreshing(false);
                     }
-                }, 5000);
+                }, 2000);
             }
         });
 
@@ -174,57 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class LoadTrailsFromServer extends AsyncTask<Void, Void, ArrayList<Trail>> {
-
-        protected ArrayList<Trail> doInBackground(Void... voids) {
-            ArrayList<Trail> trails = new ArrayList<Trail>();
-
-            try {
-                HttpGet getTrails = new HttpGet(Constants.TRACKER_URL, Constants.CHARSET);
-                getTrails.addFormField("owner_id", Integer.toString(Constants.OWNER_ID));
-                String valResult = getTrails.finish();
-                JSONArray jsonArray = new JSONArray(valResult);
-
-                String get;
-                JSONObject jsonObject;
-
-                for(int i = 0; i< jsonArray.length(); i++){
-                    Trail temp_trail = new Trail();
-                    jsonObject = jsonArray.getJSONObject(i);        //TODO: parse the id, maybe don't have to.
-
-                    temp_trail.setName(jsonObject.getString("title"));
-                    temp_trail.setDifficulty(Integer.parseInt(jsonObject.getString("difficulty")));
-                    temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
-
-                    //Parse comments from server by commas
-                    String[] commentArray = ((jsonObject.getString("comment").split(",")));
-                    ArrayList<String> commentList = new ArrayList<>();
-
-                    //iterate over all strings after split
-                    for(String s : commentArray) {
-                        if (!s.equals(Constants.NULL_STR))     //null when there is no comment
-                            commentList.add(s);     //add to temp commentList to set later
-                    }
-                    temp_trail.setComment(commentList);     //set comments from server to phone.
-
-                    trails.add(temp_trail);     //adds generated trial to ArrayList
-                }
-
-            } catch(Exception e){
-                Log.e("Async get trails exc.", e.toString());
-            }
-
-            return trails;
-        }
-
-        protected Trail onPostExecute(Void... voids){
-
-            return null;
-        }
-    }
-
-
-        @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_file, menu);
@@ -238,22 +185,33 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add_run:
                 Intent editTrailIntent = new Intent(this, EditTrailActivity.class);
                 editTrailIntent.putExtra("Trail_ID", -1); // John: -1 means trail will be created, not edited
+
+                editTrailIntent.putExtra("trail_string", trails.toString());
                 startActivity(editTrailIntent);
+                return true;
+
+            case R.id.menu_backup_trails:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ServerComms.SendAllTrailsToServer sendAll = new ServerComms.SendAllTrailsToServer();
+                        sendAll.execute(trails);
+
+                        //Send toast
+                        Toast toast = Toast.makeText(   getApplicationContext(),
+                                                        "Sending trails to server...",
+                                                        Toast.LENGTH_LONG);
+                        toast.show();
+
+                    }
+                });
+
                 return true;
 
             case R.id.menu_about:
                 Intent aboutIntent = new Intent(this, About.class);
                 startActivity(aboutIntent);
                 return true;
-
-//            case R.id.menu_deleteDB:
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                loadListViewMain();
-//                return true;
 
             case R.id.menu_debug:
                 startActivity(new Intent(this, TestDatabase.class));
@@ -316,5 +274,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static Long getSession() {
         return session;
+    }
+
+    public ArrayList<Trail> getTrails(){
+        return trails;
     }
 }

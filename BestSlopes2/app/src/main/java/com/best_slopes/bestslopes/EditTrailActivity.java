@@ -24,15 +24,19 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import com.best_slopes.bestslopes.ServerComms;
 
 import com.best_slopes.bestslopes.http.HttpPost;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EditTrailActivity extends AppCompatActivity {
     private static final int[] toggles = {R.id.toggle_easy, R.id.toggle_medium, R.id.toggle_difficult,
             R.id.toggle_extremely_difficult};
     private Trail trail;
+    private String stringTrail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,8 @@ public class EditTrailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_trail);
         Bundle b = getIntent().getExtras();
         int id = b.getInt("Trail_ID");
+        stringTrail = b.getString("trail_string");
+
         if (id != -1) { // John: if an existing trail will be edited
             this.trail = DatabaseContract.LoadTrailTask.getTrailByID(this, id);
             setTitle(trail.getName());
@@ -146,26 +152,44 @@ public class EditTrailActivity extends AppCompatActivity {
             case R.id.action_save:
                 final Trail editedTrail = redTrailFromScreen();
 
-                //TODO: add this to DB contract to know the trail id
-//                SendTrailToServer sendTrailsToServer = new SendTrailToServer();
-//                sendTrailsToServer.execute(editedTrail);
-
                 if (!this.trail.isNew()) {
                     Log.d("Database", "Starting update AsyncTask...");
                     editedTrail.setId(this.trail.getId());
+                    editedTrail.setServerID(this.trail.getServerID());
+
+                    //Sends trail to server
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ServerComms.SendSingleTrailToServer sendToServer = new ServerComms.SendSingleTrailToServer();
+
+                            sendToServer.execute(editedTrail);
+                            Log.d("editedTrail", editedTrail.toString());
+                        }
+                    });
+
                     new DatabaseContract.UpdateTrailTask(this).execute(editedTrail);
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("Trail_ID", trail.getId());
+
+
                     setResult(RESULT_OK,returnIntent);
                 }
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
-                    //editedTrail.setOld();
+
+                    //Setting serverID for editedTrail!
+                    editedTrail.setServerID(calcServerID());
+
+                    //Save new trail to DB
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
+
+                    //Sends trail to server
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            SendSingleTrailToServer sendTrailsToServer = new SendSingleTrailToServer();
+                            ServerComms.SendSingleTrailToServer sendTrailsToServer = new ServerComms.SendSingleTrailToServer();
+
                             sendTrailsToServer.execute(editedTrail);
                             Log.d("editedTrail", editedTrail.toString());
                         }
@@ -178,107 +202,48 @@ public class EditTrailActivity extends AppCompatActivity {
         }
     }
 
-    public static class SendSingleTrailToServer extends AsyncTask<Trail, Void, Void> {
+    private String calcServerID() {
+        String serverID;
+        String[] temp_id;
+        int id_int = 0;     //defaults to 0
 
-        protected Void doInBackground(Trail... param) {
-            HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
+        List<Integer> idList = new ArrayList<>();
 
-            if(param.length < 0){
-                Log.e("Send Single To Server", "array_trail was empty, couldn't send");
-                return null;
+        String[] stringArray = stringTrail.split("ServerID");
+
+        //search through array list and compare serverIDs
+        for(int i = 1; i < stringArray.length; i++){
+            //have to sort the last item in list differently
+            if(stringArray.length-1 == i)
+                idList.add(Integer.parseInt((stringArray[i].split(":")[1].split("_")[1].split("]")[0])));
+            else{
+                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split("_")[1])));
+
             }
-
-            Trail trail = param[0];
-
-            String id_concatenated = (Long.toString(Constants.OWNER_ID) + "_" + Integer.toString(trail.getId()));
-
-            sendTrails.addFormField("id", id_concatenated);        //todo, change this to use ownerID
-            sendTrails.addFormField("owner_id", Long.toString(Constants.OWNER_ID));        //TODO: don't hardcode ownerID
-            sendTrails.addFormField("title", trail.getName());
-            sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));
-            sendTrails.addFormField("difficulty", Integer.toString((int) trail.getDifficulty()));
-
-            String[] comments;
-            StringBuilder everyComment = new StringBuilder();
-
-            comments = trail.getComments();
-
-            for (String s : comments)
-                everyComment.append(s + ","); //comma separate comments to store on server
-
-            if (comments != null && comments.length > 0)
-                sendTrails.addFormField("comment", everyComment.toString());
-            else
-                sendTrails.addFormField("comment", Constants.NULL_STR);     //must send something to server for comment
-
-            try {
-                String valResult = sendTrails.finish();     //send to server
-                Log.d("HttpPost result", valResult);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
         }
 
-        protected Void onPostExecute(Void... voids){
+        Collections.sort(idList);       //sort idList
 
-            return null;
+        //set id_int by comparing against every value in DB
+        for(int i = 0; i < idList.size(); i++){
+            //checks if id_int is in the list
+            if(id_int == idList.get(i)){
+                id_int++;       //id_int val was already in DB so increment
+            }
         }
+
+        //if array is empty, init to 0
+        if(idList.size() == 0){
+            serverID = Constants.OWNER_ID + "_" + "0";
+        }
+        else{
+            serverID = Constants.OWNER_ID + "_" + Integer.toString(id_int);
+        }
+
+        return serverID;
+
     }
 
-    public static class SendAllTrailsToServer extends AsyncTask<ArrayList<Trail>, Void, Void> {
-
-        protected Void doInBackground(ArrayList<Trail>... array_param) {
-            HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
-
-            Long owner_id = 10L;
-
-            if(array_param.length < 0){
-                Log.e("Send All To Server", "array_trail was empty, couldn't send");
-                return null;
-            }
-
-            for(int i = 0; i< array_param[0].size(); i++) {
-                Trail trail = array_param[0].get(i);
-
-                String id_concatenated = (Long.toString(owner_id) + "_" + Integer.toString(trail.getId()));
-
-                sendTrails.addFormField("id", id_concatenated);        //todo, change this to use ownerID
-                sendTrails.addFormField("owner_id", Long.toString(owner_id));        //TODO: don't hardcode ownerID
-                sendTrails.addFormField("title", trail.getName());
-                sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));
-                sendTrails.addFormField("difficulty", Integer.toString((int) trail.getDifficulty()));
-
-                String[] comments;
-                StringBuilder everyComment = new StringBuilder();
-
-                comments = trail.getComments();
-
-                for (String s : comments)
-                    everyComment.append(s + ","); //comma separate comments to store on server
-
-                if (comments != null && comments.length > 0)
-                    sendTrails.addFormField("comment", everyComment.toString());
-                else
-                    sendTrails.addFormField("comment", Constants.NULL_STR);     //must send something to server for comment
-
-                try {
-                    String valResult = sendTrails.finish();     //send to server
-                    Log.d("HttpPost result", valResult);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return null;
-        }
-
-        protected Void onPostExecute(Void... voids){
-
-            return null;
-        }
-    }
 
     private Trail redTrailFromScreen() {
         EditText trailName = (EditText) findViewById(R.id.edit_trail_name);

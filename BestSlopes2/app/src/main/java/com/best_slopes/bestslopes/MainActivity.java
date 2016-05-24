@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
 
+    // User credentials for syncing
+    private static String username = null;
+    private static long session = -1;
+
     //initialize sortOrderIndex
     private Box<Integer> sortOrderIndex = new Box<>(SORT_DIFFICULTY);
 
@@ -256,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_login:
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivityForResult(new Intent(this, LoginActivity.class), 7);
                 return true;
 
             case R.id.menu_sort_by:
@@ -298,4 +302,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 7 && resultCode == RESULT_OK && data != null) {
+            session = data.getLongExtra(LoginActivity.sessionResult, -1L);
+            username = data.getStringExtra(LoginActivity.emailResult);
+        }
+    }
+
+    public static String getUsername() {
+        return username;
+    }
+
+    public static Long getSession() {
+        return session;
+    }
 }

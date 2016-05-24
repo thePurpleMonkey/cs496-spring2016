@@ -18,6 +18,16 @@ public class TestDatabase extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_database);
 
+        LinearLayout myLayout = (LinearLayout) findViewById(R.id.test_database_layout);
+        TextView text = new TextView((getApplicationContext()));
+        text.setTextColor(Color.BLUE);
+        text.setText("Username/Session = " + MainActivity.getUsername() + "/" + MainActivity.getSession());
+
+        text.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        myLayout.addView(text);
+
         DatabaseContract.LoadTask allTrailsTask = new DatabaseContract.LoadTask(this);
         allTrailsTask.execute(0);
         try {
@@ -33,10 +43,9 @@ public class TestDatabase extends Activity {
 
         if(trails.length < 1){
             Context context = getApplicationContext();
-            CharSequence text = "Database empty, add a trail first";
             int duration = Toast.LENGTH_LONG;
 
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(context, "Database empty, add a trail first", duration);
             toast.show();
             return;
         }
@@ -61,9 +70,7 @@ public class TestDatabase extends Activity {
         trails =  allTrailsTask.getResults();
 
         for (Trail trail : trails) {
-            LinearLayout myLayout = (LinearLayout) findViewById(R.id.test_database_layout);
-
-            TextView text = new TextView(getApplicationContext());
+            text = new TextView(getApplicationContext());
             text.setTextColor(Color.RED);
             text.setText(trail.toString());
             text.setLayoutParams(new LinearLayout.LayoutParams(

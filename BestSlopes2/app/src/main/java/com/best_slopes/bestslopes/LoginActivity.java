@@ -3,6 +3,7 @@ package com.best_slopes.bestslopes;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.best_slopes.bestslopes.http.HttpPost;
 
@@ -43,6 +45,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+    public static final String emailResult = "EXTRA_EMAIL";
+    public static final String sessionResult = "EXTRA_SESSION";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -296,6 +300,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         private final String mEmail;
         private final String mPassword;
+        private Long session;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -315,7 +320,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
                 JSONObject reader = new JSONObject(result);
                 Log.d("Login", "reader.has('error'): " + reader.has("error"));
-                if (reader.has("error")) {
+                if (reader.has("session")) {
+                    session = Long.parseLong(reader.getString("session"));
+                    return true;
+                } else {
                     return false;
                 }
 
@@ -324,7 +332,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
 
             // TODO: register the new account here.
-            return true;
+            //return true;
         }
 
         @Override
@@ -333,6 +341,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if (success) {
+                Intent output = new Intent();
+                output.putExtra(emailResult, mEmail);
+                output.putExtra(sessionResult, session);
+                setResult(RESULT_OK, output);
+
+                Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

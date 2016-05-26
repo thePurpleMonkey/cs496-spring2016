@@ -119,7 +119,7 @@ public class CommentAdapter extends AdapterForClickables {
     public void onClickListener(View v, int c) { }
 
     @Override
-    public boolean onPositiveButtonOnLongClick(final Context context, final AdapterForClickables adapter, final int position) { return false; }
+    public boolean onLongClickListener(final Context context, final AdapterForClickables adapter, final int position) { return false; }
 
     @Override
     public void onPositiveButtonOnLongClickToDelete(Context context, AdapterForClickables adapter, int position) {

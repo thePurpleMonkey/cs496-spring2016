@@ -21,10 +21,8 @@ public abstract class AdapterForClickables extends BaseAdapter {
     abstract public void onPositiveButtonOnLongClickToDelete(final Context context, final AdapterForClickables adapter, final int position);
     abstract public void onEditorActionListener(TextView v, int actionId, KeyEvent event);
 
-//    private String onLongClickMessageToDelete = "Are you sure you want to delete this";
-//    private String onLongClickTitleToDelete = "Delete?";
-    private String onLongClickMessageToDelete = "Don't you want to vote for me?";
-    private String onLongClickTitleToDelete = "VOTE?";
+    private String onLongClickMessageToDelete = "Are you sure you want to delete this?";
+    private String onLongClickTitleToDelete = "Delete?";
 
     public View.OnClickListener getOnClickListener(final int currentPos) {
         return new View.OnClickListener() {

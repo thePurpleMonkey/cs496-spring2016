@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -34,7 +34,7 @@ public class ViewTrailActivity extends AppCompatActivity {
         setMyActionBar();
 
         //Peter: Makes keyboard not pop up on screen! #necessary :)
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     private void setMyActionBar() {
@@ -54,19 +54,13 @@ public class ViewTrailActivity extends AppCompatActivity {
                 Log.e("Null catch", "Actionbar = Null");
 
            ( (RatingBar) findViewById(R.id.trailRatingBar)).setRating(trail.getRating());
-            GridView gridView = (GridView) findViewById(R.id.imageGridView);
-            ImageAdapter imageAdapter = new ImageAdapter(this, trail);
-            gridView.setAdapter(imageAdapter);
-
-
-            /*for (int i = 0 ; i < image_counter ; ++i) { //loading all images taken into ImageAdapter (GridView)
-                imageAdapter.getDebuggingImages(image_path[i]);
-            }
-            */
 
             ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
             final CommentAdapter commentAdapter = new CommentAdapter(this, trail, commentsView);
             commentsView.setAdapter(commentAdapter);
+
+            EditText editText = (EditText) findViewById(R.id.commentField);
+            editText.setOnEditorActionListener(commentAdapter.getOnEditorActionListener());
         }
     }
 

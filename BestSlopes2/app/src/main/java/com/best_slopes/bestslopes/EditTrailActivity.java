@@ -3,13 +3,10 @@ package com.best_slopes.bestslopes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,15 +15,11 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import com.best_slopes.bestslopes.ServerComms;
-
-import com.best_slopes.bestslopes.http.HttpPost;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,19 +73,13 @@ public class EditTrailActivity extends AppCompatActivity {
             }
         });
 
-        GridView gv = (GridView) findViewById(R.id.imageGridView);
-
-        gv.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
         //((GridView) findViewById(R.id.imageGridView)).setAdapter(new ImageAdapter(this, trail));
         ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
-        commentsView.setAdapter(new CommentAdapter(this, trail, commentsView));
+        CommentAdapter commentAdapter = new CommentAdapter(this, trail, commentsView);
+        commentsView.setAdapter(commentAdapter);
+
+        EditText editText = (EditText) findViewById(R.id.commentField);
+        editText.setOnEditorActionListener(commentAdapter.getOnEditorActionListener());
         commentsView.setSelection(trail.getComments().length-1);
 
         //If new trail sets up layout and doesn't fill anything out

@@ -10,14 +10,6 @@
     android:orientation="vertical"
     tools:context="com.best_slopes.bestslopes.ViewTrailActivity">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +26,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:id="@+id/commentsLayout"
         android:background="@drawable/grid_view_background">
@@ -50,47 +42,31 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/commentsListSpace1" />
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dip"
+            android:layout_weight="1"
             android:id="@+id/commentsListView"
+            android:layout_gravity="center_horizontal"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="false" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
             android:layout_gravity="center_horizontal" />
 
-    </LinearLayout>
-</LinearLayout>
-    </ScrollView>
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="15dp"
-        android:layout_gravity="center_horizontal" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/grid_view_background"
-        android:textColor="@android:color/transparent" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/images"
-            android:textColor="@android:color/black"
-            android:id="@+id/imagesTitleText" />
-
-        <GridView
-            android:id="@+id/imageGridView"
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:numColumns="2"
-            android:verticalSpacing="5dp"
-            android:horizontalSpacing="5dp"
-            android:stretchMode="columnWidth"
-            android:gravity="center" />
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:id="@+id/commentField"
+            android:layout_gravity="center_horizontal"
+            android:hint="@string/add_comment"
+            android:background="@drawable/edit_text_background" />
     </LinearLayout>
 
 </LinearLayout>

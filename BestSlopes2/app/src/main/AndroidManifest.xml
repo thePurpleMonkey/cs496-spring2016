@@ -27,7 +27,7 @@
             android:name=".ViewTrailActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity android:name=".EditTrailActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity android:name=".TestDatabase" />
 
         <activity android:name="About"

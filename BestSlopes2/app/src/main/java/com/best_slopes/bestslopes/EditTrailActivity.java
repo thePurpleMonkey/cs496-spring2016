@@ -2,9 +2,9 @@ package com.best_slopes.bestslopes;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -75,11 +76,17 @@ public class EditTrailActivity extends AppCompatActivity {
 
         //((GridView) findViewById(R.id.imageGridView)).setAdapter(new ImageAdapter(this, trail));
         ListView commentsView = ((ListView) findViewById(R.id.commentsListView));
-        CommentAdapter commentAdapter = new CommentAdapter(this, trail, commentsView);
+        final CommentAdapter commentAdapter = new CommentAdapter(this, trail, commentsView);
         commentsView.setAdapter(commentAdapter);
 
-        EditText editText = (EditText) findViewById(R.id.commentField);
+        final EditText editText = (EditText) findViewById(R.id.commentField);
         editText.setOnEditorActionListener(commentAdapter.getOnEditorActionListener());
+        ImageButton addCommentButton =(ImageButton) findViewById(R.id.sendButton);
+        addCommentButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                commentAdapter.onEditorActionListener(editText, 0, null);
+            }
+        });
         commentsView.setSelection(trail.getComments().length-1);
 
         //If new trail sets up layout and doesn't fill anything out
@@ -97,18 +104,16 @@ public class EditTrailActivity extends AppCompatActivity {
         }
     }
 
-    private void setOnEditorActionListener(TextView editText) {
+    private void setOnEditorActionListener(final TextView editText) {
         editText.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                                actionId == EditorInfo.IME_ACTION_DONE ||
-                                event.getAction() == KeyEvent.ACTION_DOWN &&
-                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                            if (!event.isShiftPressed()) {
-                                return true;
-                            }
+                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||actionId == EditorInfo.IME_ACTION_DONE) {
+                            editText.clearFocus();
+                            InputMethodManager imm = (InputMethodManager) EditTrailActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            return true;
                         }
                         return false;
                     }
@@ -137,6 +142,15 @@ public class EditTrailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
+                EditText trailName = (EditText) findViewById(R.id.edit_trail_name);
+                if(trailName.getText().toString().equals("")) {
+                    AlertDialog.Builder adb=new AlertDialog.Builder(this);
+                    adb.setTitle("Ups...");
+                    adb.setMessage("Trail name should be entered!");
+                    adb.setPositiveButton("Ok", null);
+                    adb.show();
+                    return true;
+                }
                 final Trail editedTrail = redTrailFromScreen();
 
                 if (!this.trail.isNew()) {
@@ -279,26 +293,26 @@ public class EditTrailActivity extends AppCompatActivity {
         }
         return trail;
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        int actionId = event.getAction();
-        if (actionId == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (v instanceof EditText) {
-                Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    v.clearFocus();
-                    if (v.getId() == R.id.commentField) {
-                        ((EditText) v).setText("");
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
+//
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent event) {
+//        int actionId = event.getAction();
+//        if (actionId == MotionEvent.ACTION_DOWN) {
+//            View v = getCurrentFocus();
+//            if (v instanceof EditText) {
+//                Rect outRect = new Rect();
+//                v.getGlobalVisibleRect(outRect);
+//                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//                    v.clearFocus();
+//                    if (v.getId() == R.id.commentField) {
+//                        ((EditText) v).setText("");
+//                    }
+//                }
+//            }
+//        }
+//        return super.dispatchTouchEvent(event);
+//    }
 
 }

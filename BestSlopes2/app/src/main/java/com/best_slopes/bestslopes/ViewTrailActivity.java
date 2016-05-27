@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -59,8 +61,14 @@ public class ViewTrailActivity extends AppCompatActivity {
             final CommentAdapter commentAdapter = new CommentAdapter(this, trail, commentsView);
             commentsView.setAdapter(commentAdapter);
 
-            EditText editText = (EditText) findViewById(R.id.commentField);
+            final EditText editText = (EditText) findViewById(R.id.commentField);
             editText.setOnEditorActionListener(commentAdapter.getOnEditorActionListener());
+            ImageButton addCommentButton =(ImageButton) findViewById(R.id.sendButton);
+            addCommentButton.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+                    commentAdapter.onEditorActionListener(editText, 0, null);
+            }
+            });
         }
     }
 

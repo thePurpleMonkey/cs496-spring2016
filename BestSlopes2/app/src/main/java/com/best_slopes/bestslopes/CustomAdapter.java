@@ -50,10 +50,12 @@ public class CustomAdapter extends AdapterForClickables {
 
         /*Set ClickListener to arrow image */
         holder.img2.setOnClickListener(getOnClickListener(position));
+        /* OTHER THINGS HERE */
 
         /*Set ClickListener to row */
         rowView.setOnClickListener(getOnClickListener(position));
 
+        /*Set ClickOnLongListener to row */
         rowView.setOnLongClickListener(getOnLongClickListenerToDelete(context, CustomAdapter.this, position));
 
         return rowView;
@@ -68,10 +70,7 @@ public class CustomAdapter extends AdapterForClickables {
     }
 
     @Override
-    public boolean onPositiveButtonOnLongClick(
-            final Context context,
-            final AdapterForClickables adapter,
-            final int position) {
+    public boolean onLongClickListener(Context context, AdapterForClickables adapter, int position) {
         return false;
     }
 
@@ -84,7 +83,6 @@ public class CustomAdapter extends AdapterForClickables {
         deleteServer.execute(trails.get(position));
 
         trails.remove(position);
-
         notifyDataSetChanged();
     }
 

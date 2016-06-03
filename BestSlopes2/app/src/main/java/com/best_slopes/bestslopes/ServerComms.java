@@ -201,7 +201,7 @@ public class ServerComms {
 
         protected void onPostExecute(Boolean results) {
             if (results == true) {
-                mainActivity.
+//                mainActivity.load
                 Toast toast = Toast.makeText(mContext,
                         "Successfully deleted trail from server!",
                         Toast.LENGTH_LONG);

@@ -1,5 +1,6 @@
 package com.best_slopes.bestslopes;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.KeyEvent;
@@ -8,15 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class CustomAdapter extends AdapterForClickables {
     private ArrayList<Trail> trails;
+    Activity mainActivity;
     Context context;
     private static LayoutInflater inflater=null;
+
     public CustomAdapter(MainActivity mainActivity, ArrayList<Trail> trails) {
         context=mainActivity;
+        this.mainActivity = mainActivity;
         this.trails = trails;
         inflater = ( LayoutInflater )context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -79,8 +84,13 @@ public class CustomAdapter extends AdapterForClickables {
         new DatabaseContract.DeleteTrailTask(context).execute(new Long(trails.get(position).getId()));
 
         //Delete trail from server!
-        ServerComms.DeleteTrailFromServer deleteServer = new ServerComms.DeleteTrailFromServer();
+        ServerComms.DeleteTrailFromServer deleteServer = new ServerComms.DeleteTrailFromServer(context, mainActivity);
         deleteServer.execute(trails.get(position));
+        Toast toast = Toast.makeText(context,
+                "Deleting trail from server",
+                Toast.LENGTH_SHORT);
+        toast.show();
+
 
         trails.remove(position);
         notifyDataSetChanged();

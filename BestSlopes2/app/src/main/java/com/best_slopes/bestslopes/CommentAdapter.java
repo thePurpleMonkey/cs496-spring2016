@@ -54,7 +54,7 @@ public class CommentAdapter extends AdapterForClickables {
         }
         trail.addComment(newComment);
 
-        new ServerComms.SendSingleTrailToServer().execute(trail);       //send trail to server again
+        new ServerComms.SendSingleTrailToServer(context).execute(trail);       //send trail to server again
 
         notifyDataSetChanged();
         v.setText("");
@@ -90,7 +90,7 @@ public class CommentAdapter extends AdapterForClickables {
         trail.removeComment(position);
 
         new DatabaseContract.UpdateTrailTask(context).execute(trail);   //update DB
-        new ServerComms.SendSingleTrailToServer().execute(trail);       //send trail to server again
+        new ServerComms.SendSingleTrailToServer(context).execute(trail);       //send trail to server again
         notifyDataSetChanged();
     }
 }

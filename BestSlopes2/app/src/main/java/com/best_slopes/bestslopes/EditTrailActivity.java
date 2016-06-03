@@ -162,7 +162,7 @@ public class EditTrailActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ServerComms.SendSingleTrailToServer sendToServer = new ServerComms.SendSingleTrailToServer();
+                            ServerComms.SendSingleTrailToServer sendToServer = new ServerComms.SendSingleTrailToServer(getApplicationContext());
 
                             sendToServer.execute(editedTrail);
                             Log.d("editedTrail", editedTrail.toString());
@@ -189,7 +189,7 @@ public class EditTrailActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ServerComms.SendSingleTrailToServer sendTrailsToServer = new ServerComms.SendSingleTrailToServer();
+                            ServerComms.SendSingleTrailToServer sendTrailsToServer = new ServerComms.SendSingleTrailToServer(getApplicationContext());
 
                             sendTrailsToServer.execute(editedTrail);
                             Log.d("editedTrail", editedTrail.toString());
@@ -216,9 +216,9 @@ public class EditTrailActivity extends AppCompatActivity {
         for(int i = 1; i < stringArray.length; i++){
             //have to sort the last item in list differently
             if(stringArray.length-1 == i)
-                idList.add(Integer.parseInt((stringArray[i].split(":")[1].split("_")[1].split("]")[0])));
+                idList.add(Integer.parseInt((stringArray[i].split(":")[1].split(Constants.OWNER_ID_SEPARATOR)[1].split("]")[0])));
             else{
-                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split("_")[1])));
+                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split(Constants.OWNER_ID_SEPARATOR)[1])));
 
             }
         }
@@ -234,11 +234,17 @@ public class EditTrailActivity extends AppCompatActivity {
         }
 
         //if array is empty, init to 0
+//        if(idList.size() == 0){
+//            serverID = Constants.OWNER_ID + "_" + "0";
+//        }
+//        else{
+//            serverID = Constants.OWNER_ID + "_" + Integer.toString(id_int);
+//        }
         if(idList.size() == 0){
-            serverID = Constants.OWNER_ID + "_" + "0";
+            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + "0";
         }
         else{
-            serverID = Constants.OWNER_ID + "_" + Integer.toString(id_int);
+            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + Integer.toString(id_int);
         }
 
         return serverID;

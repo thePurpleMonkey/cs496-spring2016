@@ -11,4 +11,5 @@ public class Constants {
     public static int LARGE = 0;
     public static String NULL_STR = "NULL";
     public static int  OWNER_ID = 10;
+    public static String OWNER_ID_SEPARATOR = "___";
 }

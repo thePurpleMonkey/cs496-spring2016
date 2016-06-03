@@ -1,9 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_cloud_upload"
+        android:icon="@drawable/ic_cloud_upload_white_24dp"
+        android:title="Upload To Cloud"
+        app:showAsAction="always"  />
+
+    <item
         android:id="@+id/action_add_run"
         android:icon="@drawable/ic_add_white_48dp"
-        android:title="NA"
+        android:title="Add Trail"
         app:showAsAction="always"  />
 
 </menu>

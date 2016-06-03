@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 //    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
 
     // User credentials for syncing
-    private static String username = null;
+    private static String username = "peter@test.com";   //TODO: set init value to null, changed for testing.
     private static long session = -1;
 
     //initialize sortOrderIndex using Box class
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ServerComms.LoadTrailsFromServer loadTrails = new ServerComms.LoadTrailsFromServer();
+                ServerComms.LoadTrailsFromServer loadTrails = new ServerComms.LoadTrailsFromServer(getApplicationContext(), swipeLayout);
                 try{
                     //Get trails from server!
                     final ArrayList<Trail> temp_trail = loadTrails.execute().get();
@@ -190,17 +190,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(editTrailIntent);
                 return true;
 
-            case R.id.menu_backup_trails:
+            case R.id.action_cloud_upload:
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ServerComms.SendAllTrailsToServer sendAll = new ServerComms.SendAllTrailsToServer();
+                        ServerComms.SendAllTrailsToServer sendAll = new ServerComms.SendAllTrailsToServer(getApplicationContext());
                         sendAll.execute(trails);
 
                         //Send toast
                         Toast toast = Toast.makeText(   getApplicationContext(),
                                                         "Sending trails to server...",
-                                                        Toast.LENGTH_LONG);
+                                                        Toast.LENGTH_SHORT);
                         toast.show();
 
                     }

@@ -9,10 +9,10 @@
         <!--android:orderInCategory="100"-->
         <!--android:title="@string/menu_deleteDB" />-->
 
-    <item
-        android:id="@+id/menu_backup_trails"
-        android:orderInCategory="100"
-        android:title="@string/menu_backup_trails" />
+    <!--<item-->
+        <!--android:id="@+id/menu_backup_trails"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="@string/menu_backup_trails" />-->
 
     <item
         android:id="@+id/menu_sort_by"

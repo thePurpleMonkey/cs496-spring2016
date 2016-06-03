@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class ServerComms {
     public static class LoadTrailsFromServer extends AsyncTask<Void, Void, ArrayList<Trail>> {
 
+
         protected ArrayList<Trail> doInBackground(Void... voids) {
             ArrayList<Trail> trails = new ArrayList<Trail>();
 
@@ -41,7 +42,8 @@ public class ServerComms {
                     temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
 
                     //Parse comments from server by commas
-                    String[] commentArray = ((jsonObject.getString("comment").split(",")));
+                    //TODO: don't comma separate, and then don't allow user to enter that symbol into comment
+                    String[] commentArray = ((jsonObject.getString("comment").split(Constants.COMMENT_SEPERATOR)));
                     ArrayList<String> commentList = new ArrayList<>();
 
                     //iterate over all strings after split
@@ -91,7 +93,7 @@ public class ServerComms {
             comments = trail.getComments();
 
             for (String s : comments)
-                everyComment.append(s + ","); //comma separate comments to store on server
+                everyComment.append(s + Constants.COMMENT_SEPERATOR); //comma separate comments to store on server
 
             if (comments != null && comments.length > 0)
                 sendTrails.addFormField("comment", everyComment.toString());
@@ -129,7 +131,7 @@ public class ServerComms {
             sendTrails.addFormField("difficulty", Integer.toString((int) trail.getDifficulty()));
             sendTrails.addFormField("comment", Constants.NULL_STR);     //must send something to server for comment
 
-            sendTrails.addFormField("delete_trail","1");    //indicates delete trail
+            sendTrails.addFormField("delete_trail", "1");    //indicates delete trail
 
             try {
                 String valResult = sendTrails.finish();     //send to server
@@ -170,7 +172,7 @@ public class ServerComms {
                 comments = trail.getComments();
 
                 for (String s : comments)
-                    everyComment.append(s + ","); //comma separate comments to store on server
+                    everyComment.append(s + Constants.COMMENT_SEPERATOR); //comma separate comments to store on server
 
                 if (comments != null && comments.length > 0)
                     sendTrails.addFormField("comment", everyComment.toString());

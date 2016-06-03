@@ -17,6 +17,8 @@ import javax.jdo.Query;
 
 @SuppressWarnings("serial")
 public class TrackTrailsServlet extends HttpServlet {
+	static String ID_SEPERATOR = "___";
+	
 	/***** doPost *****/
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("application/json");
@@ -24,7 +26,7 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-			long owner_id;
+//			long owner_id;
 			Integer delete_trail;
 
 			try {
@@ -33,14 +35,15 @@ public class TrackTrailsServlet extends HttpServlet {
 				delete_trail = -1;
 			}
 
-			try {
-				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
-			} catch (NumberFormatException nfe) {
-				owner_id = -1L;
-			}
+//			try {
+//				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
+//			} catch (NumberFormatException nfe) {
+//				owner_id = -1L;
+//			}
 			
 			String 	id = req.getParameter("id"); 
-			String[] split_array = id.split("_");
+			String 	owner_id = req.getParameter("owner_id"); 
+			String[] split_array = id.split(ID_SEPERATOR);		//
 			String parsed_id = split_array[1];
 			
 //			Log.debug(parsed_id);
@@ -59,7 +62,7 @@ public class TrackTrailsServlet extends HttpServlet {
 				throw new IllegalArgumentException("Invalid trail id");
 			if (Integer.parseInt(parsed_id) < 0)
 				throw new IllegalArgumentException("Invalid trail id, currently negative");
-			if (owner_id < 0)
+			if (owner_id == null || owner_id.length() == 0)
 				throw new IllegalArgumentException("Invalid owner id");
 			if (rating < 0){
 				throw new IllegalArgumentException("Invalid rating value");
@@ -107,14 +110,14 @@ public class TrackTrailsServlet extends HttpServlet {
 		
 		try {
 //			long id = 	getLong(req, "id", -1); 			// for getting one item
-			long owner_id = getLong(req, "owner_id", -1L);	//for getting all trails from one owner
+			String owner_id = req.getParameter("owner_id");	//for getting all trails from one owner
 
 //			if (id > 0) {
 //				Trail trail = Trail.load(id, pm);
 //				out.write(formatAsJson(trail));
 //			} 
-			if (owner_id > 0){
-				List<Trail> trails = Trail.loadOwnerTrails(owner_id, pm);
+			if (owner_id != null){
+				List<Trail> trails = Trail.loadOwnersTrails(owner_id, pm);
 				streamAsJson(out, trails);
 			}
 			else {
@@ -128,20 +131,20 @@ public class TrackTrailsServlet extends HttpServlet {
 		}
 	}
 	
-	private long getLong(HttpServletRequest req, String key, long dflt) {
-		long rv;
-		try {
-			rv = Long.parseLong(req.getParameter(key) + "");
-		} catch (NumberFormatException nfe) {
-			rv = dflt;
-		}
-		return rv;
-	}
+//	private long getLong(HttpServletRequest req, String key, long dflt) {
+//		long rv;
+//		try {
+//			rv = Long.parseLong(req.getParameter(key) + "");
+//		} catch (NumberFormatException nfe) {
+//			rv = dflt;
+//		}
+//		return rv;
+//	}
 	
 	public static String formatAsJson(Trail trail) {
 		HashMap<String, String> obj = new HashMap<String, String>();
 		obj.put("id", trail.getId());
-		obj.put("owner_id", Long.toString(trail.getOwnerID()));
+		obj.put("owner_id", trail.getOwnerID());
 		obj.put("title", trail.getTitle());
 		obj.put("rating", Integer.toString(trail.getRating()));
 		obj.put("difficulty", Integer.toString(trail.getDifficulty()));

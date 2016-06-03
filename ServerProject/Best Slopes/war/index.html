@@ -40,7 +40,7 @@ body {
 				rating : $("#rating").val(),
 				difficulty : $("#difficulty").val(),
 				comment : $("#comment").val(),
-				delete_trail : $("#delete_trail").length
+				delete_trail : $("#delete_trail").val()
 			};
 			$.ajax({
 				url : "/track_trails",

@@ -16,7 +16,7 @@ public class Trail {
 	private String id;	
 
 	@Persistent 
-	private Long owner_id;
+	private String owner_id;
 	
 	@Persistent
 	private String title;
@@ -34,8 +34,8 @@ public class Trail {
 		return id != null ? id : "";
 	}
 
-	public long getOwnerID(){
-		return owner_id != null ? owner_id.longValue() : -1L;
+	public String getOwnerID(){
+		return owner_id != null ? owner_id : "";
 	}
 
 	public String getTitle() {
@@ -58,8 +58,8 @@ public class Trail {
 		this.id = new String(id != null ? id : "");
 	}
 
-	public void setOwnerID(long id){
-		this.owner_id = id;
+	public void setOwnerID(String own_id){
+		this.owner_id = new String(own_id != null ? own_id : "");
 	}
 	
 	public void setTitle(String title) {
@@ -92,11 +92,11 @@ public class Trail {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Trail> loadOwnerTrails(long id, PersistenceManager pm) {
+	public static List<Trail> loadOwnersTrails(String owner_id_key, PersistenceManager pm) {
 		//Queries on all trails with specified owner_id
-		Query query = pm.newQuery(Trail.class, "owner_id == :id");
+		Query query = pm.newQuery(Trail.class, "owner_id == :owner_id_key");
 		
-		List<Trail> rv = (List<Trail>) query.execute(id);
+		List<Trail> rv = (List<Trail>) query.execute(owner_id_key);
 		rv.size(); // forces all records to load into memory
 		query.closeAll();
 		return rv;

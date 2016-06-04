@@ -2,6 +2,9 @@ package com.best_slopes;
 
 
 import javax.jdo.PersistenceManager;
+
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import javax.jdo.Query;
 import javax.jdo.annotations.PersistenceCapable;
@@ -24,6 +27,7 @@ public class Stats {
 	
 	@Persistent 
 	private Integer trail_count_total;
+	
 	
 	/**** Set functions ****/
 	
@@ -80,34 +84,27 @@ public class Stats {
 		query.setOrdering("id");
 
 		List<Stats> rv = (List<Stats>) query.execute();
-//		rv.size(); // forces all records to load into memory
+		rv.size(); // forces all records to load into memory
 		
 		query.closeAll();
 		return rv;
 	}
 
-//	@SuppressWarnings("unchecked")
-//	public static List<Trail> loadAll(PersistenceManager pm) {
-//		Query query = pm.newQuery(Trail.class);
-//		query.setOrdering("id");
-//
-//		List<Trail> rv = (List<Trail>) query.execute();
-//		rv.size(); // forces all records to load into memory
-//		return rv;
-//	}
-//	
-//	@SuppressWarnings("unchecked")
-//	public static List<Trail> getModifiedSince(long age, PersistenceManager pm) {
-//		Long since = System.currentTimeMillis() - age * 1000;	//converts age to seconds
-//		Date since_date = new Date(since);
-//		
-//		Query query = pm.newQuery(Trail.class, "modified >= :since_date");
-//		query.setOrdering("modified");
-//		
-//		List<Trail> rv = (List<Trail>) query.execute(since_date);
-//		rv.size(); // forces all records to load into memory
-//		query.closeAll();
-//		return rv;
-//	}
+	private void streamAsJson(PrintWriter out, Stats stats) {
+		// you could also have GSON do this for you, if you like
+		out.println('[');
+		out.println(formatAsJson(stats));
+		out.println(']');
+	}
+
+	public static String formatAsJson(Stats stats) {
+		HashMap<String, String> obj = new HashMap<String, String>();
+		obj.put("id", 			Long.toString(stats.getId()));
+		obj.put("hour_count", 	Integer.toString(stats.getHourCount()));
+		obj.put("week_count",	Integer.toString(stats.getWeekCount()));
+		obj.put("day_count", 	Integer.toString(stats.getDayCount()));
+		obj.put("total_count", 	Integer.toString(stats.getTotalCount()));
+		return UtilJson.toJsonObject(obj);
+	}
 
 }

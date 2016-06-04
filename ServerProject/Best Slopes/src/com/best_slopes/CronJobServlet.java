@@ -2,7 +2,6 @@ package com.best_slopes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -32,10 +31,6 @@ public class CronJobServlet extends HttpServlet {
 			List<Trail> week_trails = Trail.getModifiedSince(604800, pm);	//604800 seconds = 1 week
 			List<Trail> total_trails = Trail.loadAll(pm);
 			
-//			streamAsJsonTrails(out, day_trails);
-//			streamAsJsonTrails(out, week_trails);
-//			streamAsJsonTrails(out, total_trails);
-
 			int hour_count = 	hour_trails.size();
 			int day_count = 	day_trails.size();
 			int week_count =	week_trails.size();
@@ -49,53 +44,11 @@ public class CronJobServlet extends HttpServlet {
 
 			pm.makePersistent(stats);
 
-//			streamAsJson(out, stats);
+//			Stats.streamAsJson(out, stats);		//used for debugging, will output the data as JSON to Webpage.
 		} finally {
 			pm.close();
 		}
 		resp.getWriter().println("success");
 	}
-
-	private void streamAsJson(PrintWriter out, Stats stats) {
-		// you could also have GSON do this for you, if you like
-		out.println('[');
-		out.println(formatAsJson(stats));
-		out.println(']');
-	}
-
-	public static String formatAsJson(Stats stats) {
-		HashMap<String, String> obj = new HashMap<String, String>();
-		obj.put("id", 			Long.toString(stats.getId()));
-		obj.put("hour_count", 	Integer.toString(stats.getHourCount()));
-		obj.put("week_count",	Integer.toString(stats.getWeekCount()));
-		obj.put("day_count", 	Integer.toString(stats.getDayCount()));
-		obj.put("total_count", 	Integer.toString(stats.getTotalCount()));
-		return UtilJson.toJsonObject(obj);
-	}
-	
-//	private void streamAsJsonTrails(PrintWriter out, List<Trail> trails) {
-//		// you could also have GSON do this for you, if you like
-//		out.write('[');
-//		for (int i = 0; i < trails.size(); i++) {
-//			if (i > 0)
-//				out.write(',');
-//			out.write(formatAsJsonTrails(trails.get(i)));
-//		}
-//		out.write(']');
-//	}
-//
-//	public static String formatAsJsonTrails(Trail trail) {
-//		HashMap<String, String> obj = new HashMap<String, String>();
-//		obj.put("id", trail.getId());
-//		obj.put("owner_id", trail.getOwnerID());
-//		obj.put("title", trail.getTitle());
-//		obj.put("rating", Integer.toString(trail.getRating()));
-//		obj.put("difficulty", Integer.toString(trail.getDifficulty()));
-//		obj.put("comment", trail.getComment());
-//		obj.put("modified", Long.toString(trail.getLastModified() != null ? trail.getLastModified().getTime() : 0L));
-//		return UtilJson.toJsonObject(obj);
-//	}
-
-
 
 }

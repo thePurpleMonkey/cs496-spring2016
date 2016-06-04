@@ -23,7 +23,6 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-//			long owner_id;
 			Integer delete_trail;
 
 			try {
@@ -32,18 +31,11 @@ public class TrackTrailsServlet extends HttpServlet {
 				delete_trail = -1;
 			}
 
-//			try {
-//				owner_id = Long.parseLong(req.getParameter("owner_id") + "");
-//			} catch (NumberFormatException nfe) {
-//				owner_id = -1L;
-//			}
-			
 			String 	id = req.getParameter("id"); 
 			String 	owner_id = req.getParameter("owner_id"); 
 			String[] split_array = id.split(ID_SEPERATOR);		//
 			String parsed_id = split_array[1];
 			
-//			Log.debug(parsed_id);
 			Integer rating = Integer.parseInt(req.getParameter("rating") + "");
 			Integer difficulty = Integer.parseInt(req.getParameter("difficulty") + "");
 			String 	title = req.getParameter("title");

@@ -12,4 +12,5 @@ public class Constants {
     public static String NULL_STR = "NULL";
     public static int  OWNER_ID = 10;
     public static String OWNER_ID_SEPARATOR = "___";
+    public static String COMMENT_SEPERATOR = "@@@";
 }

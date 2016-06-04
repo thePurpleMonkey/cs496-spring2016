@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.best_slopes.bestslopes.http.HttpGet;
@@ -29,6 +31,7 @@ public class ServerComms {
             this.mContext = mContext;
             this.swipeLayout = swipeLayout;
         }
+
 
         protected ArrayList<Trail> doInBackground(Void... voids) {
             ArrayList<Trail> trails = new ArrayList<Trail>();
@@ -53,7 +56,8 @@ public class ServerComms {
                     temp_trail.setRating(Integer.parseInt(jsonObject.getString("rating")));
 
                     //Parse comments from server by commas
-                    String[] commentArray = ((jsonObject.getString("comment").split(",")));
+                    //TODO: don't comma separate, and then don't allow user to enter that symbol into comment
+                    String[] commentArray = ((jsonObject.getString("comment").split(Constants.COMMENT_SEPERATOR)));
                     ArrayList<String> commentList = new ArrayList<>();
 
                     //iterate over all strings after split
@@ -126,7 +130,7 @@ public class ServerComms {
             comments = trail.getComments();
 
             for (String s : comments)
-                everyComment.append(s + ","); //comma separate comments to store on server
+                everyComment.append(s + Constants.COMMENT_SEPERATOR); //comma separate comments to store on server
 
             if (comments != null && comments.length > 0)
                 sendTrails.addFormField("comment", everyComment.toString());
@@ -201,7 +205,27 @@ public class ServerComms {
 
         protected void onPostExecute(Boolean results) {
             if (results == true) {
-//                mainActivity.load
+                ListView mainListView = (ListView) mainActivity.findViewById(R.id.trail_list);
+
+                //need to synchronize when calling .notify on a ListView
+                synchronized (mainListView) {
+                    //Update the ListView that it changed
+                    mainListView.notify();
+
+                    //Checks if listView is empty, if it is, add item telling user to add trail.
+                    //Less than or equal because the trail likely hasn't finished deleting
+                    if(mainListView.getAdapter().getCount() <= 1) {
+                        ArrayAdapter<String> adapter;
+                        ArrayList<String> listItems = new ArrayList<String>();
+
+                        adapter = new ArrayAdapter<String>(mContext,
+                                (R.layout.row_empty),
+                                listItems);
+                        mainListView.setAdapter(adapter);
+
+                        listItems.add("\n   Add trail using +\n");
+                    }
+                }
                 Toast toast = Toast.makeText(mContext,
                         "Successfully deleted trail from server!",
                         Toast.LENGTH_LONG);
@@ -249,7 +273,7 @@ public class ServerComms {
                 comments = trail.getComments();
 
                 for (String s : comments)
-                    everyComment.append(s + ","); //comma separate comments to store on server
+                    everyComment.append(s + Constants.COMMENT_SEPERATOR); //comma separate comments to store on server
 
                 if (comments != null && comments.length > 0)
                     sendTrails.addFormField("comment", everyComment.toString());

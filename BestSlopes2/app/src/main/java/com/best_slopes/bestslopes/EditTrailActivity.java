@@ -145,7 +145,7 @@ public class EditTrailActivity extends AppCompatActivity {
                 EditText trailName = (EditText) findViewById(R.id.edit_trail_name);
                 if(trailName.getText().toString().equals("")) {
                     AlertDialog.Builder adb=new AlertDialog.Builder(this);
-                    adb.setTitle("Ups...");
+                    adb.setTitle("Oops...");
                     adb.setMessage("Trail name should be entered!");
                     adb.setPositiveButton("Ok", null);
                     adb.show();

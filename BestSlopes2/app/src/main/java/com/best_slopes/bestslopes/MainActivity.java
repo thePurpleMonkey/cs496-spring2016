@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Database", e.getMessage());
             finish();
         } catch (InterruptedException e) {
-            Log.e("Database", e.getMessage());
+                Log.e("Database", e.getMessage());
             finish();
         }
 
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     listItems);
             myListView.setAdapter(adapter);
 
-            listItems.add("\n   Add trail\n");
+            listItems.add("\n   Add trail using +\n");
         }
 
     }

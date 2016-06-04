@@ -1,8 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_about"
-        android:orderInCategory="100"
+        android:orderInCategory="4"
         android:title="@string/menu_about" />
+
+    <item
+        android:id="@+id/menu_server_stats"
+        android:orderInCategory="3"
+        android:title="@string/menu_server_stats" />
 
     <!--<item-->
         <!--android:id="@+id/menu_deleteDB"-->
@@ -16,13 +21,13 @@
 
     <item
         android:id="@+id/menu_sort_by"
-        android:orderInCategory="100"
+        android:orderInCategory="2"
         android:title="@string/menu_sort_by" />
 
 
     <item
         android:id ="@+id/menu_debug"
-        android:orderInCategory="100"
+        android:orderInCategory="5"
         android:title="Debug Screen" />
 
     <item

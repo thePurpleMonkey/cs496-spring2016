@@ -30,21 +30,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ViewTrailActivity"
+        <activity
+            android:name=".ViewTrailActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-        <activity android:name=".EditTrailActivity"
+        <activity
+            android:name=".EditTrailActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity android:name=".TestDatabase" />
-
-        <activity android:name="About"
-            android:theme="@style/AppTheme.CustomTheme"
-        ></activity>
-
+        <activity
+            android:name=".About"
+            android:theme="@style/AppTheme.CustomTheme" />
         <activity android:name=".CameraActivity" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
+        <activity android:name=".ServerStats"></activity>
     </application>
 
 </manifest>

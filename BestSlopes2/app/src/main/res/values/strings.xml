@@ -9,6 +9,7 @@
     <string name="medium">Medium</string>
     <string name="difficult">Difficult</string>
 
+    <string name="menu_server_stats">Server Statistics</string>
     <string name="menu_about">About</string>
     <string name="menu_deleteDB">Delete All Trails</string>
     <string name="menu_sort_by">Sort By</string>

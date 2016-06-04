@@ -208,6 +208,11 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.menu_server_stats:
+                Intent serverStatsIntent = new Intent(this, ServerStats.class);
+                startActivity(serverStatsIntent);
+                return true;
+
             case R.id.menu_about:
                 Intent aboutIntent = new Intent(this, About.class);
                 startActivity(aboutIntent);

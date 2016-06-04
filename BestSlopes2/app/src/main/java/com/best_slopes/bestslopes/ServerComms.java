@@ -23,6 +23,36 @@ import java.util.ArrayList;
  * Created by pkess_000 on 5/21/2016.
  */
 public class ServerComms {
+    public static class LoadStatsFromServer extends AsyncTask<Void, Void, Stats> {
+        private Context mContext;
+
+        protected Stats doInBackground(Void... voids) {
+            Stats stats = new Stats();
+
+            try {
+                HttpGet getStats = new HttpGet(Constants.STATS_URL, Constants.CHARSET);
+                getStats.addFormField("id", Integer.toString(Constants.STATS_ID));
+                String valResult = getStats.finish();
+                JSONArray jsonArray = new JSONArray(valResult);
+
+                JSONObject jsonObject;
+
+                jsonObject = jsonArray.getJSONObject(0);        //TODO: parse the id, maybe don't have to.
+
+                stats.setHourCount(Integer.parseInt(jsonObject.getString("hour_count")));
+                stats.setDayCount(Integer.parseInt(jsonObject.getString("day_count")));
+                stats.setWeekCount(Integer.parseInt(jsonObject.getString("week_count")));
+                stats.setTotalCount(Integer.parseInt(jsonObject.getString("total_count")));
+
+            } catch(Exception e){
+                Log.e("Async get trails exc.", e.toString());
+                return null;
+            }
+
+            return stats;
+        }
+
+    }
     public static class LoadTrailsFromServer extends AsyncTask<Void, Void, ArrayList<Trail>> {
         private Context mContext;
         private SwipeRefreshLayout swipeLayout;

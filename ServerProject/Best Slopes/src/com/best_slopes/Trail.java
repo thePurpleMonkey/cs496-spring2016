@@ -1,5 +1,6 @@
 package com.best_slopes;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -30,6 +31,11 @@ public class Trail {
 	@Persistent
 	private Text comment;
 	
+	@Persistent
+	private Date modified;
+
+	/**** Get functions ****/
+	
 	public String getId() {
 		return id != null ? id : "";
 	}
@@ -54,6 +60,12 @@ public class Trail {
 		return comment != null ? comment.getValue() : "";
 	}
 
+	public Date getLastModified() {
+		return modified;
+	}
+
+	/**** Set functions ****/
+	
 	public void setId(String id) {
 		this.id = new String(id != null ? id : "");
 	}
@@ -77,6 +89,12 @@ public class Trail {
 		this.comment = new Text(comment != null ? comment : "");
 	}
 
+	public void setLastModified(Date modified) {
+		this.modified = modified != null ? modified : new Date();
+	}
+
+	/**** Miscellaneous functions ****/
+	
 	public static Trail load(long id, PersistenceManager pm) {
 		return pm.getObjectById(Trail.class, id);
 	}
@@ -88,9 +106,24 @@ public class Trail {
 
 		List<Trail> rv = (List<Trail>) query.execute();
 		rv.size(); // forces all records to load into memory
+		query.closeAll();
 		return rv;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List<Trail> getModifiedSince(long age, PersistenceManager pm) {
+		Long since = System.currentTimeMillis() - age * 1000;	//converts age to seconds
+		Date since_date = new Date(since);
+		
+		Query query = pm.newQuery(Trail.class, "modified >= :since_date");
+		query.setOrdering("modified");
+		
+		List<Trail> rv = (List<Trail>) query.execute(since_date);
+		rv.size(); // forces all records to load into memory
+		query.closeAll();
+		return rv;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<Trail> loadOwnersTrails(String owner_id_key, PersistenceManager pm) {
 		//Queries on all trails with specified owner_id

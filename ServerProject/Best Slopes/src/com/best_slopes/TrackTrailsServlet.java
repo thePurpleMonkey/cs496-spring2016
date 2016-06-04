@@ -2,16 +2,13 @@ package com.best_slopes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.*;
-
-import org.mortbay.log.Log;
-
-import com.google.appengine.api.datastore.Query.FilterOperator;
 
 import javax.jdo.Query;
 
@@ -85,6 +82,7 @@ public class TrackTrailsServlet extends HttpServlet {
 				q.deletePersistentAll(id);
 				
 			}
+			//Else, create/update trail.
 			else{
 				trail.setId(id);
 				trail.setOwnerID(owner_id);
@@ -92,6 +90,8 @@ public class TrackTrailsServlet extends HttpServlet {
 				trail.setRating(rating);
 				trail.setDifficutly(difficulty);
 				trail.setComment(comment);
+				trail.setLastModified(new Date());		//fills in current time
+
 				pm.makePersistent(trail);
 			}
 			out.write(formatAsJson(trail));
@@ -109,16 +109,17 @@ public class TrackTrailsServlet extends HttpServlet {
 		PersistenceManager pm = PMF.getPMF().getPersistenceManager();
 		
 		try {
-//			long id = 	getLong(req, "id", -1); 			// for getting one item
 			String owner_id = req.getParameter("owner_id");	//for getting all trails from one owner
+			long age = getLong(req, "age", -1L); // for getting all modified in
 
-//			if (id > 0) {
-//				Trail trail = Trail.load(id, pm);
-//				out.write(formatAsJson(trail));
-//			} 
+
 			if (owner_id != null){
 				List<Trail> trails = Trail.loadOwnersTrails(owner_id, pm);
 				streamAsJson(out, trails);
+			}
+			else if(age > 0){
+				List<Trail> trails = Trail.getModifiedSince(age, pm);
+				streamAsJson(out, trails);				
 			}
 			else {
 				List<Trail> trails = Trail.loadAll(pm);
@@ -131,16 +132,6 @@ public class TrackTrailsServlet extends HttpServlet {
 		}
 	}
 	
-//	private long getLong(HttpServletRequest req, String key, long dflt) {
-//		long rv;
-//		try {
-//			rv = Long.parseLong(req.getParameter(key) + "");
-//		} catch (NumberFormatException nfe) {
-//			rv = dflt;
-//		}
-//		return rv;
-//	}
-	
 	public static String formatAsJson(Trail trail) {
 		HashMap<String, String> obj = new HashMap<String, String>();
 		obj.put("id", trail.getId());
@@ -149,7 +140,18 @@ public class TrackTrailsServlet extends HttpServlet {
 		obj.put("rating", Integer.toString(trail.getRating()));
 		obj.put("difficulty", Integer.toString(trail.getDifficulty()));
 		obj.put("comment", trail.getComment());
+		obj.put("modified", Long.toString(trail.getLastModified() != null ? trail.getLastModified().getTime() : 0L));
 		return UtilJson.toJsonObject(obj);
+	}
+
+	private long getLong(HttpServletRequest req, String key, long dflt) {
+		long rv;
+		try {
+			rv = Long.parseLong(req.getParameter(key) + "");
+		} catch (NumberFormatException nfe) {
+			rv = dflt;
+		}
+		return rv;
 	}
 
 	private void streamAsJson(PrintWriter out, List<Trail> trails) {

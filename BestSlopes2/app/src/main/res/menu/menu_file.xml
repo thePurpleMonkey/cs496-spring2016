@@ -30,9 +30,4 @@
         android:orderInCategory="5"
         android:title="Debug Screen" />
 
-    <item
-        android:id="@+id/menu_login"
-        android:orderInCategory="1"
-        android:title="@string/menu_login" />
-
 </menu>

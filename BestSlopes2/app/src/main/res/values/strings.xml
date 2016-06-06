@@ -102,5 +102,7 @@
     <string name="title_activity_register">Register</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="error_username_already_taken">Username already in use!</string>
+    <string name="menu_logout">Logout</string>
+    <string name="logout_success">You have been successfully logged out.</string>
 
 </resources>

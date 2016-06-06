@@ -176,6 +176,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_file, menu);
         getMenuInflater().inflate(R.menu.action_bar, menu);
+        if (session == -1)
+            getMenuInflater().inflate(R.menu.login, menu);
+        else
+            getMenuInflater().inflate(R.menu.logout, menu);
         return true;
     }
 
@@ -224,6 +228,13 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menu_login:
                 startActivityForResult(new Intent(this, LoginActivity.class), 7);
+                return true;
+
+            case R.id.menu_logout:
+                session = -1;
+                username = null;
+                invalidateOptionsMenu();
+                Toast.makeText(this, R.string.logout_success, Toast.LENGTH_LONG).show();
                 return true;
 
             case R.id.menu_sort_by:
@@ -275,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
             session = data.getLongExtra(LoginActivity.sessionResult, -1L);
             username = data.getStringExtra(LoginActivity.emailResult);
         }
+
+        invalidateOptionsMenu();
     }
 
     public static String getUsername() {

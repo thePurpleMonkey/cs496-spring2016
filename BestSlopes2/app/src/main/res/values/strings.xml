@@ -95,10 +95,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="menu_login">Log in</string>
+    <string name="menu_login">Log in/Register</string>
     <string name="login_success">Successfully logged in!</string>
+    <string name="register_success">Welcome! Successfully registered.</string>
     <string name="register">Register</string>
     <string name="title_activity_register">Register</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="error_username_already_taken">Username already in use!</string>
 
 </resources>

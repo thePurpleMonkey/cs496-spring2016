@@ -267,6 +267,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("Login", "requestCode: " + requestCode);
+        Log.d("Login", "resultCode: " + resultCode);
+        Log.d("Login", "data: " + data);
+
         if (requestCode == 7 && resultCode == RESULT_OK && data != null) {
             session = data.getLongExtra(LoginActivity.sessionResult, -1L);
             username = data.getStringExtra(LoginActivity.emailResult);

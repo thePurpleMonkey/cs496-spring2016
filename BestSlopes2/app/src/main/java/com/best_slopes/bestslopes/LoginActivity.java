@@ -100,11 +100,34 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                Log.d("Login", "Starting register intent.");
+                startActivityForResult(intent, 77);
+                //finish();
             }
         });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("Login", "In onActivityResult in LoginActivity handling result for RegisterActivity.");
+
+        if (requestCode == 77 && resultCode == RESULT_OK && data != null) {
+            long session = data.getLongExtra(LoginActivity.sessionResult, -1L);
+            String username = data.getStringExtra(LoginActivity.emailResult);
+
+            Log.d("Login", "session: " + session);
+            Log.d("Login", "username: " + username);
+
+            Intent output = new Intent();
+            output.putExtra(LoginActivity.emailResult, username);
+            output.putExtra(LoginActivity.sessionResult, session);
+            setResult(RESULT_OK, output);
+
+            finish();
+        }
     }
 
     private void populateAutoComplete() {
@@ -327,7 +350,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 post.addFormField("username", mEmail);
                 post.addFormField("password", mPassword);
                 String result = post.finish();
-                Log.d("Login", "Result: " + result);
+                Log.d("Login", "Login Result: " + result);
 
                 JSONObject reader = new JSONObject(result);
                 Log.d("Login", "reader.has('error'): " + reader.has("error"));

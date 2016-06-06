@@ -3,6 +3,7 @@ package com.best_slopes.bestslopes;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.best_slopes.bestslopes.http.HttpPost;
 
@@ -320,7 +322,7 @@ public class RegisterActivity extends Activity implements LoaderCallbacks<Cursor
                 post.addFormField("username", mEmail);
                 post.addFormField("password", mPassword);
                 String result = post.finish();
-                Log.d("Login", "Result: " + result);
+                Log.d("Login", "Register result: " + result);
 
                 JSONObject reader = new JSONObject(result);
                 Log.d("Login", "reader.has('error'): " + reader.has("error"));
@@ -345,10 +347,17 @@ public class RegisterActivity extends Activity implements LoaderCallbacks<Cursor
             showProgress(false);
 
             if (success) {
+                Intent output = new Intent();
+                output.putExtra(LoginActivity.emailResult, mEmail);
+                output.putExtra(LoginActivity.sessionResult, session);
+                setResult(RESULT_OK, output);
+
+                Toast.makeText(getApplicationContext(), R.string.register_success, Toast.LENGTH_SHORT).show();
+
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mEmailView.setError(getString(R.string.error_username_already_taken));
+                mEmailView.requestFocus();
             }
         }
 

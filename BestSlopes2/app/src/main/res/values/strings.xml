@@ -97,5 +97,8 @@
     </string>
     <string name="menu_login">Log in</string>
     <string name="login_success">Successfully logged in!</string>
+    <string name="register">Register</string>
+    <string name="title_activity_register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
 
 </resources>

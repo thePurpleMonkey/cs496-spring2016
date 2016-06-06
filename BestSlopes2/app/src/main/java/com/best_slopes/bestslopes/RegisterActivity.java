@@ -3,7 +3,6 @@ package com.best_slopes.bestslopes;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -20,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,11 +28,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.best_slopes.bestslopes.http.HttpPost;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +37,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
-    public static final String emailResult = "EXTRA_EMAIL";
-    public static final String sessionResult = "EXTRA_SESSION";
+public class RegisterActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -61,19 +52,22 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private EditText mConfirmView;
     private View mProgressView;
     private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+        mConfirmView = (EditText) findViewById(R.id.confirm_password);
+        mConfirmView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -84,7 +78,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.register_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,19 +86,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-
-        final Button clickButton = (Button) findViewById(R.id.button_register);
-        clickButton.setOnClickListener( new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        mLoginFormView = findViewById(R.id.register_form);
+        mProgressView = findViewById(R.id.register_progress);
     }
 
     private void populateAutoComplete() {
@@ -150,7 +133,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -164,10 +146,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+        mConfirmView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String confirm = mConfirmView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -187,6 +171,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
+            cancel = true;
+        } else if (!TextUtils.equals(password, confirm)) {
+            mConfirmView.setError("Passwords do not match");
+            focusView = mConfirmView;
             cancel = true;
         }
 
@@ -286,7 +274,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(RegisterActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -311,7 +299,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         private final String mEmail;
         private final String mPassword;
-        private Long session;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -320,30 +307,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            try {
-                // TODO: attempt authentication against a network service.
-                HttpPost post = new HttpPost(Constants.AUTHENTICATION_URL, Constants.CHARSET);
-                post.addFormField("op", "login");
-                post.addFormField("username", mEmail);
-                post.addFormField("password", mPassword);
-                String result = post.finish();
-                Log.d("Login", "Result: " + result);
+            // TODO: attempt authentication against a network service.
 
-                JSONObject reader = new JSONObject(result);
-                Log.d("Login", "reader.has('error'): " + reader.has("error"));
-                if (reader.has("session")) {
-                    session = Long.parseLong(reader.getString("session"));
-                    return true;
-                } else {
-                    return false;
-                }
-
-            } catch (Exception e) {
-                return false;
-            }
 
             // TODO: register the new account here.
-            //return true;
+            return true;
         }
 
         @Override
@@ -352,13 +320,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if (success) {
-                Intent output = new Intent();
-                output.putExtra(emailResult, mEmail);
-                output.putExtra(sessionResult, session);
-                setResult(RESULT_OK, output);
-
-                Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
-
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

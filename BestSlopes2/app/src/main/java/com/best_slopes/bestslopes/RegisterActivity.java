@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +29,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.best_slopes.bestslopes.http.HttpPost;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -299,6 +304,7 @@ public class RegisterActivity extends Activity implements LoaderCallbacks<Cursor
 
         private final String mEmail;
         private final String mPassword;
+        private Long session;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -307,11 +313,30 @@ public class RegisterActivity extends Activity implements LoaderCallbacks<Cursor
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            try {
+                // TODO: attempt authentication against a network service.
+                HttpPost post = new HttpPost(Constants.AUTHENTICATION_URL, Constants.CHARSET);
+                post.addFormField("op", "register");
+                post.addFormField("username", mEmail);
+                post.addFormField("password", mPassword);
+                String result = post.finish();
+                Log.d("Login", "Result: " + result);
 
+                JSONObject reader = new JSONObject(result);
+                Log.d("Login", "reader.has('error'): " + reader.has("error"));
+                if (reader.has("session")) {
+                    session = Long.parseLong(reader.getString("session"));
+                    return true;
+                } else {
+                    return false;
+                }
+
+            } catch (Exception e) {
+                return false;
+            }
 
             // TODO: register the new account here.
-            return true;
+            //return true;
         }
 
         @Override

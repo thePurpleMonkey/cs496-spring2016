@@ -39,13 +39,13 @@ import java.util.concurrent.ExecutionException;
 import com.best_slopes.bestslopes.ServerComms;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList<Trail> trails;
+    private static ArrayList<Trail> trails;
     /* for camera code */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 //    private DatabaseContract.LoadTask task = new DatabaseContract.LoadTask(this);
 
     // User credentials for syncing
-    private static String username = "peter@test.com";   //TODO: set init value to null, changed for testing.
+    private static String username = null;   //TODO: set init value to null, changed for testing.
     private static long session = -1;
 
     //initialize sortOrderIndex using Box class
@@ -200,13 +200,6 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         ServerComms.SendAllTrailsToServer sendAll = new ServerComms.SendAllTrailsToServer(getApplicationContext());
                         sendAll.execute(trails);
-
-                        //Send toast
-                        Toast toast = Toast.makeText(   getApplicationContext(),
-                                                        "Sending trails to server...",
-                                                        Toast.LENGTH_SHORT);
-                        toast.show();
-
                     }
                 });
 
@@ -298,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         return session;
     }
 
-    public ArrayList<Trail> getTrails(){
+    public static ArrayList<Trail> getTrails(){
         return trails;
     }
 }

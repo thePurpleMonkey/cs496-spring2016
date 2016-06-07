@@ -14,7 +14,7 @@ public class ServerStats extends Activity {
         setContentView(R.layout.activity_server_stats);
 
         /** Get stats from server **/
-        ServerComms.LoadStatsFromServer getStats = new ServerComms.LoadStatsFromServer();
+        ServerComms.LoadStatsFromServer getStats = new ServerComms.LoadStatsFromServer(getApplicationContext());
         try{
             stats = getStats.execute().get();
         } catch (Exception e){

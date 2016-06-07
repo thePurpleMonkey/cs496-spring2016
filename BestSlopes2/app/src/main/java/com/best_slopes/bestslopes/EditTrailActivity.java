@@ -180,7 +180,8 @@ public class EditTrailActivity extends AppCompatActivity {
                     Log.d("Database", "Starting save AsyncTask...");
 
                     //Setting serverID for editedTrail!
-                    editedTrail.setServerID(calcServerID());
+//                    editedTrail.setServerID(calcServerID());
+                    editedTrail.setServerID(null);
 
                     //Save new trail to DB
                     new DatabaseContract.SaveTrailTask(this).execute(editedTrail);
@@ -203,9 +204,9 @@ public class EditTrailActivity extends AppCompatActivity {
         }
     }
 
+/*
     private String calcServerID() {
         String serverID;
-        String[] temp_id;
         int id_int = 0;     //defaults to 0
 
         List<Integer> idList = new ArrayList<>();
@@ -233,13 +234,6 @@ public class EditTrailActivity extends AppCompatActivity {
             }
         }
 
-        //if array is empty, init to 0
-//        if(idList.size() == 0){
-//            serverID = Constants.OWNER_ID + "_" + "0";
-//        }
-//        else{
-//            serverID = Constants.OWNER_ID + "_" + Integer.toString(id_int);
-//        }
         if(idList.size() == 0){
             serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + "0";
         }
@@ -250,6 +244,7 @@ public class EditTrailActivity extends AppCompatActivity {
         return serverID;
 
     }
+*/
 
 
     private Trail redTrailFromScreen() {

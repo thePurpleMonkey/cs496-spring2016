@@ -86,10 +86,10 @@ public class CustomAdapter extends AdapterForClickables {
         //Delete trail from server!
         ServerComms.DeleteTrailFromServer deleteServer = new ServerComms.DeleteTrailFromServer(context, mainActivity);
         deleteServer.execute(trails.get(position));
-        Toast toast = Toast.makeText(context,
-                "Deleting trail from server",
-                Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(context,
+//                "Deleting trail from server",
+//                Toast.LENGTH_SHORT);
+//        toast.show();
 
 
         trails.remove(position);

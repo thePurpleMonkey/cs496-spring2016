@@ -27,48 +27,6 @@ import java.util.List;
  * Created by pkess_000 on 5/21/2016.
  */
 public class ServerComms {
-    public static String calcServerID() {
-//        String[ stringArray =
-        ArrayList<Trail> trails = MainActivity.getTrails();
-
-        String serverID;
-        int id_int = 0;     //defaults to 0
-
-        List<Integer> idList = new ArrayList<>();
-
-//        String[] stringArray = trails.toString();
-
-        //search through array list and compare serverIDs
-        for(int i = 1; i < stringArray.length; i++){
-            //have to sort the last item in list differently
-            if(stringArray.length-1 == i)
-                idList.add(Integer.parseInt((stringArray[i].split(":")[1].split(Constants.OWNER_ID_SEPARATOR)[1].split("]")[0])));
-            else{
-                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split(Constants.OWNER_ID_SEPARATOR)[1])));
-
-            }
-        }
-
-        Collections.sort(idList);       //sort idList
-
-        //set id_int by comparing against every value in DB
-        for(int i = 0; i < idList.size(); i++){
-            //checks if id_int is in the list
-            if(id_int == idList.get(i)){
-                id_int++;       //id_int val was already in DB so increment
-            }
-        }
-
-        if(idList.size() == 0){
-            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + "0";
-        }
-        else{
-            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + Integer.toString(id_int);
-        }
-
-        return serverID;
-
-    }
     public static class LoadStatsFromServer extends AsyncTask<Void, Void, Stats> {
         private Context mContext;
 
@@ -91,7 +49,7 @@ public class ServerComms {
 
                 JSONObject jsonObject;
 
-                jsonObject = jsonArray.getJSONObject(0);        //TODO: parse the id, maybe don't have to.
+                jsonObject = jsonArray.getJSONObject(0);
 
                 stats.setHourCount(Integer.parseInt(jsonObject.getString("hour_count")));
                 stats.setDayCount(Integer.parseInt(jsonObject.getString("day_count")));
@@ -226,8 +184,16 @@ public class ServerComms {
 
                 Trail trail = param[0];
 
-                sendTrails.addFormField("id", trail.getServerID());
-                sendTrails.addFormField("owner_id", MainActivity.getUsername());        //TODO: don't hardcode ownerID
+                String serverID = trail.getServerID();
+
+                //Handles when serverID is null
+                if(serverID == null){
+                    serverID = calcServerID();
+                }
+
+
+                sendTrails.addFormField("id", serverID);
+                sendTrails.addFormField("owner_id", MainActivity.getUsername());
                 sendTrails.addFormField("title", trail.getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));
                 sendTrails.addFormField("difficulty", Integer.toString((int) trail.getDifficulty()));
@@ -323,9 +289,17 @@ public class ServerComms {
 
                 Trail trail = param[0];
 
+                String serverID = trail.getServerID();
+
+                //Handles when serverID is null
+                if(serverID == null){
+                    serverID = calcServerID();
+                }
+
+
                 //only need to send ID and delete_trail parameter!
-                sendTrails.addFormField("id", trail.getServerID());        //todo, change this to use ownerID
-                sendTrails.addFormField("owner_id", MainActivity.getUsername());        //TODO: don't hardcode ownerID
+                sendTrails.addFormField("id", serverID);
+                sendTrails.addFormField("owner_id", MainActivity.getUsername());
                 sendTrails.addFormField("title", trail.getName());
                 sendTrails.addFormField("rating", Integer.toString((int) trail.getRating()));
                 sendTrails.addFormField("difficulty", Integer.toString((int) trail.getDifficulty()));
@@ -433,10 +407,9 @@ public class ServerComms {
                     Trail trail = array_param[0].get(i);
                     String serverID = trail.getServerID();
 
-
-                    //TODO: handle null case
+                    //Handles when serverID is null
                     if(serverID == null){
-                        calcServerID();
+                        serverID = calcServerID();
                     }
 
                     sendTrails.addFormField("id", serverID);        //todo, change this to use ownerID
@@ -496,7 +469,54 @@ public class ServerComms {
         }
     }
 
+    private static String calcServerID() {
+        ArrayList<Trail> trails = MainActivity.getTrails();
 
+        String serverID;
+        int id_int = 0;     //defaults to 0
 
+        List<Integer> idList = new ArrayList<>();
 
+        //splits the trail in a "special" way,
+        String[] stringArray = trails.toString().split("ServerID");
+
+        //search through array list and compare serverIDs
+        for(int i = 1; i < stringArray.length; i++){
+            //have to sort the last item in list differently
+            if(stringArray.length-1 == i) {
+                String newSplitArray = (stringArray[i].split(":")[1]);
+
+                //sorry for hard coding... it's the way trail.toString operates
+                if (newSplitArray.equals(" null]") || newSplitArray.equals(" null")){
+                    idList.add(i);
+                } else {
+                    idList.add(Integer.parseInt((stringArray[i].split(":")[1].split(Constants.OWNER_ID_SEPARATOR)[1].split("]")[0])));
+                }
+            }
+            else{
+                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split(Constants.OWNER_ID_SEPARATOR)[1])));
+
+            }
+        }
+
+        Collections.sort(idList);       //sort idList
+
+        //set id_int by comparing against every value in DB
+        for(int i = 0; i < idList.size(); i++){
+            //checks if id_int is in the list
+            if(id_int == idList.get(i)){
+                id_int++;       //id_int val was already in DB so increment
+            }
+        }
+
+        if(idList.size() == 0){
+            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + "0";
+        }
+        else{
+            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + Integer.toString(id_int);
+        }
+
+        return serverID;
+
+    }
 }

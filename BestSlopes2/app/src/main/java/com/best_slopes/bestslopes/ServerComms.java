@@ -27,6 +27,8 @@ import java.util.List;
  * Created by pkess_000 on 5/21/2016.
  */
 public class ServerComms {
+    private static ArrayList<Trail> allTrailsList = new ArrayList<>();
+
     public static class LoadStatsFromServer extends AsyncTask<Void, Void, Stats> {
         private Context mContext;
 
@@ -166,6 +168,8 @@ public class ServerComms {
         }
 
         protected Boolean doInBackground(Trail... param) {
+            allTrailsList = MainActivity.getTrails();
+
             if (Looper.myLooper() == null){
                 Looper.prepare();               //syncs thread if Looper hasn't been created
             }
@@ -189,6 +193,7 @@ public class ServerComms {
                 //Handles when serverID is null
                 if(serverID == null){
                     serverID = calcServerID();
+
                 }
 
 
@@ -293,7 +298,7 @@ public class ServerComms {
 
                 //Handles when serverID is null
                 if(serverID == null){
-                    serverID = calcServerID();
+                    return false;       //need user to sync with database first
                 }
 
 
@@ -353,7 +358,7 @@ public class ServerComms {
                 toast.show();
             } else {
                 Toast toast = Toast.makeText(mContext,
-                        "Could not delete from server, try again later",
+                        "Could not delete from server, try syncing with server first",
                         Toast.LENGTH_LONG);
                 toast.show();
 
@@ -389,6 +394,7 @@ public class ServerComms {
         }
         protected Boolean doInBackground(ArrayList<Trail>... array_param) {
             HttpPost sendTrails = new HttpPost(Constants.TRACKER_URL, Constants.CHARSET);
+            allTrailsList = MainActivity.getTrails();
 
             if (Looper.myLooper() == null){
                 Looper.prepare();               //syncs thread if Looper hasn't been created
@@ -410,6 +416,7 @@ public class ServerComms {
                     //Handles when serverID is null
                     if(serverID == null){
                         serverID = calcServerID();
+                        allTrailsList.get(i).setServerID(serverID);
                     }
 
                     sendTrails.addFormField("id", serverID);        //todo, change this to use ownerID
@@ -469,7 +476,6 @@ public class ServerComms {
     }
 
     private static String calcServerID() {
-        ArrayList<Trail> trails = MainActivity.getTrails();
 
         String serverID;
         int id_int = 0;     //defaults to 0
@@ -477,7 +483,7 @@ public class ServerComms {
         List<Integer> idList = new ArrayList<>();
 
         //splits the trail in a "special" way,
-        String[] stringArray = trails.toString().split("ServerID");
+        String[] stringArray = allTrailsList.toString().split("ServerID");
 
         //search through array list and compare serverIDs
         for(int i = 1; i < stringArray.length; i++){
@@ -487,8 +493,9 @@ public class ServerComms {
 
                 //sorry for hard coding... it's the way trail.toString operates
                 if (newSplitArray.equals(" null]") || newSplitArray.equals(" null")){
-                    idList.add(i);
-                } else {
+                    //Do nothing
+                }
+                else {
                     idList.add(Integer.parseInt((stringArray[i].split(":")[1].split(Constants.OWNER_ID_SEPARATOR)[1].split("]")[0])));
                 }
             }
@@ -497,8 +504,9 @@ public class ServerComms {
 
                 //sorry for hard coding... it's the way trail.toString operates
                 if (newSplitArray.equals(": null") || newSplitArray.equals(": null]")){
-                    idList.add(i);
-                } else {
+                    //Do nothing
+                }
+                else {
                     idList.add(Integer.parseInt((newSplitArray.split(Constants.OWNER_ID_SEPARATOR)[1])));
                 }
 
@@ -509,10 +517,12 @@ public class ServerComms {
         Collections.sort(idList);       //sort idList
 
         //set id_int by comparing against every value in DB
+        id_int = 0;
         for(int i = 0; i < idList.size(); i++){
+            int idListValue = idList.get(i);
             //checks if id_int is in the list
-            if(id_int == idList.get(i)){
-                id_int++;       //id_int val was already in DB so increment
+            if(id_int == idListValue){
+                id_int++;       //once it increments and aren't equal, won't increment again theoretically.
             }
         }
 

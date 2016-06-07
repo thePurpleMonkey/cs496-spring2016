@@ -16,6 +16,7 @@
             android:hint="@string/edit_trail_name_hint"
             android:id="@+id/edit_trail_name"
             android:imeOptions="actionDone"
+
             android:inputType="text|textCapWords|textAutoCorrect" />
 
         <TextView

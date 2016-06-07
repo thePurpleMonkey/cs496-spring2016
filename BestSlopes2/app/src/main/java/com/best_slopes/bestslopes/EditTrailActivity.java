@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -60,6 +61,9 @@ public class EditTrailActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
         fillFields();
+
+        EditText editName = ((EditText) findViewById(R.id.edit_trail_name));
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     private void fillFields() {
@@ -179,8 +183,6 @@ public class EditTrailActivity extends AppCompatActivity {
                 else {
                     Log.d("Database", "Starting save AsyncTask...");
 
-                    //Setting serverID for editedTrail!
-//                    editedTrail.setServerID(calcServerID());
                     editedTrail.setServerID(null);
 
                     //Save new trail to DB
@@ -203,49 +205,6 @@ public class EditTrailActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-/*
-    private String calcServerID() {
-        String serverID;
-        int id_int = 0;     //defaults to 0
-
-        List<Integer> idList = new ArrayList<>();
-
-        String[] stringArray = stringTrail.split("ServerID");
-
-        //search through array list and compare serverIDs
-        for(int i = 1; i < stringArray.length; i++){
-            //have to sort the last item in list differently
-            if(stringArray.length-1 == i)
-                idList.add(Integer.parseInt((stringArray[i].split(":")[1].split(Constants.OWNER_ID_SEPARATOR)[1].split("]")[0])));
-            else{
-                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split(Constants.OWNER_ID_SEPARATOR)[1])));
-
-            }
-        }
-
-        Collections.sort(idList);       //sort idList
-
-        //set id_int by comparing against every value in DB
-        for(int i = 0; i < idList.size(); i++){
-            //checks if id_int is in the list
-            if(id_int == idList.get(i)){
-                id_int++;       //id_int val was already in DB so increment
-            }
-        }
-
-        if(idList.size() == 0){
-            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + "0";
-        }
-        else{
-            serverID = MainActivity.getUsername() + Constants.OWNER_ID_SEPARATOR + Integer.toString(id_int);
-        }
-
-        return serverID;
-
-    }
-*/
-
 
     private Trail redTrailFromScreen() {
         EditText trailName = (EditText) findViewById(R.id.edit_trail_name);

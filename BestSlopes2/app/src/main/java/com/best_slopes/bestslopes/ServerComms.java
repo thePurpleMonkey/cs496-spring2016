@@ -435,7 +435,6 @@ public class ServerComms {
                     try {
                         String valResult = sendTrails.finish();     //send to server
                         Log.d("HttpPost result", valResult);
-                        return true;            // sent trails to server successfully
                     } catch (Exception e) {
                         e.printStackTrace();
                         return false;           //could not send trails to server
@@ -443,7 +442,7 @@ public class ServerComms {
                     }
                 }
             }
-            return false;
+            return true;
         }
 
         protected void onPostExecute(Boolean results) {
@@ -494,7 +493,15 @@ public class ServerComms {
                 }
             }
             else{
-                idList.add(Integer.parseInt((stringArray[i].split(",")[0].split(Constants.OWNER_ID_SEPARATOR)[1])));
+                String newSplitArray = (stringArray[i].split(",")[0]);
+
+                //sorry for hard coding... it's the way trail.toString operates
+                if (newSplitArray.equals(": null") || newSplitArray.equals(": null]")){
+                    idList.add(i);
+                } else {
+                    idList.add(Integer.parseInt((newSplitArray.split(Constants.OWNER_ID_SEPARATOR)[1])));
+                }
+
 
             }
         }

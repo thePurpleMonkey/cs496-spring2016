@@ -95,29 +95,35 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ServerComms.LoadTrailsFromServer loadTrails = new ServerComms.LoadTrailsFromServer(getApplicationContext(), swipeLayout);
-                try{
-                    //Get trails from server!
-                    final ArrayList<Trail> temp_trail = loadTrails.execute().get();
+                if (session != -1) {
+                    ServerComms.LoadTrailsFromServer loadTrails = new ServerComms.LoadTrailsFromServer(getApplicationContext(), swipeLayout);
+                    try {
+                        //Get trails from server!
+                        final ArrayList<Trail> temp_trail = loadTrails.execute().get();
 
-                    //Delete trails from phone's db
-                    DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
-                    db.RefreshDatabaseTask(getApplicationContext());
-                    db.execute(temp_trail);     //execute refresh, passing temp_trail
+                        //Delete trails from phone's db
+                        DatabaseContract.RefreshDatabaseTask db = new DatabaseContract.RefreshDatabaseTask();
+                        db.RefreshDatabaseTask(getApplicationContext());
+                        db.execute(temp_trail);     //execute refresh, passing temp_trail
 
-                } catch (Exception e){
-                    Log.e("Async server load error", e.toString());
-                }
-
-                //turns off refresh symbol after
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadListViewMain();     //reload list on main
-
-                        swipeLayout.setRefreshing(false);
+                    } catch (Exception e) {
+                        Log.e("Async server load error", e.toString());
                     }
-                }, 2000);
+
+                    //turns off refresh symbol after
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadListViewMain();     //reload list on main
+
+                            swipeLayout.setRefreshing(false);
+                        }
+                    }, 2000);
+                } else {
+                    //turns off refresh symbol
+                    new Toast(getApplicationContext()).makeText(getApplicationContext(), "You need to log in or register before you can sync to the cloud!", Toast.LENGTH_LONG).show();
+                    swipeLayout.setRefreshing(false);
+                }
             }
         });
 

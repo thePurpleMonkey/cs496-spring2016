@@ -11,4 +11,151 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.best_slopes.bestslopes.TestDatabase">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grid_view_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/serverStatistics"
+            android:textColor="@android:color/holo_red_dark"
+            android:gravity="center"
+            android:textSize="42sp"
+            android:id="@+id/title" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/commentsLayout"
+        android:background="@drawable/grid_view_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/pastHour"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:id="@+id/text1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/past0"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="24sp"
+            android:id="@+id/hourCountText" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grid_view_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/pastDay"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:id="@+id/text0" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/past0"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="24sp"
+            android:id="@+id/dayCountText" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grid_view_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/pastWeek"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:id="@+id/text2" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/past0"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="24sp"
+            android:id="@+id/weekCountText" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grid_view_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/pastTotal"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:id="@+id/text3" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/past0"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="24sp"
+            android:id="@+id/totalCountText" />
+    </LinearLayout>
 </LinearLayout>

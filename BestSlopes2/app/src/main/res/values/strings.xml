@@ -35,6 +35,14 @@
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 
+
+    <string name="serverStatistics">Server Statistics</string>
+    <string name="pastHour">Active trails in past Hour:</string>
+    <string name="pastDay">Active trails in past Day:</string>
+    <string name="pastWeek">Active trails in past Week:</string>
+    <string name="pastTotal">Active trails in Total:</string>
+    <string name="past0">0</string>
+
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
